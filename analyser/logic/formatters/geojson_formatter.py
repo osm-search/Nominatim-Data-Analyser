@@ -3,7 +3,7 @@ from geojson import Feature
 from geojson import FeatureCollection, dump
 from geojson.geometry import Geometry
 
-FULL_PATH_PREFIX = 'https://gsoc2021-qa.nominatim.org/QA-data/geojson'
+FULL_PATH_PREFIX = 'https://QA-data/geojson'
 
 class GeoJSONFormatter():
     """

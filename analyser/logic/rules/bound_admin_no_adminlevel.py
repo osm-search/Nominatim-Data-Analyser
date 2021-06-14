@@ -1,9 +1,8 @@
-from geojson.geometry import Point
+from geojson.geometry import Polygon, Point
 from analyser.logic.formatters import LayerFormatter
 from analyser.logic.base_rule import BaseRule
 from analyser.database import connect
 from analyser.logic import BaseRule
-from geojson import Polygon
 import json
 
 class AdminBoundNoAdminLevel(BaseRule):
@@ -19,15 +18,12 @@ class AdminBoundNoAdminLevel(BaseRule):
         with connect() as conn:
             with conn.cursor() as cur:
                 cur.execute("""
-                    SELECT ST_AsGeoJSON(geometry) FROM placex WHERE osm_type='R' AND class='boundary'
-                    AND type='administrative' AND admin_level >= 15 LIMIT 5;
+                    SELECT ST_AsGeoJSON(ST_Centroid(geometry)) FROM placex WHERE osm_type='R' AND class='boundary'
+                    AND type='administrative' AND admin_level >= 15;
                 """)
                 for geom in cur:
                     loaded = json.loads(geom[0])
-                    self.geojson_formatter.add_feature(Polygon(coordinates=loaded['coordinates']))
-                
-                #Tests purpose only
-                self.geojson_formatter.add_feature(Point((-122.789597, 49.195354)))
+                    self.geojson_formatter.add_feature(Point(coordinates=loaded['coordinates']))
 
         geojson_path = self.geojson_formatter.process('AdminBoundNoAL')
         self.layer_formatter.set_geojson_url(str(geojson_path))
