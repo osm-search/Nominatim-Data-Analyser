@@ -1,4 +1,4 @@
-from analyser.logic import Core
+from analyser.core import Core
 import argparse
 
 parser = argparse.ArgumentParser(prog='nominatim-analyser')

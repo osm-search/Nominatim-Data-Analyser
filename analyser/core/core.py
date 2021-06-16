@@ -1,6 +1,5 @@
 
-from analyser.logic.rules import AdminBoundNoAdminLevel
-from analyser.logic import BaseRule
+from analyser.core.rules import AdminBoundNoAdminLevel
 from typing import Set
 
 class Core():
@@ -9,10 +8,10 @@ class Core():
         Register and execute QAUnits.
     """
     def __init__(self) -> None:
-        self.rules: Set[BaseRule] = set()
+        self.rules = set()
         self.register_qa_unit(AdminBoundNoAdminLevel())
 
-    def register_qa_unit(self, qa_unit: BaseRule) -> None:
+    def register_qa_unit(self, qa_unit) -> None:
         """
             Add one QA Unit to the list of those
             to be executed.
