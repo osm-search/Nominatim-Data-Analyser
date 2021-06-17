@@ -18,7 +18,7 @@ class Node(Element):
         return feature
 
     @staticmethod
-    def create_from_string(geom: str) -> Node:
+    def create_from_WKT_string(geom: str) -> Node:
         """
             Parse a WKT geometry to instantiate a new
             Node class.
@@ -27,3 +27,10 @@ class Node(Element):
         results = re.match(pattern, geom)
         coordinates = [float(results[1]), float(results[2])]
         return Node({}, coordinates)
+
+    @staticmethod
+    def create_from_sql_result(result: any) -> Element:
+        """
+            Return a Node based on an SQL result.
+        """
+        return Node.create_from_WKT_string(result)

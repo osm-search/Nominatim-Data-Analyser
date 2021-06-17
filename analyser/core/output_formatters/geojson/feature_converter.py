@@ -25,5 +25,5 @@ class GeoJSONFeatureConverter(Pipe):
         """
         features = list()
         for i, element in enumerate(elements):
-            features.append(self.convert_to_geojson_feature(element, i))
+            features.append(self.convert_to_geojson_feature(element[0], i))
         return features

@@ -1,3 +1,4 @@
+from analyser.core.data_fetching.sql_processor import SQLProcessor
 from analyser.core.output_formatters import GeoJSONFormatter
 from analyser.core.output_formatters import GeoJSONFeatureConverter
 from analyser.core.output_formatters import LayerFormatter
@@ -14,14 +15,10 @@ class AdminBoundNoAdminLevel():
         super().__init__()
 
     def execute(self) -> bool:
-        with connect() as conn:
-            with conn.cursor() as cur:
-                cur.execute("""
-                    SELECT ST_AsText(ST_Centroid(geometry)) FROM placex WHERE osm_type='R' AND class='boundary'
+        sql_processor = SQLProcessor("""
+        SELECT ST_AsText(ST_Centroid(geometry)) FROM placex WHERE osm_type='R' AND class='boundary'
                     AND type='administrative' AND admin_level >= 15;
-                """)
-                points = [Node.create_from_string(geom[0]) for geom in cur]
-
+        """, ['Node'])
         feature_converter = GeoJSONFeatureConverter()
         geo_formatter = GeoJSONFormatter('AdminBoundNoAL')
         layer_formatter = LayerFormatter('No admin level', 'AdminBoundNoAdminLevel', 'Every evening')
@@ -32,7 +29,7 @@ class AdminBoundNoAdminLevel():
             'how_to_fix', 'An admin_level value should be set to the relation.'
         )
 
-        feature_converter.plug_pipe(geo_formatter).plug_pipe(layer_formatter)
-        feature_converter.process_and_next(points)
+        sql_processor.plug_pipe(feature_converter).plug_pipe(geo_formatter).plug_pipe(layer_formatter)
+        sql_processor.process_and_next()
 
         return True
