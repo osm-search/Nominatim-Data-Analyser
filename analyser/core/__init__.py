@@ -3,4 +3,3 @@
 """
 
 from .core import Core
-from .pipe import Pipe

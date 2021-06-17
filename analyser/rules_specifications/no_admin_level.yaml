@@ -1,0 +1,19 @@
+---
+SQLFetchers:
+  main_query:
+    query: >
+      SELECT ST_AsText(ST_Centroid(geometry)) FROM placex WHERE osm_type='R' AND class='boundary'
+      AND type='administrative' AND admin_level >= 15;
+    outputs_types:
+      - Node
+Outputs:
+  omoscope:
+    layer_file:
+      layer_name: No admin level
+      file_name: AdminBoundNoAdminLevel
+      updates: Every evening
+      docs:
+        description: Every relation with boundary=administrative should have a correct admin_level value set.
+        how_to_fix: An admin_level value should be set to the relation.
+    geojson:
+      file_name: AdminBoundNoAL
