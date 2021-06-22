@@ -1,7 +1,7 @@
 from __future__ import annotations
 from typing import List
 from geojson.feature import Feature
-from analyser.core.pipe import Pipe
+from analyser.core import Pipe
 from pathlib import Path
 from geojson import FeatureCollection, dump
 import typing

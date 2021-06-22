@@ -10,7 +10,7 @@ from typing import Deque
 import typing
 
 if typing.TYPE_CHECKING:
-    from analyser.core.qa_rule import Pipe
+    from analyser.core import Pipe
 
 class RuleAssembler():
     """
@@ -38,7 +38,7 @@ class RuleAssembler():
             #Plug the new pipe to the current last pipe of the deque
             self.nodes_history[-1].plug_pipe(pipe)
             LOG.info("%s | Assembler: %s plugged to %s", self.yaml_name, pipe, self.nodes_history[-1])
-            self.nodes_history.append(PipeFactory.assemble_pipe(node, self.exec_context))
+            self.nodes_history.append(pipe)
 
     def on_backtrack(self, backtrack_amount: int) -> None:
         """

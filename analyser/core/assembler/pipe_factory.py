@@ -1,5 +1,4 @@
 from __future__ import annotations
-from logging import captureWarnings
 from analyser.core.exceptions import YAMLSyntaxException
 import importlib
 import typing

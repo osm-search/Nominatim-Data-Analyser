@@ -1,5 +1,5 @@
 from __future__ import annotations
-from analyser.core.pipe import Pipe
+from analyser.core import Pipe
 import typing
 
 if typing.TYPE_CHECKING:

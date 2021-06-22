@@ -13,7 +13,7 @@ class Core():
         rules_path = Path('analyser/rules_specifications').resolve()
         for rule in os.listdir(str(rules_path)):
             file_without_ext = os.path.splitext(rule)[0]
-            RuleAssembler(file_without_ext).assemble()
+            RuleAssembler(file_without_ext).assemble().process_and_next()
 
     def execute_one(self, name: str) -> None:
         """

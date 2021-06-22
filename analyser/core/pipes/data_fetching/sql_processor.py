@@ -2,7 +2,7 @@ from __future__ import annotations
 from analyser.core.model.element import Element
 from typing import List
 from analyser.database.connection import connect
-from analyser.core.pipe import Pipe
+from analyser.core import Pipe
 import importlib
 import typing
 

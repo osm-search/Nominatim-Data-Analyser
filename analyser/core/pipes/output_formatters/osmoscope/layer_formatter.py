@@ -1,5 +1,5 @@
 from __future__ import annotations
-from analyser.core.pipe import Pipe
+from analyser.core import Pipe
 from pathlib import Path
 import json
 import typing

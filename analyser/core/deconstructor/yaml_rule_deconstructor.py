@@ -76,9 +76,9 @@ class YAMLRuleDeconstructor():
     def notify_new_node(self, node: dict) -> None:
         """
             Notifies all subscribers that we reached a new node.
-        """
-        self._raise_event(NEW_NODE_EVENT, node)
+        """     
         LOG.info('%s | Deconstruction: NEW_NODE %s', self.file_name, node['type'])
+        self._raise_event(NEW_NODE_EVENT, node)
 
     def notify_backtracking(self, backtrack_amount: int) -> None:
         """
@@ -87,8 +87,8 @@ class YAMLRuleDeconstructor():
 
             The backtrack_amount is how many back hop have been done.
         """
-        self._raise_event(BACKTRACKING_EVENT, backtrack_amount)
         LOG.info('%s | Deconstruction: BACKTRACK %s', self.file_name, backtrack_amount)
+        self._raise_event(BACKTRACKING_EVENT, backtrack_amount)
 
     def _get_data_from_keys(self, keys: Tuple[str]) -> dict:
         """

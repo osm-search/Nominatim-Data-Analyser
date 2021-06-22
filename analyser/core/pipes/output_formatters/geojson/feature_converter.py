@@ -1,6 +1,6 @@
 from __future__ import annotations
 from typing import List
-from analyser.core.pipe import Pipe
+from analyser.core import Pipe
 from analyser.core.model import Element
 from geojson import Feature
 import typing
