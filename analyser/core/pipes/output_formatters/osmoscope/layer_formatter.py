@@ -2,13 +2,17 @@ from __future__ import annotations
 from analyser.core.pipe import Pipe
 from pathlib import Path
 import json
+import typing
+
+if typing.TYPE_CHECKING:
+    from analyser.core.qa_rule import ExecutionContext
 
 class LayerFormatter(Pipe):
     """
         Handles the creation of the layer JSON file.
     """
-    def __init__(self, name: str, file_name: str, updates: str) -> None:
-        super().__init__()
+    def __init__(self, name: str, file_name: str, updates: str, exec_context: ExecutionContext) -> None:
+        super().__init__(exec_context)
         self.file_name = file_name
         self.data = dict()
         self.data['id'] = 'SuspectsData'
@@ -41,3 +45,14 @@ class LayerFormatter(Pipe):
             json.dump(self.data, json_file)
         
         return None
+
+    @staticmethod
+    def create_from_node_data(data: dict, exec_context: ExecutionContext) -> LayerFormatter:
+        """
+            Assembles the pipe with the given node data.
+        """
+        layer_formatter = LayerFormatter(data['layer_name'], data['file_name'], data['updates'], exec_context)
+        if 'docs' in data:
+            for k, v in data['docs'].items():
+                layer_formatter.add_doc(k, v)
+        return layer_formatter

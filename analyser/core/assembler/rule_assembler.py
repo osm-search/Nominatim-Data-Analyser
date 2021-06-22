@@ -1,53 +1,57 @@
+from __future__ import annotations
+from analyser.core.deconstructor.yaml_rule_deconstructor import BACKTRACKING_EVENT, NEW_NODE_EVENT
+from analyser.core.pipes import FillingPipe
+from analyser.core.qa_rule import ExecutionContext
 from analyser.core.deconstructor import YAMLRuleDeconstructor
-from analyser.core.data_fetching import SQLProcessor
-from analyser.core.output_formatters import GeoJSONFormatter
-from analyser.core.output_formatters import GeoJSONFeatureConverter
-from analyser.core.output_formatters import LayerFormatter
-from analyser.core.pipe import Pipe
+from analyser.logger.logger import LOG
+from collections import deque
+from .pipe_factory import PipeFactory
+from typing import Deque
+import typing
+
+if typing.TYPE_CHECKING:
+    from analyser.core.qa_rule import Pipe
 
 class RuleAssembler():
     """
-        Get data from the YAML deconstructor and
-        assembles the rule's pipeline.
+        Get deconstruction informations from the 
+        YAML deconstructor and assembles the rule's pipeline.
     """
     def __init__(self, yaml_name: str) -> None:
-        self.deconstructor = YAMLRuleDeconstructor(yaml_name)
-        self.first_pipe = None
-        self.current_pipe = None
+        self.yaml_name = yaml_name
+        self.deconstructor: YAMLRuleDeconstructor = YAMLRuleDeconstructor(yaml_name)
+        self.deconstructor.subscribe_event(NEW_NODE_EVENT, self.on_new_node)
+        self.deconstructor.subscribe_event(BACKTRACKING_EVENT, self.on_backtrack)
+        self.exec_context: ExecutionContext = ExecutionContext()
+        self.first_pipe: Pipe = FillingPipe()
+        self.nodes_history: Deque[Pipe] = deque()
+
+    def on_new_node(self, node: dict) -> None:
+        """
+            Raised by the deconstructor when a new node
+            is reached.
+        """
+        if node['type'] ==  'ROOT_NODE':
+            self.nodes_history.append(self.first_pipe)
+        else:
+            pipe = PipeFactory.assemble_pipe(node, self.exec_context)
+            #Plug the new pipe to the current last pipe of the deque
+            self.nodes_history[-1].plug_pipe(pipe)
+            LOG.info("%s | Assembler: %s plugged to %s", self.yaml_name, pipe, self.nodes_history[-1])
+            self.nodes_history.append(PipeFactory.assemble_pipe(node, self.exec_context))
+
+    def on_backtrack(self, backtrack_amount: int) -> None:
+        """
+            Raised by the deconstructor when backtrack is
+            processed through the tree.
+        """
+        for _ in range(backtrack_amount):
+            if self.nodes_history:
+                self.nodes_history.pop()
 
     def assemble(self) -> Pipe:
         """
             Assembles the rule's pipeline
         """
-        sql_fetcher = self.deconstructor.get_next_sql_fetcher()
-        while sql_fetcher:
-            self.add_pipe(SQLProcessor(sql_fetcher['query'], sql_fetcher['outputs_types']))
-            sql_fetcher = self.deconstructor.get_next_sql_fetcher()
-
-        osmoscope_output = self.deconstructor.get_osmoscope_output()
-        if osmoscope_output:
-            self.add_pipe(GeoJSONFeatureConverter())
-            if 'geojson' in osmoscope_output:
-                self.add_pipe(GeoJSONFormatter(osmoscope_output['geojson']['file_name']))
-            if 'layer_file' in osmoscope_output:
-                layer_data = osmoscope_output['layer_file']
-                layer_formatter = LayerFormatter(layer_data['layer_name'], layer_data['file_name'], layer_data['updates'])
-                if 'docs' in layer_data:
-                    for k, v in layer_data['docs'].items():
-                        layer_formatter.add_doc(k, v)
-                self.add_pipe(layer_formatter)
-
+        self.deconstructor.deconstruct()
         return self.first_pipe
-
-    def add_pipe(self, pipe: Pipe) -> None:
-        """
-            Add a pipe to the pipeline. This method is
-            an assurance that the pipeline order is respected.
-        """
-        if self.first_pipe is None:
-            self.first_pipe = pipe
-        elif self.current_pipe is None:
-            self.first_pipe.plug_pipe(pipe)
-            self.current_pipe = pipe
-        else:
-            self.current_pipe = self.current_pipe.plug_pipe(pipe)

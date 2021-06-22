@@ -3,3 +3,4 @@
 """
  
 from .rule_assembler import RuleAssembler
+from .pipe_factory import PipeFactory
