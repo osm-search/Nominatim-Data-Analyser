@@ -19,7 +19,7 @@ class LayerFormatter(Pipe):
         self.data['name'] = name
         self.data['doc'] = dict()
         self.data['updates'] = updates
-        self.base_folder_path = Path('/srv/nominatim/data-files/layers')
+        self.base_folder_path = Path('/srv/nominatim/data-files')
 
     def add_doc(self, key: str, content: str) -> LayerFormatter:
         """
@@ -37,14 +37,36 @@ class LayerFormatter(Pipe):
         """
         self.data['geojson_url'] = geo_url
 
-        folder_path = self.base_folder_path.resolve()
+        folder_path = Path(self.base_folder_path / Path('layers')).resolve()
         folder_path.mkdir(parents=True, exist_ok=True)
         full_path = folder_path / Path(self.file_name + '.json')
 
         with open(full_path, 'w') as json_file:
             json.dump(self.data, json_file)
         
-        return None
+        file_url = str(Path(Path('https://QA-data/layers') / Path(self.file_name + '.json')))
+        self.add_layer_to_global_layers_file(file_url)
+
+    def add_layer_to_global_layers_file(self, path: str) -> None:
+        """
+            Add the newly created layer to the global layers file.
+            If the global layers file doesn't exist it is created.
+        """
+        folder_path = self.base_folder_path.resolve()
+        folder_path.mkdir(parents=True, exist_ok=True)
+        full_path = folder_path / Path('layers.json')
+
+        with open(full_path, 'w') as json_file:
+            try:
+                data = json.load(json_file)
+            except:
+                data = {
+                    'name': 'Nominatim suspects',
+                    'layers': []
+                }
+            if path not in data['layers']:
+                data['layers'].append(path)
+            json.dump(data, json_file)
 
     @staticmethod
     def create_from_node_data(data: dict, exec_context: ExecutionContext) -> LayerFormatter:

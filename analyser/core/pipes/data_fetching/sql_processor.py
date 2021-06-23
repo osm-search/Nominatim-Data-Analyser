@@ -1,6 +1,7 @@
 from __future__ import annotations
-from analyser.core.model.element import Element
-from typing import List
+from .result_type import ResultType
+from analyser.core.model import Element
+from typing import List, Set
 from analyser.database.connection import connect
 from analyser.core import Pipe
 import importlib
@@ -15,7 +16,7 @@ class SQLProcessor(Pipe):
         the resulting data to the generic data model of the analyser
         and send them to the next pipe.
     """
-    def __init__(self, query: str, results_types: List[str], exec_context: ExecutionContext) -> None:
+    def __init__(self, query: str, results_types: List[ResultType], exec_context: ExecutionContext) -> None:
         super().__init__(exec_context)
         self.query = query
         self.results_types = results_types
@@ -40,9 +41,9 @@ class SQLProcessor(Pipe):
         module = importlib.import_module('analyser.core.model')
         converted_results = list()
         for i, result in enumerate(results):
-            dclass = getattr(module, self.results_types[i])
+            dclass = getattr(module, self.results_types[i].str_type)
             convert = getattr(dclass, 'create_from_sql_result')
-            converted_results.append(convert(result))
+            converted_results.append(convert(result, *self.results_types[i].additional_arguments))
         return converted_results
             
     @staticmethod
@@ -50,5 +51,14 @@ class SQLProcessor(Pipe):
         """
             Assembles the pipe with the given node data.
         """
-        return SQLProcessor(data['query'], data['outputs_types'], exec_context)
+        results_types: List[ResultType] = list()
+        for d in data['results_types']:
+            #Create ResultType with additional argument if it is a dict
+            if isinstance(d, dict):
+                str_type = next(iter(d))
+                arguments = d[str_type]
+                results_types.append(ResultType(str_type, arguments))
+            else:
+                results_types.append(ResultType(d))
+        return SQLProcessor(data['query'], results_types, exec_context)
 

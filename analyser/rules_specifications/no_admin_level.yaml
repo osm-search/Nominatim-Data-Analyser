@@ -2,13 +2,17 @@
 QUERY:
   type: SQLProcessor
   query: >
-    SELECT ST_AsText(ST_Centroid(geometry)) FROM placex WHERE osm_type='R' AND class='boundary'
+    SELECT ST_AsText(centroid), osm_id FROM placex WHERE osm_type='R' AND class='boundary'
     AND type='administrative' AND admin_level >= 15;
-  outputs_types:
+  results_types:
     - Node
+    - AdditionalData:
+      - node_osm_id
   out:
     CONVERTER:
       type: GeoJSONFeatureConverter
+      properties:
+        node_id: $node_osm_id
       out:
         GEOJSON:
           type: GeoJSONFormatter
