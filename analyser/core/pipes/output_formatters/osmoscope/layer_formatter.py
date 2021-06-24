@@ -56,7 +56,7 @@ class LayerFormatter(Pipe):
         folder_path.mkdir(parents=True, exist_ok=True)
         full_path = folder_path / Path('layers.json')
 
-        with open(full_path, 'w') as json_file:
+        with open(full_path, 'r') as json_file:
             try:
                 data = json.load(json_file)
             except:
@@ -64,8 +64,9 @@ class LayerFormatter(Pipe):
                     'name': 'Nominatim suspects',
                     'layers': []
                 }
-            if path not in data['layers']:
-                data['layers'].append(path)
+        if path not in data['layers']:
+            data['layers'].append(path)
+        with open(full_path, 'w') as json_file:
             json.dump(data, json_file)
 
     @staticmethod

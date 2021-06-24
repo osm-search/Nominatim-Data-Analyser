@@ -1,0 +1,27 @@
+---
+QUERY:
+  type: SQLProcessor
+  query: >
+    SELECT wd, ids, centroids FROM (SELECT extratags->'wikidata' as wd, array_agg(osm_id) as ids, array_agg(ST_AsText(centroid)) as centroids, count(1) FROM placex
+    WHERE class='place' AND osm_type='N' AND extratags ? 'wikidata' GROUP BY wd) foo WHERE count > 1
+  results_types:
+    - AdditionalData
+    - AdditionalData
+    - AdditionalData
+  out:
+    CONVERTER:
+      type: AdvancedLogicalUnit
+      name: SameWikiDataFeatureConverter
+      out:
+        GEOJSON:
+          type: GeoJSONFormatter
+          file_name: NodeSameWikiData
+          out:
+            LAYER_FILE:
+              type: LayerFormatter
+              layer_name: Duplicate wikidata
+              file_name: NodeDuplicateWikiData
+              updates: Every evening
+              docs:
+                description: Wikidata should be unique and not duplicate through nodes.
+                how_to_fix: Wikidata links should me modified.

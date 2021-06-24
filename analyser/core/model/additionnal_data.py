@@ -1,6 +1,6 @@
 from __future__ import annotations
 from .element import Element
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 @dataclass
 class AdditionalData(Element):
@@ -9,7 +9,7 @@ class AdditionalData(Element):
         and a code.
     """
     data: any
-    code: str
+    code: str = field(default=None)
 
     def create_from_sql_result(result: any, *args) -> AdditionalData:
         """

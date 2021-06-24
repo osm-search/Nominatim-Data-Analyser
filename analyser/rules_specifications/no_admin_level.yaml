@@ -12,7 +12,7 @@ QUERY:
     CONVERTER:
       type: GeoJSONFeatureConverter
       properties:
-        node_id: $node_osm_id
+        relation_id: $node_osm_id
       out:
         GEOJSON:
           type: GeoJSONFormatter
