@@ -1,4 +1,5 @@
 from __future__ import annotations
+from analyser.core.model.paths import Paths
 from analyser.core import Pipe
 from pathlib import Path
 import json
@@ -28,14 +29,14 @@ class LayerFormatter(Pipe):
         self.data['doc'][key] = content
         return self
 
-    def process(self, geo_url: str) -> None:
+    def process(self, paths: Paths) -> None:
         """
             Create the JSON layer file containing the right data.
             
             It gets the GeoJSON url as data parameter and set it
             inside the layer file.
         """
-        self.data['geojson_url'] = geo_url
+        self.data['vector_tile_url'] = paths.web_path
 
         folder_path = Path(self.base_folder_path / Path('layers')).resolve()
         folder_path.mkdir(parents=True, exist_ok=True)

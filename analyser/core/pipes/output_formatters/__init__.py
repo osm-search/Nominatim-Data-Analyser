@@ -5,3 +5,4 @@
 from .osmoscope.layer_formatter import LayerFormatter
 from .geojson.feature_converter import GeoJSONFeatureConverter
 from .geojson.geojson_formatter import GeoJSONFormatter
+from .geojson.vector_tile_converter import VectorTileConverter

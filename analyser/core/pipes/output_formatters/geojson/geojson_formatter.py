@@ -1,4 +1,5 @@
 from __future__ import annotations
+from analyser.core.model.paths import Paths
 from typing import List
 from geojson.feature import Feature
 from analyser.core import Pipe
@@ -21,7 +22,7 @@ class GeoJSONFormatter(Pipe):
         self.sub_folder = ''
         self.file_name = filename
 
-    def process(self, features: List[Feature]) -> str:
+    def process(self, features: List[Feature]) -> Paths:
         """
             Create the FeatureCollection and dump it to
             a new GeoJSON file.
@@ -34,7 +35,8 @@ class GeoJSONFormatter(Pipe):
         with open(full_path, 'w') as file:
             dump(feature_collection, file)
 
-        return str(Path(FULL_PATH_PREFIX / Path(self.sub_folder) / Path(self.file_name + '.json')))
+        web_path = str(Path(FULL_PATH_PREFIX / Path(self.sub_folder) / Path(self.file_name + '.json')))
+        return Paths(web_path, str(full_path.resolve()))
     
     @staticmethod
     def create_from_node_data(data: dict, exec_context: ExecutionContext) -> GeoJSONFormatter:

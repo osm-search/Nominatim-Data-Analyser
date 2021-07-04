@@ -1,4 +1,6 @@
 from __future__ import annotations
+from analyser.logger.logger import LOG
+from analyser.logger.timer import Timer
 from .result_type import ResultType
 from analyser.core.model import Element
 from typing import List, Set
@@ -29,7 +31,9 @@ class SQLProcessor(Pipe):
         converted_results = list()
         with connect() as conn:
             with conn.cursor() as cur:
+                timer = Timer().start_timer()
                 cur.execute(self.query)
+                LOG.info('Query %s executed in %s mins %s secs', self.id, *timer.get_elapsed())
                 for data_result in cur:
                     converted_results.append(self.convert_results(data_result))
         return converted_results
