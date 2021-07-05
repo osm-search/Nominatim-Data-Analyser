@@ -2,12 +2,9 @@
 QUERY:
   type: SQLProcessor
   query: >
-    SELECT wd, ids, centroids FROM (SELECT extratags->'wikidata' as wd, array_agg(osm_id) as ids, array_agg(ST_AsText(centroid)) as centroids, count(1) FROM placex
-    WHERE class='place' AND osm_type='N' AND extratags ? 'wikidata' GROUP BY wd) foo WHERE count > 1
-  results_types:
-    - AdditionalData
-    - AdditionalData
-    - AdditionalData
+    SELECT wikidata, ids, centroids FROM (SELECT extratags->'wikidata' as wikidata, array_agg(osm_id) as ids, 
+    array_agg(ST_AsText(centroid)) as centroids, count(1) FROM placex
+    WHERE class='place' AND osm_type='N' AND extratags ? 'wikidata' GROUP BY wikidata) foo WHERE count > 1
   out:
     CONVERTER:
       type: AdvancedLogicalUnit
@@ -19,9 +16,10 @@ QUERY:
           out:
             LAYER_FILE:
               type: LayerFormatter
-              layer_name: Duplicate wikidata
               file_name: NodeDuplicateWikiData
+              data_format_url: geojson_url
+              name: Duplicate wikidata
               updates: Every evening
-              docs:
+              doc:
                 description: Wikidata should be unique and not duplicate through nodes.
                 how_to_fix: Wikidata links should me modified.

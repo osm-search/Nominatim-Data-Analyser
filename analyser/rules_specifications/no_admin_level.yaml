@@ -6,13 +6,11 @@ QUERY:
     AND type='administrative' AND admin_level >= 15;
   results_types:
     - Node
-    - AdditionalData:
-      - node_osm_id
   out:
     CONVERTER:
       type: GeoJSONFeatureConverter
       properties:
-        relation_id: $node_osm_id
+        relation_id: $osm_id
       out:
         GEOJSON:
           type: GeoJSONFormatter
@@ -20,9 +18,10 @@ QUERY:
           out:
             LAYER_FILE:
               type: LayerFormatter
-              layer_name: No admin level
               file_name: AdminBoundNoAdminLevel
+              data_format_url: geojson_url
+              name: No admin level
               updates: Every evening
-              docs:
+              doc:
                 description: Every relation with boundary=administrative should have a correct admin_level value set.
                 how_to_fix: An admin_level value should be set to the relation.

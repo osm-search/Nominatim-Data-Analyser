@@ -1,4 +1,5 @@
 from __future__ import annotations
+from analyser.core.exceptions.yaml_syntax_exception import YAMLSyntaxException
 from analyser.core.model.additionnal_data import AdditionalData
 from typing import List
 from analyser.core import Pipe
@@ -18,27 +19,25 @@ class GeoJSONFeatureConverter(Pipe):
         super().__init__(exec_context)
         self.properties_pattern = properties_pattern
 
-    def convert_to_geojson_feature(self, element: Element, id: int) -> Feature:
+    def convert_to_geojson_feature(self, elements: dict, id: int) -> Feature:
         """
-            Convert a generic data class to a
-            geojson feature.
+            Convert a query result to a geojson feature.
         """
         properties = dict()
-        #If a custom variable with the '$' syntax if used
-        #find the corresponding AdditionalData code which match it.
+        #If a custom propertie with the '$' syntax is used
+        #find the corresponding name into the data record.
         if self.properties_pattern:
             for k, v in self.properties_pattern.items():
                 if v[0] == '$':
-                    code = v[1:]
-                    finded_data = next((x for x in element if isinstance(x, AdditionalData) and x.code == code), None)
-                    if finded_data:
-                        finded_data = finded_data.data
-                    properties[k] = finded_data
+                    name = v[1:]
+                    if not name in elements:
+                        raise YAMLSyntaxException(f'The {name} value doesn\'t exist.')
+                    properties[k] = elements[name]
                 else:
                     properties[k] = v
-        return element[0].to_geojson_feature(id, properties)
+        return elements.pop(0).to_geojson_feature(id, properties)
 
-    def process(self, all_elements: List[List[Element]]) -> List[Feature]:
+    def process(self, all_elements: List[dict]) -> List[Feature]:
         """
             Convert multiple elements
             to a list of features.

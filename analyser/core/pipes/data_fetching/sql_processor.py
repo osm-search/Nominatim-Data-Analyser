@@ -3,10 +3,11 @@ from analyser.logger.logger import LOG
 from analyser.logger.timer import Timer
 from .result_type import ResultType
 from analyser.core.model import Element
-from typing import List, Set
+from typing import Dict, List
 from analyser.database.connection import connect
 from analyser.core import Pipe
 import importlib
+import psycopg2.extras
 import typing
 
 if typing.TYPE_CHECKING:
@@ -23,14 +24,14 @@ class SQLProcessor(Pipe):
         self.query = query
         self.results_types = results_types
 
-    def process(self, data: any = None) -> List[List[Element]]:
+    def process(self, data: any = None) -> List[Dict]:
         """
             Executes the query and converts data based on
             the results_types given.
         """
-        converted_results = list()
+        converted_results: List[Dict] = list()
         with connect() as conn:
-            with conn.cursor() as cur:
+            with conn.cursor(cursor_factory=psycopg2.extras.DictCursor) as cur:
                 timer = Timer().start_timer()
                 cur.execute(self.query)
                 LOG.info('Query %s executed in %s mins %s secs', self.id, *timer.get_elapsed())
@@ -38,17 +39,17 @@ class SQLProcessor(Pipe):
                     converted_results.append(self.convert_results(data_result))
         return converted_results
 
-    def convert_results(self, results: List[any]) -> List[Element]:
+    def convert_results(self, results: Dict) -> Dict:
         """
             Converts the results to their corresponding elements.
         """
         module = importlib.import_module('analyser.core.model')
-        converted_results = list()
-        for i, result in enumerate(results):
-            dclass = getattr(module, self.results_types[i].str_type)
-            convert = getattr(dclass, 'create_from_sql_result')
-            converted_results.append(convert(result, *self.results_types[i].additional_arguments))
-        return converted_results
+        for i, (k, v) in enumerate(results.items()):
+            if i < len(self.results_types):
+                dclass = getattr(module, self.results_types[i].str_type)
+                convert = getattr(dclass, 'create_from_sql_result')
+                results[k] = convert(v, *self.results_types[i].additional_arguments)
+        return results
             
     @staticmethod
     def create_from_node_data(data: dict, exec_context: ExecutionContext) -> SQLProcessor:
@@ -56,13 +57,14 @@ class SQLProcessor(Pipe):
             Assembles the pipe with the given node data.
         """
         results_types: List[ResultType] = list()
-        for d in data['results_types']:
-            #Create ResultType with additional argument if it is a dict
-            if isinstance(d, dict):
-                str_type = next(iter(d))
-                arguments = d[str_type]
-                results_types.append(ResultType(str_type, arguments))
-            else:
-                results_types.append(ResultType(d))
+        if 'results_types' in data:
+            for d in data['results_types']:
+                #Create ResultType with additional argument if it is a dict
+                if isinstance(d, dict):
+                    str_type = next(iter(d))
+                    arguments = d[str_type]
+                    results_types.append(ResultType(str_type, arguments))
+                else:
+                    results_types.append(ResultType(d))
         return SQLProcessor(data['query'], results_types, exec_context)
 

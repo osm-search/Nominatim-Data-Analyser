@@ -5,7 +5,7 @@ from geojson.geometry import Point
 from geojson import Feature
 
 class SameWikiDataFeatureConverter(AdvancedLogicalUnit):
-    def process(self, data: any = None) -> any:
+    def process(self, data: List[dict]) -> List[Feature]:
         """
             Creates Geojson features for each nodes.
             each result from the SQLProcessor contains
@@ -16,23 +16,23 @@ class SameWikiDataFeatureConverter(AdvancedLogicalUnit):
         """
         features: List[Feature] = list()
         current_feature_id = 0
-        for additional_data in data:
-            for i, centroid in enumerate(additional_data[2].data):
+        for record in data:
+            for i, centroid in enumerate(record['centroids']):
                 node = Node.create_from_WKT_string(centroid)
                 nodes_in_common = list()
                 #Fetch concerning node id and id of each other nodes with the
                 #same wikidata
-                for j, id in enumerate(additional_data[1].data):
+                for j, id in enumerate(record['ids']):
                     if j == i:
                         node_id = id
                     else:
                         nodes_in_common.append(id)
                 properties = {
                     'node_id': node_id,
-                    'wikidata in common': additional_data[0].data
+                    'wikidata in common': record['wikidata']
                 }
                 for i, id in enumerate(nodes_in_common):
-                    properties['Node in common ' + str(i)] = id
+                    properties['n/@idNode in common ' + str(i)] = id
                 features.append(node.to_geojson_feature(current_feature_id, properties))
                 current_feature_id += 1
         return features

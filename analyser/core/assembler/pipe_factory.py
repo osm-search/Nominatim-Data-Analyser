@@ -23,7 +23,7 @@ class PipeFactory():
         try:
             dclass = getattr(module, node_data['type'])
         except AttributeError:
-            raise YAMLSyntaxException("The type {} doesn't exist.".format(node_data['type']))
+            raise YAMLSyntaxException(f"The type {node_data['type']} doesn't exist.")
 
         create = getattr(dclass, 'create_from_node_data')
         assembled_pipe = create(node_data, exec_context)

@@ -12,14 +12,12 @@ class LayerFormatter(Pipe):
     """
         Handles the creation of the layer JSON file.
     """
-    def __init__(self, name: str, file_name: str, updates: str, exec_context: ExecutionContext) -> None:
+    def __init__(self, data: dict, exec_context: ExecutionContext) -> None:
         super().__init__(exec_context)
-        self.file_name = file_name
-        self.data = dict()
+        self.file_name = data.pop('file_name')
+        self.data_format_url = data.pop('data_format_url')
+        self.data = data
         self.data['id'] = 'SuspectsData'
-        self.data['name'] = name
-        self.data['doc'] = dict()
-        self.data['updates'] = updates
         self.base_folder_path = Path('/srv/nominatim/data-files')
 
     def add_doc(self, key: str, content: str) -> LayerFormatter:
@@ -36,7 +34,7 @@ class LayerFormatter(Pipe):
             It gets the GeoJSON url as data parameter and set it
             inside the layer file.
         """
-        self.data['vector_tile_url'] = paths.web_path
+        self.data[self.data_format_url] = paths.web_path
 
         folder_path = Path(self.base_folder_path / Path('layers')).resolve()
         folder_path.mkdir(parents=True, exist_ok=True)
@@ -45,7 +43,7 @@ class LayerFormatter(Pipe):
         with open(full_path, 'w') as json_file:
             json.dump(self.data, json_file)
         
-        file_url = str(Path(Path('https://QA-data/layers') / Path(self.file_name + '.json')))
+        file_url = 'https://gsoc2021-qa.nominatim.org/QA-data/layers/' + self.file_name + '.json'
         self.add_layer_to_global_layers_file(file_url)
 
     def add_layer_to_global_layers_file(self, path: str) -> None:
@@ -56,6 +54,7 @@ class LayerFormatter(Pipe):
         folder_path = self.base_folder_path.resolve()
         folder_path.mkdir(parents=True, exist_ok=True)
         full_path = folder_path / Path('layers.json')
+        full_path.touch(exist_ok=True)
 
         with open(full_path, 'r') as json_file:
             try:
@@ -75,8 +74,9 @@ class LayerFormatter(Pipe):
         """
             Assembles the pipe with the given node data.
         """
-        layer_formatter = LayerFormatter(data['layer_name'], data['file_name'], data['updates'], exec_context)
-        if 'docs' in data:
-            for k, v in data['docs'].items():
-                layer_formatter.add_doc(k, v)
+        layer_formatter = LayerFormatter(data, exec_context)
+        # if 'docs' in data:
+        #     for k, v in data['docs'].items():
+        #         layer_formatter.add_doc(k, v)
+        #     data.pop('docs')
         return layer_formatter

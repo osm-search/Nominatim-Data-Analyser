@@ -10,7 +10,7 @@ import typing
 if typing.TYPE_CHECKING:
     from analyser.core.qa_rule import ExecutionContext
 
-FULL_PATH_PREFIX = 'https://QA-data/geojson'
+FULL_PATH_PREFIX = 'https://gsoc2021-qa.nominatim.org/QA-data/geojson'
 
 class GeoJSONFormatter(Pipe):
     """
@@ -19,7 +19,6 @@ class GeoJSONFormatter(Pipe):
     def __init__(self, filename: str, exec_context: ExecutionContext) -> None:
         super().__init__(exec_context)
         self.base_folder_path = Path('/srv/nominatim/data-files/geojson')
-        self.sub_folder = ''
         self.file_name = filename
 
     def process(self, features: List[Feature]) -> Paths:
@@ -28,14 +27,14 @@ class GeoJSONFormatter(Pipe):
             a new GeoJSON file.
         """
         feature_collection = FeatureCollection(features)
-        folder_path = Path(self.base_folder_path / Path(self.sub_folder)).resolve()
+        folder_path = Path(self.base_folder_path).resolve()
         folder_path.mkdir(parents=True, exist_ok=True)
         full_path = folder_path / Path(self.file_name + '.json')
 
         with open(full_path, 'w') as file:
             dump(feature_collection, file)
 
-        web_path = str(Path(FULL_PATH_PREFIX / Path(self.sub_folder) / Path(self.file_name + '.json')))
+        web_path = FULL_PATH_PREFIX + '/' + self.file_name + '.json'
         return Paths(web_path, str(full_path.resolve()))
     
     @staticmethod
