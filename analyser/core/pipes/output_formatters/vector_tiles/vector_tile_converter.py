@@ -1,4 +1,6 @@
 from __future__ import annotations
+from analyser.logger.logger import LOG
+from analyser.logger.timer import Timer
 from analyser.core.model import Paths
 from analyser.core import Pipe
 from pathlib import Path
@@ -26,6 +28,7 @@ class VectorTileConverter(Pipe):
         """
         output_dir = Path(self.base_folder_path / Path(self.folder_name))
         output_dir.mkdir(parents=True, exist_ok=True)
+        timer = Timer().start_timer()
 
         os.system(f"""
             tippecanoe --output-to-directory {output_dir} \
@@ -42,7 +45,8 @@ class VectorTileConverter(Pipe):
             --force \
             {geojson_paths.local_path}
         """)
-
+        
+        LOG.info('Vector tile conversion executed in %s mins %s secs', *timer.get_elapsed())
         web_path = FULL_PATH_PREFIX + '/' + self.folder_name + '/{z}/{x}/{y}.pbf'
         return Paths(web_path, str(output_dir.resolve()))
     

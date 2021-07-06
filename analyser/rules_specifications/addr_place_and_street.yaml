@@ -1,0 +1,33 @@
+---
+QUERY:
+  type: SQLProcessor
+  query: >
+    SELECT ST_AsText(centroid), osm_id, osm_type FROM placex WHERE address ? 'place' AND address ? 'street';
+  results_types:
+    - Node
+  out:
+    CONVERTER:
+      type: GeoJSONFeatureConverter
+      properties:
+        /?nwr?/ -> $osm_type:
+          - node_id: $osm_id
+          - way_id: $osm_id
+          - relation_id: $osm_id
+      out:
+        GEOJSON:
+          type: GeoJSONFormatter
+          file_name: AddrWithPlaceAndStreet
+          out:
+            VECTOR_TILE_CONVERTER:
+              type: VectorTileConverter
+              folder_name: AddrWithPlaceAndStreet
+              out:
+                LAYER_FILE:
+                  type: LayerFormatter
+                  file_name: AddrWithPlaceAndStreet
+                  data_format_url: vector_tile_url
+                  name: Addr with place and street
+                  updates: Every evening
+                  doc:
+                    description: addr:place and addr:street on the same object.
+                    how_to_fix: Set only addr:place or addr:street but not both on the same object.

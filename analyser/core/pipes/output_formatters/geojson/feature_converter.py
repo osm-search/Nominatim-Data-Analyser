@@ -1,9 +1,9 @@
 from __future__ import annotations
-from analyser.core.exceptions.yaml_syntax_exception import YAMLSyntaxException
-from analyser.core.model.additionnal_data import AdditionalData
+from analyser.logger.logger import LOG
+from analyser.logger.timer import Timer
+from analyser.core.yaml_logic.complex_value_parser import parse_complex_value
 from typing import List
 from analyser.core import Pipe
-from analyser.core.model import Element
 from geojson import Feature
 import typing
 
@@ -27,14 +27,19 @@ class GeoJSONFeatureConverter(Pipe):
         #If a custom propertie with the '$' syntax is used
         #find the corresponding name into the data record.
         if self.properties_pattern:
-            for k, v in self.properties_pattern.items():
-                if v[0] == '$':
-                    name = v[1:]
-                    if not name in elements:
-                        raise YAMLSyntaxException(f'The {name} value doesn\'t exist.')
-                    properties[k] = elements[name]
+            for item in self.properties_pattern.items():
+                parsed_value = parse_complex_value(item, elements)
+                #A dictionnary is returned if there was a /?nwr?/ condition
+                #else the tuple is returned.
+                if isinstance(parsed_value, dict):
+                    for k, v in parsed_value.items():
+                        if k == 'Layer':
+                            print(k)
+                        properties[k] = v
                 else:
-                    properties[k] = v
+                    if parsed_value[0] == 'Layer':
+                        print(k)
+                    properties[parsed_value[0]] = parsed_value[1]
         return elements.pop(0).to_geojson_feature(id, properties)
 
     def process(self, all_elements: List[dict]) -> List[Feature]:
@@ -42,9 +47,11 @@ class GeoJSONFeatureConverter(Pipe):
             Convert multiple elements
             to a list of features.
         """
+        timer = Timer().start_timer()
         features = list()
         for i, elements in enumerate(all_elements):
             features.append(self.convert_to_geojson_feature(elements, i))
+        LOG.info('Feature conversion executed in %s mins %s secs', *timer.get_elapsed())
         return features
     
     @staticmethod

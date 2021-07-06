@@ -1,0 +1,34 @@
+---
+QUERY:
+  type: SQLProcessor
+  query: >
+    SELECT ST_AsText(centroid), osm_id, osm_type FROM placex WHERE address ? 'housenumber' AND
+    address->'housenumber' NOT SIMILAR TO '%[0-9]%';
+  results_types:
+    - Node
+  out:
+    CONVERTER:
+      type: GeoJSONFeatureConverter
+      properties:
+        /?nwr?/ -> $osm_type:
+          - node_id: $osm_id
+          - way_id: $osm_id
+          - relation_id: $osm_id
+      out:
+        GEOJSON:
+          type: GeoJSONFormatter
+          file_name: AddrHousenumberNoDigit
+          out:
+            VECTOR_TILE_CONVERTER:
+              type: VectorTileConverter
+              folder_name: AddrHousenumberNoDigit
+              out:
+                LAYER_FILE:
+                  type: LayerFormatter
+                  file_name: AddrHousenumberNoDigit
+                  data_format_url: vector_tile_url
+                  name: Housenumber with no digit
+                  updates: Every evening
+                  doc:
+                    description: addr:housenumber without any digit in them.
+                    how_to_fix: Fix the addr:housenumber tag.

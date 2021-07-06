@@ -6,5 +6,5 @@ parser.add_argument('execute')
 args = parser.parse_args()
 
 if args.execute:
-    Core().execute_all()
-    #Core().execute_one('no_admin_level')
+    #Core().execute_all()
+    Core().execute_one('addr_housenumber_no_digit')
