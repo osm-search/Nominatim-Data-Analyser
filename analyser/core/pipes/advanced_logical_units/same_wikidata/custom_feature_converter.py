@@ -1,7 +1,6 @@
 from typing import List
 from analyser.core.model.node import Node
 from analyser.core.pipes.advanced_logical_units import AdvancedLogicalUnit
-from geojson.geometry import Point
 from geojson import Feature
 
 class SameWikiDataFeatureConverter(AdvancedLogicalUnit):

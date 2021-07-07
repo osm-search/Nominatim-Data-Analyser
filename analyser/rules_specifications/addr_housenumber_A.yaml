@@ -2,8 +2,9 @@
 QUERY:
   type: SQLProcessor
   query: >
-    SELECT ST_AsText(centroid), osm_id, osm_type, address FROM placex 
-    WHERE address ? 'place' AND address ? 'street' AND NOT address ? 'conscriptionnumber';
+    SELECT ST_AsText(centroid), osm_id, osm_type, address, address->'housenumber' as housenumber
+    FROM placex WHERE address ? 'housenumber' AND
+    address->'housenumber' = 'A';
   results_types:
     - Node
   out:
@@ -18,18 +19,18 @@ QUERY:
       out:
         GEOJSON:
           type: GeoJSONFormatter
-          file_name: AddrWithPlaceAndStreet
+          file_name: AddrHousenumberA
           out:
             VECTOR_TILE_CONVERTER:
               type: VectorTileConverter
-              folder_name: AddrWithPlaceAndStreet
+              folder_name: AddrHousenumberA
               out:
                 LAYER_FILE:
                   type: LayerFormatter
-                  file_name: AddrWithPlaceAndStreet
+                  file_name: AddrHousenumberA
                   data_format_url: vector_tile_url
-                  name: Addr with place and street
+                  name: Housenumber equal A
                   updates: Every evening
                   doc:
-                    description: addr:place and addr:street on the same object.
-                    how_to_fix: Set only addr:place or addr:street but not both on the same object.
+                    description: addr:housenumber equal A.
+                    how_to_fix: Fix the addr:housenumber tag.

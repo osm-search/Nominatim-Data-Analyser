@@ -14,12 +14,16 @@ QUERY:
           type: GeoJSONFormatter
           file_name: NodeSameWikiData
           out:
-            LAYER_FILE:
-              type: LayerFormatter
-              file_name: NodeDuplicateWikiData
-              data_format_url: geojson_url
-              name: Duplicate wikidata
-              updates: Every evening
-              doc:
-                description: Wikidata should be unique and not duplicate through nodes.
-                how_to_fix: Wikidata links should me modified.
+            VECTOR_TILE_CONVERTER:
+              type: VectorTileConverter
+              folder_name: NodeSameWikiData
+              out:
+                LAYER_FILE:
+                  type: LayerFormatter
+                  file_name: NodeDuplicateWikiData
+                  data_format_url: vector_tile_url
+                  name: Duplicate wikidata
+                  updates: Every evening
+                  doc:
+                    description: Wikidata should be unique and not duplicate through nodes.
+                    how_to_fix: Wikidata links should me modified.

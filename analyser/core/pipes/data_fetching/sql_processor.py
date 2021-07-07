@@ -34,9 +34,10 @@ class SQLProcessor(Pipe):
             with conn.cursor(cursor_factory=psycopg2.extras.DictCursor) as cur:
                 timer = Timer().start_timer()
                 cur.execute(self.query)
-                LOG.info('Query %s executed in %s mins %s secs', self.id, *timer.get_elapsed())
+                LOG.info('Query %s executed in %s mins %s secs.', self.id, *timer.get_elapsed())
                 for data_result in cur:
                     converted_results.append(self.convert_results(data_result))
+        LOG.info('Query %s returned %s results.', self.id, len(converted_results))
         return converted_results
 
     def convert_results(self, results: Dict) -> Dict:

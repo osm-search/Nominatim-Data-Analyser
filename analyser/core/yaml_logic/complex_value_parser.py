@@ -41,6 +41,8 @@ def replace_all_custom_var(value: any, data: dict = None) -> any:
         return {replace_one_custom_var(k, data): replace_one_custom_var(v, data) for k, v in value.items()}
     elif isinstance(value, list):
         return [replace_one_custom_var(v, data) for v in value]
+    elif isinstance(value, tuple):
+        return (replace_one_custom_var(value[0], data), replace_one_custom_var(value[1], data))
     else:
         return replace_one_custom_var(value, data)
 

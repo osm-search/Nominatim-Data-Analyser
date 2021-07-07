@@ -37,8 +37,6 @@ class GeoJSONFeatureConverter(Pipe):
                             print(k)
                         properties[k] = v
                 else:
-                    if parsed_value[0] == 'Layer':
-                        print(k)
                     properties[parsed_value[0]] = parsed_value[1]
         return elements.pop(0).to_geojson_feature(id, properties)
 
