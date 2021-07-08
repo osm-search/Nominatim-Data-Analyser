@@ -1,0 +1,31 @@
+---
+QUERY:
+  type: SQLProcessor
+  query: >
+    SELECT ST_AsText(centroid), osm_id, osm_type, members FROM placex AS px JOIN planet_osm_rels AS por ON px.osm_id=por.id  
+    WHERE class='boundary' AND type='administrative' AND
+    cardinality(array_positions(members, 'label')) >= 2;
+  results_types:
+    - Node
+  out:
+    CONVERTER:
+      type: AdvancedLogicalUnit
+      name: DuplicateLabelRoleCustomFeatureConverter
+      out:
+        GEOJSON:
+          type: GeoJSONFormatter
+          file_name: DuplicateLabelRole
+          out:
+            VECTOR_TILE_CONVERTER:
+              type: VectorTileConverter
+              folder_name: DuplicateLabelRole
+              out:
+                LAYER_FILE:
+                  type: LayerFormatter
+                  file_name: DuplicateLabelRole
+                  data_format_url: vector_tile_url
+                  name: Duplicate label role
+                  updates: Every evening
+                  doc:
+                    description: Admin boundaries with more than one member with role 'label'.
+                    how_to_fix: Make sure that the admin boundary contains only one member with role 'label'.
