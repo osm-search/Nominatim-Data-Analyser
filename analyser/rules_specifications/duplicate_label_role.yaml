@@ -16,16 +16,12 @@ QUERY:
           type: GeoJSONFormatter
           file_name: DuplicateLabelRole
           out:
-            VECTOR_TILE_CONVERTER:
-              type: VectorTileConverter
-              folder_name: DuplicateLabelRole
-              out:
-                LAYER_FILE:
-                  type: LayerFormatter
-                  file_name: DuplicateLabelRole
-                  data_format_url: vector_tile_url
-                  name: Duplicate label role
-                  updates: Every evening
-                  doc:
-                    description: Admin boundaries with more than one member with role 'label'.
-                    how_to_fix: Make sure that the admin boundary contains only one member with role 'label'.
+            LAYER_FILE:
+              type: LayerFormatter
+              file_name: DuplicateLabelRole
+              data_format_url: geojson_url
+              name: Duplicate label role
+              updates: Every evening
+              doc:
+                description: Admin boundaries with more than one member with role 'label'.
+                how_to_fix: Make sure that the admin boundary contains only one member with role 'label'.

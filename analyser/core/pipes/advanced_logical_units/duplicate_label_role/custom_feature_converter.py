@@ -21,7 +21,7 @@ class DuplicateLabelRoleCustomFeatureConverter(AdvancedLogicalUnit):
         current_feature_id = 0
         for record in data:
             properties = {
-                'node_id': record['osm_id']
+                'relation_id': record['osm_id']
             }
             members = record['members']
             label_members_count = 0

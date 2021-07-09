@@ -7,4 +7,4 @@ args = parser.parse_args()
 
 if args.execute:
     #Core().execute_all()
-    Core().execute_one('duplicate_label_role')
+    Core().execute_one('same_wikidata')

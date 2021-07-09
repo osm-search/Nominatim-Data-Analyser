@@ -43,9 +43,13 @@ class VectorTileConverter(Pipe):
             --drop-densest-as-needed \
             --quiet \
             --force \
+            --no-clipping \
             {geojson_paths.local_path}
         """)
         
+        #Remove the geojson file as it is only used for conversion.
+        Path(geojson_paths.local_path).unlink()
+
         LOG.info('Vector tile conversion executed in %s mins %s secs', *timer.get_elapsed())
         web_path = FULL_PATH_PREFIX + '/' + self.folder_name + '/{z}/{x}/{y}.pbf'
         return Paths(web_path, str(output_dir.resolve()))
