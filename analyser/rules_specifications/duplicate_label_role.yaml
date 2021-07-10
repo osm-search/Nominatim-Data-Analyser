@@ -20,8 +20,9 @@ QUERY:
               type: LayerFormatter
               file_name: DuplicateLabelRole
               data_format_url: geojson_url
-              name: Duplicate label role
+              name: duplicate label role
               updates: Every evening
               doc:
                 description: Admin boundaries with more than one member with role 'label'.
+                why_problem: Boundary can have exactly one member with place label.
                 how_to_fix: Make sure that the admin boundary contains only one member with role 'label'.

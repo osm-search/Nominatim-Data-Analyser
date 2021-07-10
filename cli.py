@@ -7,4 +7,4 @@ args = parser.parse_args()
 
 if args.execute:
     #Core().execute_all()
-    Core().execute_one('ways_AB_not_part_relation')
+    Core().execute_one('no_admin_level')

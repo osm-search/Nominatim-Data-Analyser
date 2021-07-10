@@ -20,8 +20,9 @@ QUERY:
               type: LayerFormatter
               file_name: AdminBoundNoAdminLevel
               data_format_url: geojson_url
-              name: No admin level
+              name: no admin level
               updates: Every evening
               doc:
-                description: Every relation with boundary=administrative should have a correct admin_level value set.
-                how_to_fix: An admin_level value should be set to the relation.
+                description: Every relation with boundary=administrative should have an admin_level value set.
+                why_problem: https://wiki.openstreetmap.org/wiki/Tag%3Aboundary%3Dadministrative
+                how_to_fix: Add a tag 'admin_level' to the boundary relation.

@@ -28,8 +28,9 @@ QUERY:
                   type: LayerFormatter
                   file_name: AddrWithPlaceAndStreet
                   data_format_url: vector_tile_url
-                  name: Addr with place and street
+                  name: addr:place vs addr:street
                   updates: Every evening
                   doc:
                     description: addr:place and addr:street on the same object.
-                    how_to_fix: Set only addr:place or addr:street but not both on the same object.
+                    why_problem: Usually an house number refers either to a street or to a larger place. addr:place and addr:street should therefore not be used together.
+                    how_to_fix: Set only addr:place or addr:street but not both on the same object. Usually addr:place should be changed to something like addr:suburb or addr:city.

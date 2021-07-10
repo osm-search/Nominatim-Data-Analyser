@@ -34,8 +34,9 @@ QUERY:
                       type: LayerFormatter
                       file_name: AddrHousenumberNoDigit
                       data_format_url: vector_tile_url
-                      name: Housenumber with no digit
+                      name: addr:housenumber with no digit
                       updates: Every evening
                       doc:
                         description: addr:housenumber without any digit in them.
-                        how_to_fix: Fix the addr:housenumber tag.
+                        why_problem: Normally house number are numbers. So, this layer tries to detect mapping mistakes by looking for house numbers that have no digits in them.
+                        how_to_fix: Check if the house number is correct or make sense. Either fix it or delete it.

@@ -25,8 +25,9 @@ QUERY:
                   type: LayerFormatter
                   file_name: ABWaysNotPartOfRelation
                   data_format_url: vector_tile_url
-                  name: AB ways not part of a relation
+                  name: boundary ways without relation
                   updates: Every evening
                   doc:
                     description: Ways with boundary=administrative that are not part of a relation.
-                    how_to_fix: Check that the way is well defined.
+                    why_problem: Administrative boundary should always be mapped as relations. Every boundary way should be member of a relation.
+                    how_to_fix: You might have to create an appropriate administrative relation.
