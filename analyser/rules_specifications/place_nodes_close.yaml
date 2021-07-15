@@ -1,0 +1,31 @@
+---
+QUERY:
+  type: SQLProcessor
+  query: >
+    SELECT ST_AsText(px1.centroid), px1.osm_id as osm_id, ARRAY_AGG(px2.osm_id) AS common_ids FROM (SELECT * FROM placex WHERE osm_type='N' AND class='place') AS px1 JOIN (SELECT * FROM placex WHERE osm_type='N' AND class='place') AS px2 ON
+    px1.type = px2.type and px1.name = px2.name and px1.osm_id != px2.osm_id WHERE ST_DistanceSphere(px1.centroid, px2.centroid) / 1000 <= 10 GROUP BY px1.osm_id, px1.centroid;
+  results_types:
+    - Node
+  out:
+    CONVERTER:
+      type: AdvancedLogicalUnit
+      name: PlaceNodesCloseCustomFeatureConverter
+      out:
+        GEOJSON:
+          type: GeoJSONFormatter
+          file_name: PlaceNodesClose
+          out:
+            VECTOR_TILE_CONVERTER:
+              type: VectorTileConverter
+              folder_name: PlaceNodesClose
+              out:
+                LAYER_FILE:
+                  type: LayerFormatter
+                  file_name: PlaceNodesClose
+                  data_format_url: vector_tile_url
+                  name: place nodes close
+                  updates: Every evening
+                  doc:
+                    description: Place nodes of same type and name close to each other.
+                    why_problem: Place nodes with the same type and name which are geographically close to each other are probably errors.
+                    how_to_fix: Remove or correct the duplicate nodes.
