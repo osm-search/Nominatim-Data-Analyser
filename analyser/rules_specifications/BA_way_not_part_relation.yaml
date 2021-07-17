@@ -2,9 +2,11 @@
 QUERY:
   type: SQLProcessor
   query: >
-    SELECT ST_AsText(centroid), osm_id FROM placex AS px WHERE osm_type='W' AND class='boundary' AND type='administrative' AND
-    NOT EXISTS(SELECT 1 FROM planet_osm_rels WHERE id = (SELECT osm_id FROM placex WHERE place_id=px.parent_place_id)
-    AND cardinality(array_positions(members, concat(lower(px.type), px.osm_id))) >= 1);
+    SELECT ST_AsText(centroid), osm_id FROM (
+      SELECT centroid, osm_id, array_agg(osm_id) AS array_osm_id, concat('w', osm_id) AS type_osm_id FROM placex 
+      WHERE osm_type='W' AND class='boundary' AND type='administrative' GROUP BY osm_id, centroid
+    ) AS px 
+    WHERE NOT EXISTS(SELECT 1 FROM planet_osm_rels WHERE px.array_osm_id <@ parts AND px.type_osm_id=ANY(members));
   results_types:
     - Node
   out:

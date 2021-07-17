@@ -7,4 +7,4 @@ args = parser.parse_args()
 
 if args.execute:
     #Core().execute_all()
-    Core().execute_one('addr_housenumber_roman')
+    Core().execute_one('BA_way_not_part_relation')

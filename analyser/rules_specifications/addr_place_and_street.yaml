@@ -17,7 +17,7 @@ QUERY:
         address: $address
       out:
         GEOJSON:
-          type: GeoJSONFormatter
+          type: GeoJSONFormatters
           file_name: AddrWithPlaceAndStreet
           out:
             VECTOR_TILE_CONVERTER:
