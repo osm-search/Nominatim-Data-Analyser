@@ -10,21 +10,17 @@ QUERY:
       type: AdvancedLogicalUnit
       name: SameWikiDataFeatureConverter
       out:
-        GEOJSON:
-          type: GeoJSONFormatter
-          file_name: NodeSameWikiData
+        VECTOR_TILE_CONVERTER:
+          type: VectorTileConverter
+          folder_name: NodeSameWikiData
           out:
-            VECTOR_TILE_CONVERTER:
-              type: VectorTileConverter
-              folder_name: NodeSameWikiData
-              out:
-                LAYER_FILE:
-                  type: LayerFormatter
-                  file_name: NodeDuplicateWikiData
-                  data_format_url: vector_tile_url
-                  name: duplicate wikidata id
-                  updates: Every evening
-                  doc:
-                    description: A single wikidata id should be assigned to at most one place node.
-                    why_problem: Wikidata object describes exactly one place, if the same wikidata id is found on multiple places then usually the id belongs to the parent place.
-                    how_to_fix: Check the wikidata entries, leave the wikidata id only on the place that corresponds exactly to the entry. Sometimes you have to remove all of the wikidata ids because they belong to the parent.
+            LAYER_FILE:
+              type: LayerFormatter
+              file_name: NodeDuplicateWikiData
+              data_format_url: vector_tile_url
+              name: duplicate wikidata id
+              updates: Every evening
+              doc:
+                description: A single wikidata id should be assigned to at most one place node.
+                why_problem: Wikidata object describes exactly one place, if the same wikidata id is found on multiple places then usually the id belongs to the parent place.
+                how_to_fix: Check the wikidata entries, leave the wikidata id only on the place that corresponds exactly to the entry. Sometimes you have to remove all of the wikidata ids because they belong to the parent.

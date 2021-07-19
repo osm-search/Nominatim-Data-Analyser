@@ -15,21 +15,17 @@ QUERY:
       properties:
         way_id: $osm_id
       out:
-        GEOJSON:
-          type: GeoJSONFormatter
-          file_name: ABWaysNotPartOfRelation
+        VECTOR_TILE_CONVERTER:
+          type: VectorTileConverter
+          folder_name: ABWaysNotPartOfRelation
           out:
-            VECTOR_TILE_CONVERTER:
-              type: VectorTileConverter
-              folder_name: ABWaysNotPartOfRelation
-              out:
-                LAYER_FILE:
-                  type: LayerFormatter
-                  file_name: ABWaysNotPartOfRelation
-                  data_format_url: vector_tile_url
-                  name: boundary ways without relation
-                  updates: Every evening
-                  doc:
-                    description: Ways with boundary=administrative that are not part of a relation.
-                    why_problem: Administrative boundary should always be mapped as relations. Every boundary way should be member of a relation.
-                    how_to_fix: You might have to create an appropriate administrative relation.
+            LAYER_FILE:
+              type: LayerFormatter
+              file_name: ABWaysNotPartOfRelation
+              data_format_url: vector_tile_url
+              name: boundary ways without relation
+              updates: Every evening
+              doc:
+                description: Ways with boundary=administrative that are not part of a relation.
+                why_problem: Administrative boundary should always be mapped as relations. Every boundary way should be member of a relation.
+                how_to_fix: You might have to create an appropriate administrative relation.

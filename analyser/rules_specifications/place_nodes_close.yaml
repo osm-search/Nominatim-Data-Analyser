@@ -11,21 +11,17 @@ QUERY:
       type: AdvancedLogicalUnit
       name: PlaceNodesCloseCustomFeatureConverter
       out:
-        GEOJSON:
-          type: GeoJSONFormatter
-          file_name: PlaceNodesClose
+        VECTOR_TILE_CONVERTER:
+          type: VectorTileConverter
+          folder_name: PlaceNodesClose
           out:
-            VECTOR_TILE_CONVERTER:
-              type: VectorTileConverter
-              folder_name: PlaceNodesClose
-              out:
-                LAYER_FILE:
-                  type: LayerFormatter
-                  file_name: PlaceNodesClose
-                  data_format_url: vector_tile_url
-                  name: place nodes close
-                  updates: Every evening
-                  doc:
-                    description: Place nodes of same type and name close to each other.
-                    why_problem: Place nodes with the same type and name which are geographically close to each other are probably errors.
-                    how_to_fix: Remove or correct the duplicate nodes.
+            LAYER_FILE:
+              type: LayerFormatter
+              file_name: PlaceNodesClose
+              data_format_url: vector_tile_url
+              name: place nodes close
+              updates: Every evening
+              doc:
+                description: Place nodes of same type and name close to each other.
+                why_problem: Place nodes with the same type and name which are geographically close to each other are probably errors.
+                how_to_fix: Remove or correct the duplicate nodes.
