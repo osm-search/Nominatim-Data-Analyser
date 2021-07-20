@@ -11,8 +11,8 @@ QUERY:
       type: AdvancedLogicalUnit
       name: PlaceNodesCloseCustomFeatureConverter
       out:
-        VECTOR_TILE_CONVERTER:
-          type: VectorTileConverter
+        VECTOR_TILE:
+          type: VectorTileFormatter
           folder_name: PlaceNodesClose
           out:
             LAYER_FILE:

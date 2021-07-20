@@ -23,7 +23,7 @@ QUERY:
             address: $address
           out:
             VECTOR_TILE:
-              type: VectorTileConverter
+              type: VectorTileFormatter
               folder_name: AddrHousenumberNoDigit
               out:
                 LAYER_FILE:

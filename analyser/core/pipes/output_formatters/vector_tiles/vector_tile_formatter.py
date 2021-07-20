@@ -15,7 +15,7 @@ if typing.TYPE_CHECKING:
 
 FULL_PATH_PREFIX = 'https://gsoc2021-qa.nominatim.org/QA-data/vector-tiles'
 
-class VectorTileConverter(Pipe):
+class VectorTileFormatter(Pipe):
     """
         Handles the creation of the GeoJSON file.
     """
@@ -39,10 +39,8 @@ class VectorTileConverter(Pipe):
                 ['tippecanoe', f'--output-to-directory={output_dir}', 
                 '--force',
                 '--no-tile-compression',
-                '-zg',
-                '-K 60',
                 '-r1',
-                '--drop-densest-as-needed'],
+                '-K 150'],
                 check=True,
                 input=dumps(feature_collection).encode(),
                 stdout=subprocess.PIPE

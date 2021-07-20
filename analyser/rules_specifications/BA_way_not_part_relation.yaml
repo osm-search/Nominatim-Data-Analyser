@@ -15,8 +15,8 @@ QUERY:
       properties:
         way_id: $osm_id
       out:
-        VECTOR_TILE_CONVERTER:
-          type: VectorTileConverter
+        VECTOR_TILE:
+          type: VectorTileFormatter
           folder_name: ABWaysNotPartOfRelation
           out:
             LAYER_FILE:
