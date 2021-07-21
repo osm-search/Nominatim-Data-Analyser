@@ -1,9 +1,9 @@
+from analyser.core.pipe import Pipe
 from typing import List
 from analyser.core.model.node import Node
-from analyser.core.pipes.advanced_logical_units import AdvancedLogicalUnit
 from geojson import Feature
 
-class SameWikiDataFeatureConverter(AdvancedLogicalUnit):
+class SameWikiDataFeatureConverter(Pipe):
     def process(self, data: List[dict]) -> List[Feature]:
         """
             Creates Geojson features for each nodes.

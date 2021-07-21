@@ -1,9 +1,9 @@
+from analyser.core.pipe import Pipe
 from analyser.logger.logger import LOG
-import re
 from typing import List
-from analyser.core.pipes.advanced_logical_units import AdvancedLogicalUnit
+import re
 
-class AddrHouseNumberNoDigitFilter(AdvancedLogicalUnit):
+class AddrHouseNumberNoDigitFilter(Pipe):
     def process(self, data: List[dict]) -> List[dict]:
         """
             Filter each data result by checking if 

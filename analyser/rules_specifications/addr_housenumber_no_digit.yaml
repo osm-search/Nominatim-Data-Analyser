@@ -10,8 +10,7 @@ QUERY:
     - Node
   out:
     NO_DIGIT_FILTER:
-      type: AdvancedLogicalUnit
-      name: AddrHouseNumberNoDigitFilter
+      type: AddrHouseNumberNoDigitFilter
       out:
         CONVERTER:
           type: GeoJSONFeatureConverter
@@ -27,7 +26,7 @@ QUERY:
               folder_name: AddrHousenumberNoDigit
               out:
                 LAYER_FILE:
-                  type: LayerFormatter
+                  type: OsmoscopeLayerFormatter
                   file_name: AddrHousenumberNoDigit
                   data_format_url: vector_tile_url
                   name: addr:housenumber with no digit

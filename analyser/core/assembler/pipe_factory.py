@@ -21,10 +21,10 @@ class PipeFactory():
         module = importlib.import_module('analyser.core.pipes')
 
         try:
-            dclass = getattr(module, node_data['type'])
+            assembled_pipe = getattr(module, node_data['type'])(node_data, exec_context)
         except AttributeError:
             raise YAMLSyntaxException(f"The type {node_data['type']} doesn't exist.")
 
-        create = getattr(dclass, 'create_from_node_data')
-        assembled_pipe = create(node_data, exec_context)
+        # create = getattr(dclass, 'create_from_node_data')
+        # assembled_pipe = create(node_data, exec_context)
         return assembled_pipe

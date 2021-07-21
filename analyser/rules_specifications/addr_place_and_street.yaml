@@ -21,7 +21,7 @@ QUERY:
           folder_name: AddrWithPlaceAndStreet
           out:
             LAYER_FILE:
-              type: LayerFormatter
+              type: OsmoscopeLayerFormatter
               file_name: AddrWithPlaceAndStreet
               data_format_url: vector_tile_url
               name: addr:place vs addr:street

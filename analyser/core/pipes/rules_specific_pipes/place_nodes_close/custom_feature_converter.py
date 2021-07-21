@@ -1,8 +1,8 @@
+from analyser.core.pipe import Pipe
 from geojson.feature import Feature
 from typing import List
-from analyser.core.pipes.advanced_logical_units import AdvancedLogicalUnit
 
-class PlaceNodesCloseCustomFeatureConverter(AdvancedLogicalUnit):
+class PlaceNodesCloseCustomFeatureConverter(Pipe):
     def process(self, data: List[dict]) -> List[Feature]:
         """
             Creates Geojson features for each result from the SQLProcessor.

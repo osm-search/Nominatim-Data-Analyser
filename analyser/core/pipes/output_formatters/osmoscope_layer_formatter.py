@@ -3,29 +3,16 @@ from analyser.core.model.paths import Paths
 from analyser.core import Pipe
 from pathlib import Path
 import json
-import typing
 
-if typing.TYPE_CHECKING:
-    from analyser.core.qa_rule import ExecutionContext
-
-class LayerFormatter(Pipe):
+class OsmoscopeLayerFormatter(Pipe):
     """
         Handles the creation of the layer JSON file.
     """
-    def __init__(self, data: dict, exec_context: ExecutionContext) -> None:
-        super().__init__(exec_context)
-        self.file_name = data.pop('file_name')
-        self.data_format_url = data.pop('data_format_url')
-        self.data = data
+    def on_created(self) -> None:
+        self.file_name = self.extract_data('file_name', required=True)
+        self.data_format_url = self.extract_data('data_format_url', required=True)
         self.data['id'] = 'SuspectsData'
         self.base_folder_path = Path('/srv/nominatim/data-files')
-
-    def add_doc(self, key: str, content: str) -> LayerFormatter:
-        """
-            Add content under the 'doc' tag of the layer file.
-        """
-        self.data['doc'][key] = content
-        return self
 
     def process(self, paths: Paths) -> None:
         """
@@ -68,15 +55,3 @@ class LayerFormatter(Pipe):
             data['layers'].append(path)
         with open(full_path, 'w') as json_file:
             json.dump(data, json_file)
-
-    @staticmethod
-    def create_from_node_data(data: dict, exec_context: ExecutionContext) -> LayerFormatter:
-        """
-            Assembles the pipe with the given node data.
-        """
-        layer_formatter = LayerFormatter(data, exec_context)
-        # if 'docs' in data:
-        #     for k, v in data['docs'].items():
-        #         layer_formatter.add_doc(k, v)
-        #     data.pop('docs')
-        return layer_formatter

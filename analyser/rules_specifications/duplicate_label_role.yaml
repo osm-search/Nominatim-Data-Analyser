@@ -9,15 +9,14 @@ QUERY:
     - Node
   out:
     CONVERTER:
-      type: AdvancedLogicalUnit
-      name: DuplicateLabelRoleCustomFeatureConverter
+      type: DuplicateLabelRoleCustomFeatureConverter
       out:
         GEOJSON:
           type: GeoJSONFormatter
           file_name: DuplicateLabelRole
           out:
             LAYER_FILE:
-              type: LayerFormatter
+              type: OsmoscopeLayerFormatter
               file_name: DuplicateLabelRole
               data_format_url: geojson_url
               name: duplicate label role

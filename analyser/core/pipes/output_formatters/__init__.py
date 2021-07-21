@@ -1,8 +1,7 @@
 """
     Module containing the formatters for the outputs
 """
-
-from .osmoscope.layer_formatter import LayerFormatter
-from .geojson.feature_converter import GeoJSONFeatureConverter
-from .geojson.geojson_formatter import GeoJSONFormatter
-from .vector_tiles.vector_tile_formatter import VectorTileFormatter
+from .geojson_formatter import *
+from .geojson_feature_converter import *
+from .vector_tile_formatter import *
+from .osmoscope_layer_formatter import *

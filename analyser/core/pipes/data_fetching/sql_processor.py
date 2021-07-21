@@ -2,16 +2,11 @@ from __future__ import annotations
 from analyser.logger.logger import LOG
 from analyser.logger.timer import Timer
 from .result_type import ResultType
-from analyser.core.model import Element
 from typing import Dict, List
 from analyser.database.connection import connect
 from analyser.core import Pipe
 import importlib
 import psycopg2.extras
-import typing
-
-if typing.TYPE_CHECKING:
-    from analyser.core.qa_rule import ExecutionContext
 
 class SQLProcessor(Pipe):
     """
@@ -19,10 +14,18 @@ class SQLProcessor(Pipe):
         the resulting data to the generic data model of the analyser
         and send them to the next pipe.
     """
-    def __init__(self, query: str, results_types: List[ResultType], exec_context: ExecutionContext) -> None:
-        super().__init__(exec_context)
-        self.query = query
-        self.results_types = results_types
+    def on_created(self) -> None:
+        self.query = self.extract_data('query')
+        self.results_types: List[ResultType] = list()
+
+        for result_type in self.extract_data('results_types'):
+                #Create ResultType with additional argument if it is a dict
+                if isinstance(result_type, dict):
+                    str_type = next(iter(result_type))
+                    arguments = d[str_type]
+                    self.results_types.append(ResultType(str_type, arguments))
+                else:
+                    self.results_types.append(ResultType(result_type))
 
     def process(self, data: any = None) -> List[Dict]:
         """
@@ -51,21 +54,3 @@ class SQLProcessor(Pipe):
                 convert = getattr(dclass, 'create_from_sql_result')
                 results[k] = convert(v, *self.results_types[i].additional_arguments)
         return results
-            
-    @staticmethod
-    def create_from_node_data(data: dict, exec_context: ExecutionContext) -> SQLProcessor:
-        """
-            Assembles the pipe with the given node data.
-        """
-        results_types: List[ResultType] = list()
-        if 'results_types' in data:
-            for d in data['results_types']:
-                #Create ResultType with additional argument if it is a dict
-                if isinstance(d, dict):
-                    str_type = next(iter(d))
-                    arguments = d[str_type]
-                    results_types.append(ResultType(str_type, arguments))
-                else:
-                    results_types.append(ResultType(d))
-        return SQLProcessor(data['query'], results_types, exec_context)
-

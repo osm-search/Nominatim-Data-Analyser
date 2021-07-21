@@ -7,15 +7,14 @@ QUERY:
     WHERE class='place' AND osm_type='N' AND extratags ? 'wikidata' GROUP BY wikidata) foo WHERE count > 1
   out:
     CONVERTER:
-      type: AdvancedLogicalUnit
-      name: SameWikiDataFeatureConverter
+      type: SameWikiDataFeatureConverter
       out:
         VECTOR_TILE:
           type: VectorTileFormatter
           folder_name: NodeSameWikiData
           out:
             LAYER_FILE:
-              type: LayerFormatter
+              type: OsmoscopeLayerFormatter
               file_name: NodeDuplicateWikiData
               data_format_url: vector_tile_url
               name: duplicate wikidata id

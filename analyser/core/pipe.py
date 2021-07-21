@@ -1,5 +1,6 @@
 from __future__ import annotations
 from abc import ABCMeta, abstractmethod
+from analyser.core.exceptions.yaml_syntax_exception import YAMLSyntaxException
 import typing
 import uuid
 
@@ -10,10 +11,12 @@ class Pipe(metaclass=ABCMeta):
     """
         This is the base class for every pipe.
     """
-    def __init__(self, exec_context: ExecutionContext = None) -> None:
+    def __init__(self, data: dict, exec_context: ExecutionContext = None) -> None:
         self.id = uuid.uuid1()
         self.exec_context = exec_context
+        self.data = data
         self._next_pipes = set()
+        self.on_created()
 
     def plug_pipe(self, pipe: Pipe) -> Pipe:
         self._next_pipes.add(pipe)
@@ -39,10 +42,30 @@ class Pipe(metaclass=ABCMeta):
         """
         return
 
-    @staticmethod
-    @abstractmethod
-    def create_from_node_data(data: dict, exec_context: ExecutionContext) -> Pipe:
+    def on_created(self) -> None:
         """
-            Assembles the pipe with the given node data.
+            This method is called when the pipe is created.
+
+            It should be overriden by the child pipe if any action is needed
+            at the creation. 
+            
+            This is needed because child pipes can't have their own
+            constructor since pipes are created dynamically.
         """
-        return
+        pass
+
+    def extract_data(self, name: str, default: any = None, required: bool = False) -> any:
+        """
+            Tries to get data from the data dictionary.
+
+            If the data name provided exists in the dictionary it gets pop out and it gets returned. 
+            But if it doesn't exist, the default value provided is returned (None by default).
+
+            if the required value is set to True and if the data can't be found, a YAMLSyntaxException is raised.
+        """
+        if name in self.data:
+             return self.data.pop(name)
+        elif required == False:
+            return default
+        else:
+            raise YAMLSyntaxException(f'The field "{name}" is required for the pipe of type {type(self).__name__}')

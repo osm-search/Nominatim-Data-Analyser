@@ -17,7 +17,7 @@ QUERY:
           file_name: AdminBoundNoAL
           out:
             LAYER_FILE:
-              type: LayerFormatter
+              type: OsmoscopeLayerFormatter
               file_name: AdminBoundNoAdminLevel
               data_format_url: geojson_url
               name: no admin level

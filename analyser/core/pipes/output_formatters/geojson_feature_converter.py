@@ -5,19 +5,14 @@ from analyser.core.yaml_logic.complex_value_parser import parse_complex_value
 from typing import List
 from analyser.core import Pipe
 from geojson import Feature
-import typing
-
-if typing.TYPE_CHECKING:
-    from analyser.core.qa_rule import ExecutionContext
 
 class GeoJSONFeatureConverter(Pipe):
     """
         Handle the conversion of generic data class
         to geojson features.
     """
-    def __init__(self, exec_context: ExecutionContext, properties_pattern: dict = None) -> None:
-        super().__init__(exec_context)
-        self.properties_pattern = properties_pattern
+    def on_created(self) -> None:
+        self.properties_pattern = self.extract_data('properties')
 
     def convert_to_geojson_feature(self, elements: dict, id: int) -> Feature:
         """
@@ -51,11 +46,3 @@ class GeoJSONFeatureConverter(Pipe):
             features.append(self.convert_to_geojson_feature(elements, i))
         LOG.info('Feature conversion executed in %s mins %s secs', *timer.get_elapsed())
         return features
-    
-    @staticmethod
-    def create_from_node_data(data: dict, exec_context: ExecutionContext) -> GeoJSONFeatureConverter:
-        """
-            Assembles the pipe with the given node data.
-        """
-        properties = data['properties'] if 'properties' in data else None
-        return GeoJSONFeatureConverter(exec_context, properties)

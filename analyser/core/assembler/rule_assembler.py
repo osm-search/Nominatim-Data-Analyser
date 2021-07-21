@@ -23,7 +23,7 @@ class RuleAssembler():
         self.deconstructor.subscribe_event(NEW_NODE_EVENT, self.on_new_node)
         self.deconstructor.subscribe_event(BACKTRACKING_EVENT, self.on_backtrack)
         self.exec_context: ExecutionContext = ExecutionContext()
-        self.first_pipe: Pipe = FillingPipe()
+        self.first_pipe: Pipe = FillingPipe(None, None)
         self.nodes_history: Deque[Pipe] = deque()
 
     def on_new_node(self, node: dict) -> None:

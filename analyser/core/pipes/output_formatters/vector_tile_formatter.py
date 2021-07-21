@@ -7,11 +7,7 @@ from analyser.core.model import Paths
 from analyser.core import Pipe
 from pathlib import Path
 from typing import List
-import typing
 import subprocess
-
-if typing.TYPE_CHECKING:
-    from analyser.core.qa_rule import ExecutionContext
 
 FULL_PATH_PREFIX = 'https://gsoc2021-qa.nominatim.org/QA-data/vector-tiles'
 
@@ -19,10 +15,9 @@ class VectorTileFormatter(Pipe):
     """
         Handles the creation of the GeoJSON file.
     """
-    def __init__(self, folder_name: str, exec_context: ExecutionContext) -> None:
-        super().__init__(exec_context)
+    def on_created(self) -> None:
         self.base_folder_path = Path('/srv/nominatim/data-files/vector-tiles')
-        self.folder_name = folder_name
+        self.folder_name = self.extract_data('folder_name', required=True)
 
     def process(self, features: List[Feature]) -> Paths:
         """
@@ -54,10 +49,3 @@ class VectorTileFormatter(Pipe):
         LOG.info('Vector tile conversion executed in %s mins %s secs', *timer.get_elapsed())
         web_path = FULL_PATH_PREFIX + '/' + self.folder_name + '/{z}/{x}/{y}.pbf'
         return Paths(web_path, str(output_dir.resolve()))
-    
-    @staticmethod
-    def create_from_node_data(data: dict, exec_context: ExecutionContext) -> VectorTileConverter:
-        """
-            Assembles the pipe with the given node data.
-        """
-        return VectorTileConverter(data['folder_name'], exec_context)
