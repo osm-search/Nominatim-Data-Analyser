@@ -4,7 +4,6 @@
     to any module of the pipeline.
 """
 
-from .element import Element
 from .node import Node
 from .geometry import Geometry
 from .paths import Paths

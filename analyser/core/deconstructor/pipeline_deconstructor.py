@@ -1,29 +1,27 @@
 from typing import Callable, Deque, Dict, Set, Tuple
 from collections import deque
-from pathlib import Path
 from analyser.logger.logger import LOG
-import yaml
 
 NEW_NODE_EVENT = 'new_node'
 BACKTRACKING_EVENT = 'backtracking'
 
-class YAMLRuleDeconstructor():
+class PipelineDeconstructor():
     """
-        Deconstructs a YAML rule file following a tree
+        Deconstructs a pipeline specification following a tree
         structure.
 
         Raises events throughout the entire deconstruction process.
         It uses a backtracking system to go back on upper nodes
         when reaching a leaf.
     """
-    def __init__(self, file_name: str) -> None:
-        self.file_name: str = file_name
-        self._loaded_data: dict = self._load_yaml(file_name)
+    def __init__(self, pipeline_specification: Dict, rule_name: str) -> None:
+        self._loaded_data: dict = pipeline_specification
+        self.rule_name = rule_name
         self._init_event_callbacks()
 
     def deconstruct(self) -> None:
         """
-            Explores the YAML loaded data tree.
+            Explores the pipeline specification loaded data tree.
 
             Sends each node to subscribers and backtracks
             when a leaf node is reached.
@@ -77,7 +75,7 @@ class YAMLRuleDeconstructor():
         """
             Notifies all subscribers that we reached a new node.
         """     
-        LOG.info('Rule <%s> : Deconstruction -> NEW_NODE %s', self.file_name, node['type'])
+        LOG.info('Rule <%s> : Deconstruction -> NEW_NODE %s', self.rule_name, node['type'])
         self._raise_event(NEW_NODE_EVENT, node)
 
     def notify_backtracking(self, backtrack_amount: int) -> None:
@@ -87,7 +85,7 @@ class YAMLRuleDeconstructor():
 
             The backtrack_amount is how many back hop have been done.
         """
-        LOG.info('Rule <%s> : Deconstruction -> BACKTRACK %s', self.file_name, backtrack_amount)
+        LOG.info('Rule <%s> : Deconstruction -> BACKTRACK %s', self.rule_name, backtrack_amount)
         self._raise_event(BACKTRACKING_EVENT, backtrack_amount)
 
     def _get_data_from_keys(self, keys: Tuple[str]) -> dict:
@@ -103,19 +101,6 @@ class YAMLRuleDeconstructor():
         while keys:
             current_dict = current_dict[keys.pop(0)]
         return current_dict
-
-    def _load_yaml(self, file_name: str) -> dict:
-        """
-            Load the YAML specification file into the
-            data dictionnary of the deconstructor.
-        """
-        path = Path(Path('analyser/rules_specifications') / Path(file_name + '.yaml')).resolve()
-        with open(str(path), 'r') as file:
-            try:
-                return yaml.safe_load(file)
-            except yaml.YAMLError as exc:
-                LOG.error('Error while loading the YAML rule file %s: %s',
-                          file_name, exc)
     
     def _raise_event(self, event_name: str, *args: any) -> None:
         """

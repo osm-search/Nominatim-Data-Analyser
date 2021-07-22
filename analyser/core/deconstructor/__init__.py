@@ -4,4 +4,4 @@
     corresponding pipeline.
 """
 
-from .yaml_rule_deconstructor import YAMLRuleDeconstructor
+from .pipeline_deconstructor import *

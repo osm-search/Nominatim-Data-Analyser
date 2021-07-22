@@ -4,4 +4,3 @@
 """
 
 from .sql_processor import SQLProcessor
-from .result_type import ResultType

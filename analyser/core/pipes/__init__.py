@@ -6,3 +6,4 @@ from .filling_pipe import FillingPipe
 from .output_formatters import *
 from .data_fetching import *
 from .rules_specific_pipes import *
+from .data_processing import *

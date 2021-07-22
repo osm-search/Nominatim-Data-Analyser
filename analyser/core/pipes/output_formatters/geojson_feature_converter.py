@@ -1,7 +1,6 @@
 from __future__ import annotations
-from analyser.logger.timer import Timer
+from typing import Dict
 from analyser.core.yaml_logic.complex_value_parser import parse_complex_value
-from typing import List
 from analyser.core import Pipe
 from geojson import Feature
 
@@ -12,12 +11,14 @@ class GeoJSONFeatureConverter(Pipe):
     """
     def on_created(self) -> None:
         self.properties_pattern = self.extract_data('properties')
+        self.current_id = -1
 
-    def convert_to_geojson_feature(self, elements: dict, id: int) -> Feature:
+    def process(self, elements: Dict) -> Feature:
         """
             Convert a query result to a geojson feature.
         """
         properties = dict()
+        self.current_id += 1
         #If a custom propertie with the '$' syntax is used
         #find the corresponding name into the data record.
         if self.properties_pattern:
@@ -27,22 +28,8 @@ class GeoJSONFeatureConverter(Pipe):
                 #else the tuple is returned.
                 if isinstance(parsed_value, dict):
                     for k, v in parsed_value.items():
-                        if k == 'Layer':
-                            print(k)
                         properties[k] = v
                 else:
                     properties[parsed_value[0]] = parsed_value[1]
-        return elements.pop(0).to_geojson_feature(id, properties)
-
-    def process(self, all_elements: List[dict]) -> List[Feature]:
-        """
-            Convert multiple elements
-            to a list of features.
-        """
-        timer = Timer().start_timer()
-        features = list()
-        for i, elements in enumerate(all_elements):
-            features.append(self.convert_to_geojson_feature(elements, i))
-        elapsed_mins, elapsed_secs = timer.get_elapsed()
-        self.log(f'Feature conversion executed in {elapsed_mins} mins {elapsed_secs} secs')
-        return features
+        returned_geom = elements.pop('geometry_holder').to_geojson_feature(self.current_id, properties)
+        return returned_geom

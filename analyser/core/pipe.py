@@ -31,8 +31,8 @@ class Pipe(metaclass=ABCMeta):
         """
         result = self.process(data)
         for pipe in self._next_pipes:
-            pipe.process_and_next(result)
-        return None
+            result = pipe.process_and_next(result)
+        return result
 
     def __str__(self):
         return type(self).__name__ + ' ' + str(self.id)

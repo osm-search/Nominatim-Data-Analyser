@@ -2,5 +2,5 @@
     Module handling the assembly of a rule's pipeline.
 """
  
-from .rule_assembler import RuleAssembler
+from .pipeline_assembler import PipelineAssembler
 from .pipe_factory import PipeFactory
