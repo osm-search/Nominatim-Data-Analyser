@@ -22,9 +22,10 @@ class RuleAssembler():
         self.deconstructor: YAMLRuleDeconstructor = YAMLRuleDeconstructor(yaml_name)
         self.deconstructor.subscribe_event(NEW_NODE_EVENT, self.on_new_node)
         self.deconstructor.subscribe_event(BACKTRACKING_EVENT, self.on_backtrack)
-        self.exec_context: ExecutionContext = ExecutionContext()
         self.first_pipe: Pipe = FillingPipe(None, None)
         self.nodes_history: Deque[Pipe] = deque()
+        self.exec_context: ExecutionContext = ExecutionContext()
+        self.exec_context.rule_name = yaml_name
 
     def on_new_node(self, node: dict) -> None:
         """
@@ -37,7 +38,7 @@ class RuleAssembler():
             pipe = PipeFactory.assemble_pipe(node, self.exec_context)
             #Plug the new pipe to the current last pipe of the deque
             self.nodes_history[-1].plug_pipe(pipe)
-            LOG.info("%s | Assembler: %s plugged to %s", self.yaml_name, pipe, self.nodes_history[-1])
+            LOG.info("Rule <%s> : Assembler -> %s plugged to %s", self.yaml_name, pipe, self.nodes_history[-1])
             self.nodes_history.append(pipe)
 
     def on_backtrack(self, backtrack_amount: int) -> None:

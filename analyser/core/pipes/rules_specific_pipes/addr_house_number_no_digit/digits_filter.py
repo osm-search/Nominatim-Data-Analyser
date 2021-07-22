@@ -1,5 +1,4 @@
 from analyser.core.pipe import Pipe
-from analyser.logger.logger import LOG
 from typing import List
 import re
 
@@ -16,6 +15,6 @@ class AddrHouseNumberNoDigitFilter(Pipe):
             #Keep only data where me match at least one digit
             if not any_digit_regex.match(d['housenumber']):
                 filtered_data.append(d)
-        LOG.info('After filtering there is %s results.', len(filtered_data))
+        self.log(f'After filtering there is {len(filtered_data)} results.')
         return filtered_data
 

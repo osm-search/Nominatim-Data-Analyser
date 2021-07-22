@@ -1,8 +1,10 @@
 from __future__ import annotations
 from abc import ABCMeta, abstractmethod
-from analyser.core.exceptions.yaml_syntax_exception import YAMLSyntaxException
+from analyser.logger.logger import LOG
+from analyser.core.exceptions import YAMLSyntaxException
 import typing
 import uuid
+import logging
 
 if typing.TYPE_CHECKING:
     from analyser.core.qa_rule import ExecutionContext
@@ -69,3 +71,10 @@ class Pipe(metaclass=ABCMeta):
             return default
         else:
             raise YAMLSyntaxException(f'The field "{name}" is required for the pipe of type {type(self).__name__}')
+
+    def log(self, msg: str, level: int = logging.INFO) -> None:
+        """
+            Log the given message with the given log level (default is INFO).
+            The rule name is automatically prefixed to the log message.
+        """
+        LOG.log(level, f'Rule <{self.exec_context.rule_name}> : {msg}')

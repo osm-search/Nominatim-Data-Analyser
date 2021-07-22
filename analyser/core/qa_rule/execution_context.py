@@ -1,16 +1,10 @@
-from __future__ import annotations
-from typing import List
-import typing
-
-if typing.TYPE_CHECKING:
-    from analyser.core.pipes import SQLProcessor
-
 class ExecutionContext():
     """
-        Execution context of a QA Rule pipeline
-        contains data and objects transfered through
-        the pipeline execution.
+        Execution context of a QA Rule pipeline 
+        which contains data and objects.
+
+        It is stored in each pipe of the QA Rule pipeline.
     """
     def __init__(self) -> None:
-        self.sql_processors: List[SQLProcessor] = []
+        self.rule_name = ''
         

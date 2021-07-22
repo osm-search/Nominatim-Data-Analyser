@@ -1,5 +1,4 @@
 from __future__ import annotations
-from analyser.logger.logger import LOG
 from analyser.logger.timer import Timer
 from analyser.core.yaml_logic.complex_value_parser import parse_complex_value
 from typing import List
@@ -44,5 +43,6 @@ class GeoJSONFeatureConverter(Pipe):
         features = list()
         for i, elements in enumerate(all_elements):
             features.append(self.convert_to_geojson_feature(elements, i))
-        LOG.info('Feature conversion executed in %s mins %s secs', *timer.get_elapsed())
+        elapsed_mins, elapsed_secs = timer.get_elapsed()
+        self.log(f'Feature conversion executed in {elapsed_mins} mins {elapsed_secs} secs')
         return features

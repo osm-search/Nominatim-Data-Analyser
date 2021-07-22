@@ -1,5 +1,6 @@
 from __future__ import annotations
 from analyser.core.model.paths import Paths
+from analyser.config.config import Config
 from analyser.core import Pipe
 from pathlib import Path
 import json
@@ -8,11 +9,11 @@ class OsmoscopeLayerFormatter(Pipe):
     """
         Handles the creation of the layer JSON file.
     """
-    def on_created(self) -> None:
-        self.file_name = self.extract_data('file_name', required=True)
+    def on_created(self) -> None:   
+        self.base_folder_path = f'{Config.values["RulesFolderPath"]}/{self.exec_context.rule_name}/osmoscope-layer'
+        self.file_name = self.extract_data('file_name', 'layer')
         self.data_format_url = self.extract_data('data_format_url', required=True)
         self.data['id'] = 'SuspectsData'
-        self.base_folder_path = Path('/srv/nominatim/data-files')
 
     def process(self, paths: Paths) -> None:
         """
@@ -23,14 +24,14 @@ class OsmoscopeLayerFormatter(Pipe):
         """
         self.data[self.data_format_url] = paths.web_path
 
-        folder_path = Path(self.base_folder_path / Path('layers')).resolve()
+        folder_path = Path(self.base_folder_path)
         folder_path.mkdir(parents=True, exist_ok=True)
         full_path = folder_path / Path(self.file_name + '.json')
 
         with open(full_path, 'w') as json_file:
             json.dump(self.data, json_file)
         
-        file_url = 'https://gsoc2021-qa.nominatim.org/QA-data/layers/' + self.file_name + '.json'
+        file_url = f'{Config.values["WebPrefixPath"]}/{self.exec_context.rule_name}/osmoscope-layer/{self.file_name}.json'
         self.add_layer_to_global_layers_file(file_url)
 
     def add_layer_to_global_layers_file(self, path: str) -> None:
@@ -38,7 +39,7 @@ class OsmoscopeLayerFormatter(Pipe):
             Add the newly created layer to the global layers file.
             If the global layers file doesn't exist it is created.
         """
-        folder_path = self.base_folder_path.resolve()
+        folder_path = Path(f'{Config.values["RulesFolderPath"]}')
         folder_path.mkdir(parents=True, exist_ok=True)
         full_path = folder_path / Path('layers.json')
         full_path.touch(exist_ok=True)

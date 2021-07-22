@@ -1,13 +1,17 @@
+from analyser.core.assembler import RuleAssembler
+from analyser.config.config import Config
 from analyser.logger.logger import LOG
 from analyser.logger.timer import Timer
-import os
 from pathlib import Path
-from analyser.core.assembler import RuleAssembler
+import os
 
 class Core():
     """
         Core of the analyser used to execute rules.
     """
+    def __init__(self) -> None:
+        Config.load_config()
+
     def execute_all(self, filter=None) -> None:
         """
             Execute each QA rules.
@@ -18,7 +22,7 @@ class Core():
         rules_path = Path('analyser/rules_specifications').resolve()
         for rule in os.listdir(str(rules_path)):
             file_without_ext = os.path.splitext(rule)[0]
-            if filter and file_without_ext not in filter:
+            if not filter or file_without_ext not in filter:
                 self.execute_one(file_without_ext)
 
     def execute_one(self, name: str) -> None:
@@ -27,4 +31,4 @@ class Core():
         """
         timer = Timer().start_timer()
         RuleAssembler(name).assemble().process_and_next()
-        LOG.info('Rule %s executed in %s mins %s secs', name, *timer.get_elapsed())
+        LOG.info('Rule <%s> : The whole rule executed in %s mins %s secs', name, *timer.get_elapsed())

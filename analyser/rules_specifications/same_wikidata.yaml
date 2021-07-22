@@ -11,11 +11,9 @@ QUERY:
       out:
         VECTOR_TILE:
           type: VectorTileFormatter
-          folder_name: NodeSameWikiData
           out:
             LAYER_FILE:
               type: OsmoscopeLayerFormatter
-              file_name: NodeDuplicateWikiData
               data_format_url: vector_tile_url
               name: duplicate wikidata id
               updates: Every evening

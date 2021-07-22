@@ -1,5 +1,4 @@
 from __future__ import annotations
-from analyser.logger.logger import LOG
 from analyser.logger.timer import Timer
 from .result_type import ResultType
 from typing import Dict, List
@@ -18,11 +17,11 @@ class SQLProcessor(Pipe):
         self.query = self.extract_data('query')
         self.results_types: List[ResultType] = list()
 
-        for result_type in self.extract_data('results_types'):
+        for result_type in self.extract_data('results_types', default=list()):
                 #Create ResultType with additional argument if it is a dict
                 if isinstance(result_type, dict):
                     str_type = next(iter(result_type))
-                    arguments = d[str_type]
+                    arguments = result_type[str_type]
                     self.results_types.append(ResultType(str_type, arguments))
                 else:
                     self.results_types.append(ResultType(result_type))
@@ -37,10 +36,11 @@ class SQLProcessor(Pipe):
             with conn.cursor(cursor_factory=psycopg2.extras.DictCursor) as cur:
                 timer = Timer().start_timer()
                 cur.execute(self.query)
-                LOG.info('Query %s executed in %s mins %s secs.', self.id, *timer.get_elapsed())
+                elapsed_mins, elapsed_secs = timer.get_elapsed()
+                self.log(f'Query {self.id} executed in {elapsed_mins} mins {elapsed_secs} secs.')
                 for data_result in cur:
                     converted_results.append(self.convert_results(data_result))
-        LOG.info('Query %s returned %s results.', self.id, len(converted_results))
+        self.log(f'Query {self.id} returned {len(converted_results)} results.')
         return converted_results
 
     def convert_results(self, results: Dict) -> Dict:

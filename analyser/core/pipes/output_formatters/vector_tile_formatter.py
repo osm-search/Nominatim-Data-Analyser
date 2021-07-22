@@ -1,23 +1,21 @@
 from __future__ import annotations
 from geojson.feature import Feature, FeatureCollection
 from geojson import dumps
-from analyser.logger.logger import LOG
 from analyser.logger.timer import Timer
 from analyser.core.model import Paths
+from analyser.config.config import Config
 from analyser.core import Pipe
 from pathlib import Path
 from typing import List
 import subprocess
-
-FULL_PATH_PREFIX = 'https://gsoc2021-qa.nominatim.org/QA-data/vector-tiles'
+import logging
 
 class VectorTileFormatter(Pipe):
     """
         Handles the creation of the GeoJSON file.
     """
     def on_created(self) -> None:
-        self.base_folder_path = Path('/srv/nominatim/data-files/vector-tiles')
-        self.folder_name = self.extract_data('folder_name', required=True)
+        self.base_folder_path = f'{Config.values["RulesFolderPath"]}/{self.exec_context.rule_name}/vector-tiles'
 
     def process(self, features: List[Feature]) -> Paths:
         """
@@ -25,7 +23,7 @@ class VectorTileFormatter(Pipe):
             calling tippecanoe from the command line.
         """
         feature_collection = FeatureCollection(features)
-        output_dir = Path(self.base_folder_path / Path(self.folder_name))
+        output_dir = Path(self.base_folder_path)
         output_dir.mkdir(parents=True, exist_ok=True)
         timer = Timer().start_timer()
 
@@ -40,12 +38,14 @@ class VectorTileFormatter(Pipe):
                 input=dumps(feature_collection).encode(),
                 stdout=subprocess.PIPE
             )
-            LOG.info(result)
+            self.log(result)
         except subprocess.TimeoutExpired as e:
-            LOG.fatal(e)
+            self.log(logging.FATAL, e)
         except subprocess.CalledProcessError as e:
-            LOG.fatal(e)
+            self.log(logging.FATAL, e)
 
-        LOG.info('Vector tile conversion executed in %s mins %s secs', *timer.get_elapsed())
-        web_path = FULL_PATH_PREFIX + '/' + self.folder_name + '/{z}/{x}/{y}.pbf'
+        elapsed_mins, elapsed_secs = timer.get_elapsed()
+        self.log(f'Vector tile conversion executed in {elapsed_mins} mins {elapsed_secs} secs')
+
+        web_path = f'{Config.values["WebPrefixPath"]}/{self.exec_context.rule_name}/vector-tiles/' + '{z}/{x}/{y}.pbf'
         return Paths(web_path, str(output_dir.resolve()))

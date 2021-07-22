@@ -1,8 +1,8 @@
-import yaml
 from typing import Callable, Deque, Dict, Set, Tuple
 from collections import deque
 from pathlib import Path
 from analyser.logger.logger import LOG
+import yaml
 
 NEW_NODE_EVENT = 'new_node'
 BACKTRACKING_EVENT = 'backtracking'
@@ -77,7 +77,7 @@ class YAMLRuleDeconstructor():
         """
             Notifies all subscribers that we reached a new node.
         """     
-        LOG.info('%s | Deconstruction: NEW_NODE %s', self.file_name, node['type'])
+        LOG.info('Rule <%s> : Deconstruction -> NEW_NODE %s', self.file_name, node['type'])
         self._raise_event(NEW_NODE_EVENT, node)
 
     def notify_backtracking(self, backtrack_amount: int) -> None:
@@ -87,7 +87,7 @@ class YAMLRuleDeconstructor():
 
             The backtrack_amount is how many back hop have been done.
         """
-        LOG.info('%s | Deconstruction: BACKTRACK %s', self.file_name, backtrack_amount)
+        LOG.info('Rule <%s> : Deconstruction -> BACKTRACK %s', self.file_name, backtrack_amount)
         self._raise_event(BACKTRACKING_EVENT, backtrack_amount)
 
     def _get_data_from_keys(self, keys: Tuple[str]) -> dict:
