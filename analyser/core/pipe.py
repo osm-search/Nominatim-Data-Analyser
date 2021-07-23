@@ -17,11 +17,11 @@ class Pipe(metaclass=ABCMeta):
         self.id = uuid.uuid1()
         self.exec_context = exec_context
         self.data = data
-        self._next_pipes = set()
+        self.next_pipes = set()
         self.on_created()
 
     def plug_pipe(self, pipe: Pipe) -> Pipe:
-        self._next_pipes.add(pipe)
+        self.next_pipes.add(pipe)
         return pipe
 
     def process_and_next(self, data: any = None) -> any:
@@ -30,7 +30,7 @@ class Pipe(metaclass=ABCMeta):
             by giving them the result of this execution.
         """
         result = self.process(data)
-        for pipe in self._next_pipes:
+        for pipe in self.next_pipes:
             result = pipe.process_and_next(result)
         return result
 

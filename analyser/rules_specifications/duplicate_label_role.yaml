@@ -2,14 +2,19 @@
 QUERY:
   type: SQLProcessor
   query: >
-    SELECT ST_AsText(centroid), osm_id, osm_type, members FROM placex AS px JOIN planet_osm_rels AS por ON px.osm_id=por.id  
+    SELECT ST_AsText(centroid) AS geometry_holder, osm_id, osm_type, members FROM placex AS px JOIN planet_osm_rels AS por ON px.osm_id=por.id  
     WHERE class='boundary' AND type='administrative' AND
     cardinality(array_positions(members, 'label')) >= 2;
-  results_types:
-    - Node
   out:
-    CONVERTER:
-      type: DuplicateLabelRoleCustomFeatureConverter
+    LOOP_PROCESSING:
+      type: LoopDataProcessor
+      /SP\sub_pipeline:
+        GEOMETRY_CONVERTER:
+          type: GeometryConverter
+          geometry_type: Node
+          out:
+            FEATURE_CONVERTER:
+              type: DuplicateLabelRoleCustomFeatureConverter
       out:
         GEOJSON:
           type: GeoJSONFormatter

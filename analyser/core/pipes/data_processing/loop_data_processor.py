@@ -1,6 +1,7 @@
 from __future__ import annotations
+from analyser.logger.timer import Timer
 from analyser.core import Pipe
-from typing import List
+from typing import Iterable, List
 
 class LoopDataProcessor(Pipe):
     """
@@ -8,10 +9,36 @@ class LoopDataProcessor(Pipe):
         custom processing pipeline.
     """
     def on_created(self) -> None:
-        self.processing_pipeline = self.extract_data('sub_pipeline', required=True)
+        self.processing_pipeline: Pipe = self.extract_data('sub_pipeline', required=True)
 
     def process(self, data: List[any]) -> List[any]:
         """
             Processes each data of the input list with the processing pipeline.
         """
-        return list(map(lambda x: self.processing_pipeline.process_and_next(x), data))
+        timer = Timer().start_timer()
+        processed_data = list()
+        for d in data:
+            processed_result = self.process_one_data(d)
+            if processed_result:
+                #The result can be a list with multiple results or only one result
+                if isinstance(processed_result, List):
+                    processed_data.extend(processed_result)
+                else:
+                    processed_data.append(processed_result)
+    
+        elapsed_mins, elapsed_secs = timer.get_elapsed()
+        self.log(f'Loop data processor executed in {elapsed_mins} mins {elapsed_secs} secs.')
+        return processed_data
+
+    def process_one_data(self, data) -> any:
+        """
+            Processes one data through each pipe of the processing pipeline.
+            If one pipe returns None the process is stopped and None is returned.
+        """
+        current_pipe = self.processing_pipeline
+        while current_pipe:
+            data = current_pipe.process(data)
+            if data is None:
+                break
+            current_pipe = next(iter(current_pipe.next_pipes), None)
+        return data

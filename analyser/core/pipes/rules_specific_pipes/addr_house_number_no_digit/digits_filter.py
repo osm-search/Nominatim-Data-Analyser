@@ -1,20 +1,19 @@
 from analyser.core.pipe import Pipe
-from typing import List
+from typing import Dict
 import re
 
 class AddrHouseNumberNoDigitFilter(Pipe):
-    def process(self, data: List[dict]) -> List[dict]:
+    def on_created(self) -> None:
+        self.any_digit_regex = re.compile(r'.*\d.*')
+
+    def process(self, elements: Dict) -> Dict:
         """
-            Filter each data result by checking if 
+            Filter the given data result by checking if 
             the housenumber contains any digit in any scripts
             (by using the \d in python regex).
         """
-        filtered_data = list()
-        any_digit_regex = re.compile(r'.*\d.*')
-        for d in data:
-            #Keep only data where me match at least one digit
-            if not any_digit_regex.match(d['housenumber']):
-                filtered_data.append(d)
-        self.log(f'After filtering there is {len(filtered_data)} results.')
-        return filtered_data
+        #Keep only data where me match at least one digit
+        if not self.any_digit_regex.match(elements['housenumber']):
+            return elements
+        return None
 

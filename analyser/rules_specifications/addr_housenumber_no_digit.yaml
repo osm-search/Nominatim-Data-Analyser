@@ -2,34 +2,39 @@
 QUERY:
   type: SQLProcessor
   query: >
-    SELECT ST_AsText(centroid), osm_id, osm_type, address, address->'housenumber' as housenumber
+    SELECT ST_AsText(centroid) AS geometry_holder, osm_id, osm_type, address, address->'housenumber' as housenumber
     FROM placex WHERE address ? 'housenumber' AND
     address->'housenumber' NOT SIMILAR TO '%[[:digit:]]%' AND
     address->'housenumber' NOT IN ('S/N', 's/n', 'sn', 'SN', 'BB', 'bb');
-  results_types:
-    - Node
   out:
-    NO_DIGIT_FILTER:
-      type: AddrHouseNumberNoDigitFilter
-      out:
-        CONVERTER:
-          type: GeoJSONFeatureConverter
-          properties:
-            /?nwr?/ -> $osm_type:
-              - node_id: $osm_id
-              - way_id: $osm_id
-              - relation_id: $osm_id
-            address: $address
+    LOOP_PROCESSING:
+      type: LoopDataProcessor
+      /SP\sub_pipeline:
+        NO_DIGIT_FILTER:
+          type: AddrHouseNumberNoDigitFilter
           out:
-            VECTOR_TILE:
-              type: VectorTileFormatter
+            GEOMETRY_CONVERTER:
+              type: GeometryConverter
+              geometry_type: Node
               out:
-                LAYER_FILE:
-                  type: OsmoscopeLayerFormatter
-                  data_format_url: vector_tile_url
-                  name: addr:housenumber with no digit
-                  updates: Every evening
-                  doc:
-                    description: addr:housenumber without any digit in them.
-                    why_problem: Normally house number are numbers. So, this layer tries to detect mapping mistakes by looking for house numbers that have no digits in them.
-                    how_to_fix: Check if the house number is correct or make sense. Either fix it or delete it.
+                FEATURE_CONVERTER:
+                  type: GeoJSONFeatureConverter
+                  properties:
+                    /?nwr?/ -> $osm_type:
+                      - node_id: $osm_id
+                      - way_id: $osm_id
+                      - relation_id: $osm_id
+                    address: $address
+      out:
+        VECTOR_TILE:
+          type: VectorTileFormatter
+          out:
+            LAYER_FILE:
+              type: OsmoscopeLayerFormatter
+              data_format_url: vector_tile_url
+              name: addr:housenumber with no digit
+              updates: Every evening
+              doc:
+                description: addr:housenumber without any digit in them.
+                why_problem: Normally house number are numbers. So, this layer tries to detect mapping mistakes by looking for house numbers that have no digits in them.
+                how_to_fix: Check if the house number is correct or make sense. Either fix it or delete it.

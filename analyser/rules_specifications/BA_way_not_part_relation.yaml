@@ -2,18 +2,23 @@
 QUERY:
   type: SQLProcessor
   query: >
-    SELECT ST_AsText(centroid), osm_id FROM (
+    SELECT ST_AsText(centroid) AS geometry_holder, osm_id FROM (
       SELECT centroid, osm_id, array_agg(osm_id) AS array_osm_id, concat('w', osm_id) AS type_osm_id FROM placex 
       WHERE osm_type='W' AND class='boundary' AND type='administrative' GROUP BY osm_id, centroid
     ) AS px 
     WHERE NOT EXISTS(SELECT 1 FROM planet_osm_rels WHERE px.array_osm_id <@ parts AND px.type_osm_id=ANY(members));
-  results_types:
-    - Node
   out:
-    CONVERTER:
-      type: GeoJSONFeatureConverter
-      properties:
-        way_id: $osm_id
+    LOOP_PROCESSING:
+      type: LoopDataProcessor
+      /SP\sub_pipeline:
+        GEOMETRY_CONVERTER:
+          type: GeometryConverter
+          geometry_type: Node
+          out:
+            FEATURE_CONVERTER:
+              type: GeoJSONFeatureConverter
+              properties:
+                way_id: $osm_id
       out:
         VECTOR_TILE:
           type: VectorTileFormatter

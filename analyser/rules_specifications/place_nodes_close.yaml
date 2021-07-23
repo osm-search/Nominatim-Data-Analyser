@@ -2,13 +2,18 @@
 QUERY:
   type: SQLProcessor
   query: >
-    SELECT ST_AsText(px1.centroid), px1.osm_id as osm_id, ARRAY_AGG(px2.osm_id) AS common_ids FROM (SELECT * FROM placex WHERE osm_type='N' AND class='place') AS px1 JOIN (SELECT * FROM placex WHERE osm_type='N' AND class='place') AS px2 ON
+    SELECT ST_AsText(px1.centroid) AS geometry_holder, px1.osm_id as osm_id, ARRAY_AGG(px2.osm_id) AS common_ids FROM (SELECT * FROM placex WHERE osm_type='N' AND class='place') AS px1 JOIN (SELECT * FROM placex WHERE osm_type='N' AND class='place') AS px2 ON
     px1.type = px2.type and px1.name = px2.name and px1.osm_id != px2.osm_id WHERE ST_DistanceSphere(px1.centroid, px2.centroid) / 1000 <= 10 GROUP BY px1.osm_id, px1.centroid;
-  results_types:
-    - Node
   out:
-    CONVERTER:
-      type: PlaceNodesCloseCustomFeatureConverter
+    LOOP_PROCESSING:
+      type: LoopDataProcessor
+      /SP\sub_pipeline:
+        GEOMETRY_CONVERTER:
+          type: GeometryConverter
+          geometry_type: Node
+          out:
+            FEATURE_CONVERTER:
+              type: PlaceNodesCloseCustomFeatureConverter
       out:
         VECTOR_TILE:
           type: VectorTileFormatter

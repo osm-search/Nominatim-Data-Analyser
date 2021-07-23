@@ -2,19 +2,24 @@
 QUERY:
   type: SQLProcessor
   query: >
-    SELECT ST_AsText(centroid), osm_id, osm_type, address FROM placex 
+    SELECT ST_AsText(centroid) AS geometry_holder, osm_id, osm_type, address FROM placex 
     WHERE address ? 'place' AND address ? 'street' AND NOT address ? 'conscriptionnumber';
-  results_types:
-    - Node
   out:
-    CONVERTER:
-      type: GeoJSONFeatureConverter
-      properties:
-        /?nwr?/ -> $osm_type:
-          - node_id: $osm_id
-          - way_id: $osm_id
-          - relation_id: $osm_id
-        address: $address
+    LOOP_PROCESSING:
+      type: LoopDataProcessor
+      /SP\sub_pipeline:
+        GEOMETRY_CONVERTER:
+          type: GeometryConverter
+          geometry_type: Node
+          out:
+            FEATURE_CONVERTER:
+              type: GeoJSONFeatureConverter
+              properties:
+                /?nwr?/ -> $osm_type:
+                  - node_id: $osm_id
+                  - way_id: $osm_id
+                  - relation_id: $osm_id
+                address: $address
       out:
         VECTOR_TILE:
           type: VectorTileFormatter

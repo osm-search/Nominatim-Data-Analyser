@@ -2,7 +2,7 @@
 QUERY:
   type: SQLProcessor
   query: >
-    SELECT ST_AsText(centroid) as geometry_holder, osm_id FROM placex WHERE osm_type='R' AND class='boundary'
+    SELECT ST_AsText(centroid) AS geometry_holder, osm_id FROM placex WHERE osm_type='R' AND class='boundary'
     AND type='administrative' AND admin_level >= 15;
   out:
     LOOP_PROCESSING:
