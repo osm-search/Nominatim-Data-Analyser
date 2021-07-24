@@ -5,7 +5,7 @@ QUERY:
     SELECT ST_AsText(centroid) AS geometry_holder, osm_id, osm_type, address, address->'housenumber' as housenumber
     FROM placex WHERE address ? 'housenumber' AND
     address->'housenumber' NOT SIMILAR TO '%[[:digit:]]%' AND
-    address->'housenumber' NOT IN ('S/N', 's/n', 'sn', 'SN', 'BB', 'bb');
+    lower(address->'housenumber') NOT IN ('s/n', 'sn', 'bb');
   out:
     LOOP_PROCESSING:
       type: LoopDataProcessor

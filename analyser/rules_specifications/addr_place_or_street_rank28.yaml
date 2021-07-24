@@ -1,0 +1,34 @@
+---
+QUERY:
+  type: SQLProcessor
+  query: >
+    SELECT ST_AsText(centroid) AS geometry_holder, osm_id, osm_type, address
+    FROM placex WHERE (class != 'place' OR type != 'postcode') AND (address ? 'street' or address ? 'place' ) AND rank_address < 28;
+  out:
+    LOOP_PROCESSING:
+      type: LoopDataProcessor
+      /SP\sub_pipeline:
+        GEOMETRY_CONVERTER:
+          type: GeometryConverter
+          geometry_type: Node
+          out:
+            FEATURE_CONVERTER:
+              type: GeoJSONFeatureConverter
+              properties:
+                /?nwr?/ -> $osm_type:
+                  - node_id: $osm_id
+                  - way_id: $osm_id
+                  - relation_id: $osm_id
+                address: $address
+      out:
+        VECTOR_TILE:
+          type: VectorTileFormatter
+          out:
+            LAYER_FILE:
+              type: OsmoscopeLayerFormatter
+              data_format_url: vector_tile_url
+              name: addr:place or addr:street rank < 28
+              updates: Every evening
+              doc:
+                description: addr:street or addr:place on objects with rank < 28.
+                how_to_fix: objects with rank < 28 can't have addr:street or addr:place.

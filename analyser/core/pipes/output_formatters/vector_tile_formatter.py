@@ -33,7 +33,8 @@ class VectorTileFormatter(Pipe):
                 '--force',
                 '--no-tile-compression',
                 '-r1',
-                '-K 150'],
+                '-K 20',
+                '-B10'],
                 check=True,
                 input=dumps(feature_collection).encode(),
                 stdout=subprocess.PIPE
