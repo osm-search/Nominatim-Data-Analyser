@@ -15,8 +15,8 @@ class PipeFactory():
         """
             Instantiate a pipe based on the given node_data
         """
-        if not node_data['type']:
-            raise YAMLSyntaxException("Each node of the tree (module) should have a 'type' defined.")
+        if 'type' not in node_data:
+            raise YAMLSyntaxException("Each node of the tree (pipe) should have a type defined.")
 
         module = importlib.import_module('analyser.core.pipes')
 

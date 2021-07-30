@@ -18,7 +18,7 @@ class Config():
         else:
             LOG.info('Loading the config.yaml file.')
 
-        with open(path.resolve(), 'r') as file:
+        with open(path, 'r') as file:
             try:
                 Config.values = yaml.safe_load(file)
             except yaml.YAMLError as exc:
