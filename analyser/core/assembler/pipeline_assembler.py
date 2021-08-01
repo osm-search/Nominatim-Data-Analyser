@@ -52,14 +52,13 @@ class PipelineAssembler():
                 pipeline_specification = node_data.pop(k)
                 node_data[new_k] = PipelineAssembler(pipeline_specification, self.rule_name).assemble()
 
-    def on_backtrack(self, backtrack_amount: int) -> None:
+    def on_backtrack(self) -> None:
         """
             Raised by the deconstructor when backtrack is
             processed through the tree.
         """
-        for _ in range(backtrack_amount):
-            if self.nodes_history:
-                self.nodes_history.pop()
+        if self.nodes_history:
+            self.nodes_history.pop()
 
     def assemble(self) -> Pipe:
         """

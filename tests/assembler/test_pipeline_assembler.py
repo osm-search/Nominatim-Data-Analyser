@@ -47,7 +47,7 @@ def test_on_backtrack(pipeline_assembler: PipelineAssembler,
                       sql_processor: SQLProcessor) -> None:
     """
         Test the on_backtrack() method.
-        By applying a batrack of 2 the two last
+        By applying two batracks the two last
         pipes of the nodes_history should be removed.
     """
     pipeline_assembler.nodes_history.extend([
@@ -56,7 +56,8 @@ def test_on_backtrack(pipeline_assembler: PipelineAssembler,
         geojson_feature_converter,
         sql_processor
     ])
-    pipeline_assembler.on_backtrack(2)
+    pipeline_assembler.on_backtrack()
+    pipeline_assembler.on_backtrack()
     assert pipeline_assembler.nodes_history.pop() == geometry_converter
 
 def test_assemble() -> None:

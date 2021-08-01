@@ -1,3 +1,4 @@
+from analyser.core.pipes.data_processing.geometry_converter import GeometryConverter
 from analyser.core.assembler.pipe_factory import PipeFactory
 from analyser.core.exceptions import YAMLSyntaxException
 import pytest
@@ -5,14 +6,15 @@ import pytest
 def test_assemble_pipe_ok() -> None:
     """
         Test the assemble_pipe() method.
-        It should runs whithout any problem.
+        It should runs whithout any problem and returns 
+        a GeometryConverter pipe.
     """
     node_data = {
         'test': 'oui',
         'type': 'GeometryConverter',
         'geometry_type': 'Node'
     }
-    PipeFactory.assemble_pipe(node_data, None)
+    assert isinstance(PipeFactory.assemble_pipe(node_data, None), GeometryConverter)
 
 def test_assemble_pipe_no_type() -> None:
     """
