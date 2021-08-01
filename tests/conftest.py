@@ -4,7 +4,52 @@ from analyser.core.pipes.output_formatters import GeoJSONFeatureConverter
 from analyser.core.pipes.data_processing import GeometryConverter
 from analyser.core.qa_rule import ExecutionContext
 from analyser.core.pipes import FillingPipe
+from psycopg2._psycopg import connection
+from typing import Any
+import psycopg2
 import pytest
+
+@pytest.fixture
+def temp_db() -> str:
+    """ 
+        Create an empty database for the test.
+    """
+    name = 'test_qa_tool_python_unittest'
+    conn = psycopg2.connect(database='postgres')
+
+    conn.set_isolation_level(0)
+    with conn.cursor() as cur:
+        cur.execute('DROP DATABASE IF EXISTS {}'.format(name))
+        cur.execute('CREATE DATABASE {}'.format(name))
+    conn.close()
+
+    yield name
+
+    conn = psycopg2.connect(database='postgres')
+    conn.set_isolation_level(0)
+    with conn.cursor() as cur:
+        cur.execute('DROP DATABASE IF EXISTS {}'.format(name))
+    conn.close()
+
+@pytest.fixture
+def temp_db_conn(temp_db) -> connection:
+    """
+        Connection to the test database.
+    """
+    with psycopg2.connect('dbname=' + temp_db) as conn:
+        yield conn
+
+@pytest.fixture
+def temp_db_cursor(temp_db) -> Any:
+    """     
+        Connection and cursor towards the test database. 
+        The connection will be in auto-commit mode.
+    """
+    conn = psycopg2.connect('dbname=' + temp_db)
+    conn.set_isolation_level(0)
+    with conn.cursor() as cur:
+        yield cur
+    conn.close()
 
 @pytest.fixture
 def sql_processor(execution_context) -> SQLProcessor:
