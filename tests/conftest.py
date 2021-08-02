@@ -22,7 +22,7 @@ def temp_db() -> str:
         cur.execute('DROP DATABASE IF EXISTS {}'.format(name))
         cur.execute('CREATE DATABASE {}'.format(name))
     conn.close()
-
+    print('FIRSTTTTTTTTTTTTT')
     yield name
 
     conn = psycopg2.connect(database='postgres')
@@ -30,6 +30,7 @@ def temp_db() -> str:
     with conn.cursor() as cur:
         cur.execute('DROP DATABASE IF EXISTS {}'.format(name))
     conn.close()
+    print('SECOOOOOOOOND')
 
 @pytest.fixture
 def temp_db_conn(temp_db) -> connection:
@@ -67,7 +68,12 @@ def filling_pipe(execution_context) -> FillingPipe:
 
 @pytest.fixture
 def geojson_feature_converter(execution_context) -> GeoJSONFeatureConverter:
-    return GeoJSONFeatureConverter({}, execution_context)
+    return GeoJSONFeatureConverter({
+        'properties': {
+            'prop1': 'val1',
+            'prop2': 'val2'
+        }
+    }, execution_context)
 
 @pytest.fixture
 def geojson_formatter(execution_context) -> GeoJSONFormatter:

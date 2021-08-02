@@ -1,8 +1,17 @@
 from analyser.core.pipes.data_fetching import SQLProcessor
 from psycopg2._psycopg import connection
 
+def test_on_created_sql_processor(sql_processor: SQLProcessor) -> None:
+    """
+        Test the on_created() method of the SQLProcessor.
+    """
+    sql_processor.query = None
+    sql_processor.data['query'] = 'QUERY'
+    sql_processor.on_created()
+    assert sql_processor.query == 'QUERY'
+
 def test_process_sql_processor(sql_processor: SQLProcessor, 
-                               temp_db_conn: connection):
+                               temp_db_conn: connection) -> None:
     """
         Test the process() method of the SQLProcessor.
     """
