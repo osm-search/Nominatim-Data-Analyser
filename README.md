@@ -45,3 +45,13 @@ You can use the tool with the integrated cli.py:
 * --execute-all: Executes all QA rules.
 * --filter [rules_names…]: Filters some QA rules so they are not executed.
 * --execute-one <rule_name>: Executes the given QA rule.
+
+# Tests
+
+[Pytest](https://docs.pytest.org/en/6.2.x/getting-started.html) is used for the tests and it should be installed:
+
+```
+pip install pytest
+```
+
+To run the tests: execute the ```pytest``` command inside the /tests folder of the project.
