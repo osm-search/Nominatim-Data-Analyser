@@ -1,5 +1,6 @@
-from geojson.feature import Feature
 from analyser.core.model.node import Node
+from geojson.feature import Feature
+
 
 def test_create_from_WKT_string() -> None:
     node = Node.create_from_WKT_string('POINT(10 15)')

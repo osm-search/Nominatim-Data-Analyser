@@ -11,9 +11,10 @@ class Config():
             Load the YAML config file into the
             config global variable.
         """
-        path = Path('analyser/config/config.yaml')
+        current_folder = Path(__file__).parent
+        path = current_folder / Path('config.yaml')
         if not path.is_file():
-            path = Path('analyser/config/default.yaml')
+            path = current_folder / Path('default.yaml')
             LOG.info('Loading the default.yaml config file.')
         else:
             LOG.info('Loading the config.yaml file.')

@@ -1,13 +1,14 @@
-from analyser.core.pipes.data_fetching.sql_processor import SQLProcessor
-from analyser.core.pipes.output_formatters import GeoJSONFormatter
-from analyser.core.pipes.output_formatters import GeoJSONFeatureConverter
-from analyser.core.pipes.data_processing import GeometryConverter
-from analyser.core.qa_rule import ExecutionContext
-from analyser.core.pipes import FillingPipe
-from psycopg2._psycopg import connection
-from typing import Any
 import psycopg2
 import pytest
+from analyser.core.pipes import FillingPipe
+from analyser.core.pipes.data_fetching.sql_processor import SQLProcessor
+from analyser.core.pipes.data_processing import GeometryConverter
+from analyser.core.pipes.output_formatters import (GeoJSONFeatureConverter,
+                                                   GeoJSONFormatter)
+from analyser.core.qa_rule import ExecutionContext
+from analyser.database.connection import connect
+from psycopg2._psycopg import connection, cursor
+
 
 @pytest.fixture
 def temp_db() -> str:
@@ -22,7 +23,7 @@ def temp_db() -> str:
         cur.execute('DROP DATABASE IF EXISTS {}'.format(name))
         cur.execute('CREATE DATABASE {}'.format(name))
     conn.close()
-    print('FIRSTTTTTTTTTTTTT')
+
     yield name
 
     conn = psycopg2.connect(database='postgres')
@@ -30,18 +31,17 @@ def temp_db() -> str:
     with conn.cursor() as cur:
         cur.execute('DROP DATABASE IF EXISTS {}'.format(name))
     conn.close()
-    print('SECOOOOOOOOND')
 
 @pytest.fixture
 def temp_db_conn(temp_db) -> connection:
     """
         Connection to the test database.
     """
-    with psycopg2.connect('dbname=' + temp_db) as conn:
+    with connect('dbname=' + temp_db) as conn:
         yield conn
 
 @pytest.fixture
-def temp_db_cursor(temp_db) -> Any:
+def temp_db_cursor(temp_db) -> cursor:
     """     
         Connection and cursor towards the test database. 
         The connection will be in auto-commit mode.
@@ -51,6 +51,10 @@ def temp_db_cursor(temp_db) -> Any:
     with conn.cursor() as cur:
         yield cur
     conn.close()
+
+@pytest.fixture
+def dsn(temp_db):
+    return 'dbname=' + temp_db
 
 @pytest.fixture
 def sql_processor(execution_context) -> SQLProcessor:
