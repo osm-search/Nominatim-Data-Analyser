@@ -10,7 +10,7 @@ class OsmoscopeLayerFormatter(Pipe):
         Handles the creation of the layer JSON file.
     """
     def on_created(self) -> None:   
-        self.base_folder_path = f'{Config.values["RulesFolderPath"]}/{self.exec_context.rule_name}/osmoscope-layer'
+        self.base_folder_path = Path(f'{Config.values["RulesFolderPath"]}/{self.exec_context.rule_name}/osmoscope-layer')
         self.file_name = self.extract_data('file_name', 'layer')
         self.data_format_url = self.extract_data('data_format_url', required=True)
         self.data['id'] = 'SuspectsData'
@@ -23,10 +23,8 @@ class OsmoscopeLayerFormatter(Pipe):
             inside the layer file.
         """
         self.data[self.data_format_url] = paths.web_path
-
-        folder_path = Path(self.base_folder_path)
-        folder_path.mkdir(parents=True, exist_ok=True)
-        full_path = folder_path / Path(self.file_name + '.json')
+        self.base_folder_path.mkdir(parents=True, exist_ok=True)
+        full_path = self.base_folder_path / f'{self.file_name}.json'
 
         with open(full_path, 'w') as json_file:
             json.dump(self.data, json_file)
@@ -41,7 +39,7 @@ class OsmoscopeLayerFormatter(Pipe):
         """
         folder_path = Path(f'{Config.values["RulesFolderPath"]}')
         folder_path.mkdir(parents=True, exist_ok=True)
-        full_path = folder_path / Path('layers.json')
+        full_path = folder_path / 'layers.json'
         full_path.touch(exist_ok=True)
 
         with open(full_path, 'r') as json_file:

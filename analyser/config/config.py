@@ -12,9 +12,9 @@ class Config():
             config global variable.
         """
         current_folder = Path(__file__).parent
-        path = current_folder / Path('config.yaml')
+        path = current_folder / 'config.yaml'
         if not path.is_file():
-            path = current_folder / Path('default.yaml')
+            path = current_folder / 'default.yaml'
             LOG.info('Loading the default.yaml config file.')
         else:
             LOG.info('Loading the config.yaml file.')

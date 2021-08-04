@@ -1,7 +1,7 @@
 from __future__ import annotations
 from analyser.logger.timer import Timer
 from analyser.core import Pipe
-from typing import Iterable, List
+from typing import List
 
 class LoopDataProcessor(Pipe):
     """

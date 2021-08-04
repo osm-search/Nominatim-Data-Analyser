@@ -12,7 +12,7 @@ class GeoJSONFormatter(Pipe):
         Handles the creation of the GeoJSON file.
     """
     def on_created(self) -> None:
-        self.base_folder_path = f'{Config.values["RulesFolderPath"]}/{self.exec_context.rule_name}/geojson'
+        self.base_folder_path = Path(f'{Config.values["RulesFolderPath"]}/{self.exec_context.rule_name}/geojson')
         #Take the rule's name as default file name.
         self.file_name = self.extract_data('file_name', self.exec_context.rule_name)
 
@@ -22,9 +22,8 @@ class GeoJSONFormatter(Pipe):
             a new GeoJSON file.
         """
         feature_collection = FeatureCollection(features)
-        folder_path = Path(self.base_folder_path)
-        folder_path.mkdir(parents=True, exist_ok=True)
-        full_path = folder_path / Path(self.file_name + '.json')
+        self.base_folder_path.mkdir(parents=True, exist_ok=True)
+        full_path = self.base_folder_path / f'{self.file_name}.json'
 
         with open(full_path, 'w') as file:
             dump(feature_collection, file)

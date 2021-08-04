@@ -21,6 +21,10 @@ class Pipe(metaclass=ABCMeta):
         self.on_created()
 
     def plug_pipe(self, pipe: Pipe) -> Pipe:
+        """
+            Plugs a pipe to the current pipe and returns the
+            plugged pipe.
+        """
         self.next_pipes.add(pipe)
         return pipe
 

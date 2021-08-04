@@ -15,7 +15,7 @@ class VectorTileFormatter(Pipe):
         Handles the creation of the GeoJSON file.
     """
     def on_created(self) -> None:
-        self.base_folder_path = f'{Config.values["RulesFolderPath"]}/{self.exec_context.rule_name}/vector-tiles'
+        self.base_folder_path = Path(f'{Config.values["RulesFolderPath"]}/{self.exec_context.rule_name}/vector-tiles')
 
     def process(self, features: List[Feature]) -> Paths:
         """
@@ -23,10 +23,22 @@ class VectorTileFormatter(Pipe):
             calling tippecanoe from the command line.
         """
         feature_collection = FeatureCollection(features)
-        output_dir = Path(self.base_folder_path)
-        output_dir.mkdir(parents=True, exist_ok=True)
+        self.base_folder_path.mkdir(parents=True, exist_ok=True)
         timer = Timer().start_timer()
 
+        self.call_tippecanoe(self.base_folder_path, feature_collection)
+
+        elapsed_mins, elapsed_secs = timer.get_elapsed()
+        self.log(f'Vector tile conversion executed in {elapsed_mins} mins {elapsed_secs} secs')
+
+        web_path = f'{Config.values["WebPrefixPath"]}/{self.exec_context.rule_name}/vector-tiles/' + '{z}/{x}/{y}.pbf'
+        return Paths(web_path, str(self.base_folder_path.resolve()))
+    
+    def call_tippecanoe(self, output_dir: Path, feature_collection: FeatureCollection) -> None:
+        """
+            Calls Tippecanoe through a subprocess and send the feature collection as a stream
+            in the stdin of the subprocess.
+        """
         try:
             result = subprocess.run(
                 ['tippecanoe', f'--output-to-directory={output_dir}', 
@@ -44,9 +56,3 @@ class VectorTileFormatter(Pipe):
             self.log(logging.FATAL, e)
         except subprocess.CalledProcessError as e:
             self.log(logging.FATAL, e)
-
-        elapsed_mins, elapsed_secs = timer.get_elapsed()
-        self.log(f'Vector tile conversion executed in {elapsed_mins} mins {elapsed_secs} secs')
-
-        web_path = f'{Config.values["WebPrefixPath"]}/{self.exec_context.rule_name}/vector-tiles/' + '{z}/{x}/{y}.pbf'
-        return Paths(web_path, str(output_dir.resolve()))
