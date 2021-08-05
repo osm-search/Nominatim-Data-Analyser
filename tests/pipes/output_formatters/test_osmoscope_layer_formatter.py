@@ -1,5 +1,5 @@
 from analyser.core.model.paths import Paths
-from analyser.config.config import Config
+from analyser.config import Config
 from analyser.core.pipes import OsmoscopeLayerFormatter
 import json
 

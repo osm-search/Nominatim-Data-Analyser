@@ -3,7 +3,7 @@ from geojson.feature import Feature, FeatureCollection
 from geojson import dumps
 from analyser.logger.timer import Timer
 from analyser.core.model import Paths
-from analyser.config.config import Config
+from analyser.config import Config
 from analyser.core import Pipe
 from pathlib import Path
 from typing import List

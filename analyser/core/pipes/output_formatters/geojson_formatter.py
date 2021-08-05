@@ -1,5 +1,5 @@
 from __future__ import annotations
-from analyser.config.config import Config
+from analyser.config import Config
 from analyser.core.model.paths import Paths
 from typing import List
 from geojson.feature import Feature

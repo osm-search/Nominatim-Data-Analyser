@@ -15,3 +15,4 @@ def load_yaml_rule(file_name: str) -> dict:
         except yaml.YAMLError as exc:
             LOG.error('Error while loading the YAML rule file %s: %s',
                         file_name, exc)
+            raise

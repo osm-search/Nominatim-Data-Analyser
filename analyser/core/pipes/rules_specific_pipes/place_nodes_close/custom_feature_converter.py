@@ -8,7 +8,8 @@ class PlaceNodesCloseCustomFeatureConverter(Pipe):
 
     def process(self, elements: Dict) -> Feature:
         """
-            Creates Geojson features for the given result from the SQLProcessor.
+            Creates a Geojson feature for the given elements dictionnary.
+            Adds a specific property for each id in the 'common_ids' field.
         """
         self.current_feature_id += 1
 

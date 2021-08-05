@@ -12,7 +12,7 @@ class AddrHouseNumberNoDigitFilter(Pipe):
             the housenumber contains any digit in any scripts
             (by using the \d in python regex).
         """
-        #Keep only data where me match at least one digit
+        #Keep only data where we do not match at least one digit
         if not self.any_digit_regex.match(elements['housenumber']):
             return elements
         return None

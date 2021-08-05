@@ -8,7 +8,7 @@ from .pipe_factory import PipeFactory
 from typing import Deque, Dict
 import typing
 
-if typing.TYPE_CHECKING:
+if typing.TYPE_CHECKING: # pragma: no cover
     from analyser.core import Pipe
 
 class PipelineAssembler():

@@ -1,7 +1,7 @@
 from analyser.core.pipes.output_formatters import GeoJSONFormatter
 from analyser.core.model import Paths
 from geojson import Feature, Point, FeatureCollection, loads
-from analyser.config.config import Config
+from analyser.config import Config
 
 def test_process_geojson_formatter(config: Config,
                                    geojson_formatter: GeoJSONFormatter, 

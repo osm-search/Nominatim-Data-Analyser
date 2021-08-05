@@ -1,6 +1,6 @@
 import psycopg2
 import pytest
-from analyser.config.config import Config
+from analyser.config import Config
 from analyser.core.pipes import FillingPipe
 from analyser.core.pipes.data_fetching.sql_processor import SQLProcessor
 from analyser.core.pipes.data_processing import (GeometryConverter,
@@ -63,10 +63,9 @@ def temp_db_cursor(dsn: str) -> cursor:
 @pytest.fixture
 def config(dsn: str) -> Config:
     """
-        Loads the config if not loaded and returns it.
+        Loads the config and returns it.
     """
-    if not Config.values:
-        Config.load_config()
+    Config.load_config()
     return Config
 
 @pytest.fixture

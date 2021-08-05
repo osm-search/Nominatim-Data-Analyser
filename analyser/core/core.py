@@ -1,8 +1,8 @@
 from analyser.core.yaml_logic.yaml_loader import load_yaml_rule
 from analyser.core.assembler.pipeline_assembler import PipelineAssembler
-from analyser.config.config import Config
 from analyser.logger.logger import LOG
 from analyser.logger.timer import Timer
+from analyser.config import Config
 from pathlib import Path
 from typing import Dict
 import os
@@ -13,6 +13,7 @@ class Core():
     """
     def __init__(self) -> None:
         Config.load_config()
+        self.rules_path = Path('analyser/rules_specifications')
 
     def execute_all(self, filter=None) -> None:
         """
@@ -21,8 +22,7 @@ class Core():
             If a filter is given as parameter, the rules inside this
             filter wont be executed.
         """
-        rules_path = Path('analyser/rules_specifications').resolve()
-        for rule in os.listdir(str(rules_path)):
+        for rule in os.listdir(str(self.rules_path.resolve())):
             file_without_ext = os.path.splitext(rule)[0]
             if not filter or file_without_ext not in filter:
                 self.execute_one(file_without_ext)

@@ -1,0 +1,5 @@
+FILLING:
+  type: FillingPipe
+  out:
+    GEOJSON:
+      type: GeoJSONFormatter

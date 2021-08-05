@@ -6,7 +6,7 @@ import typing
 import uuid
 import logging
 
-if typing.TYPE_CHECKING:
+if typing.TYPE_CHECKING: # pragma: no cover
     from analyser.core.qa_rule import ExecutionContext
 
 class Pipe(metaclass=ABCMeta):

@@ -1,5 +1,5 @@
-from analyser.config.config import Config
 from analyser.core.pipes import VectorTileFormatter
+from analyser.config import Config
 from geojson import Feature, Point
 
 def test_process_vector_tile_formatter(vector_tile_formatter: VectorTileFormatter,

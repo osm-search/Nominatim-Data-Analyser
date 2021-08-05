@@ -3,7 +3,7 @@ from analyser.core.exceptions import YAMLSyntaxException
 import importlib
 import typing
 
-if typing.TYPE_CHECKING:
+if typing.TYPE_CHECKING: # pragma: no cover
     from analyser.core.qa_rule import ExecutionContext
 
 class PipeFactory():
