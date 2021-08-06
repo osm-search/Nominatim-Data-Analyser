@@ -34,23 +34,11 @@ class PipelineAssembler():
         if node['type'] ==  'ROOT_NODE':
             self.nodes_history.append(self.first_pipe)
         else:
-            self.assemble_sub_pipeline_if_needed(node)
             pipe = PipeFactory.assemble_pipe(node, self.exec_context)
             #Plug the new pipe to the current last pipe of the deque
             self.nodes_history[-1].plug_pipe(pipe)
             LOG.info("Rule <%s> : Assembler -> %s plugged to %s", self.rule_name, pipe, self.nodes_history[-1])
             self.nodes_history.append(pipe)
-
-    def assemble_sub_pipeline_if_needed(self, node_data: dict):
-        """
-            If the node_data contains a key starting with /SP\
-            a sub pipeline is assembled with the data of this field.
-        """
-        for k in list(node_data):
-            if k.startswith('/SP\\'):
-                new_k = k[4:] #Remove the /SP\ prefix
-                pipeline_specification = node_data.pop(k)
-                node_data[new_k] = PipelineAssembler(pipeline_specification, self.rule_name).assemble()
 
     def on_backtrack(self) -> None:
         """

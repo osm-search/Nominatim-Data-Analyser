@@ -70,7 +70,9 @@ def config(dsn: str) -> Config:
 
 @pytest.fixture
 def sql_processor(execution_context: ExecutionContext) -> SQLProcessor:
-    return SQLProcessor({}, execution_context)
+    return SQLProcessor({
+        'query': 'dumb_query'
+    }, execution_context)
 
 @pytest.fixture
 def geometry_converter(execution_context: ExecutionContext) -> GeometryConverter:

@@ -18,7 +18,7 @@ QUERY:
   out:
     LOOP_PROCESSING:
       type: LoopDataProcessor
-      /SP\sub_pipeline:
+      sub_pipeline: !sub-pipeline
         GEOMETRY_CONVERTER:
           type: GeometryConverter
           geometry_type: Node
@@ -43,6 +43,9 @@ QUERY:
 ```
 
 # Syntax
+
+## Overview
+
 Each "section" is called a `Pipe` and it should have a name. The name has no importance but it should be meaningful and in uppercase (for convention). In the introduction example, the first `Pipe` is called `QUERY`.
 
 Each `Pipe` should have a `type` defined. The `type` value should be equal to the name of the pipe's `class`. It will be used by the `Assembler` to know which class to instantiate for this pipe (See [Architecture](Overview.md#architecture)).
@@ -70,7 +73,31 @@ QUERY:
 
 The `FEATURE_CONVERTER` and `GEOJSON` pipes are both plugged to the `QUERY` pipe.
 
-TODO: EXPLAIN CUSTOM TYPE ($ and subpipeline)
+## Custom types
+
+Custom types are used in the YAML specification to handle some fields differently. 
+
+### !sub-pipeline
+
+The `!sub-pipeline` type is used to create a field which contains a sub-pipeline as its content. The `LoopDataProcessor` pipe is a perfect example for using this custom type:
+
+```yaml
+LOOP_PROCESSING:
+  type: LoopDataProcessor
+  sub_pipeline: !sub-pipeline
+    GEOMETRY_CONVERTER:
+      type: GeometryConverter
+      geometry_type: Node
+      out:
+        FEATURE_CONVERTER:
+          type: GeoJSONFeatureConverter
+          properties:
+            relation_id: $osm_id
+```
+
+The value of the `sub_pipeline` field is set to `!sub-pipeline` and then a pipeline specification is set as its content. By using the `!sub-pipeline` custom type, the YAML loader knows that it should use the content of the field to assemble a pipeline. 
+
+Here, the assembled sub-pipeline will be composed of a `GeoJSONFeatureConverter` pipe plugged to a `GeometryConverter` pipe.
 
 # Example explanation
 
@@ -86,7 +113,7 @@ QUERY:
   out:
     LOOP_PROCESSING:
       type: LoopDataProcessor
-      /SP\sub_pipeline:
+      sub_pipeline: !sub-pipeline
         GEOMETRY_CONVERTER:
           type: GeometryConverter
           geometry_type: Node
@@ -114,7 +141,7 @@ We can explain it like that:
 
 * First, a `QUERY` pipe is defined. This pipe is of type `SQLProcessor`. It contains a `query` field which corresponds to the SQL query wich will be executed by the pipe.
 
-* In the `out` field of the `QUERY` pipe, a `LOOP_PROCESSING` pipe is defined. Hence, this pipe will be plugged to the `QUERY` pipe. It is of type `LoopDataProcessor` and it contains a `sub_pipeline` field which contains the subpipeline which will be used by the pipe.
+* In the `out` field of the `QUERY` pipe, a `LOOP_PROCESSING` pipe is defined. Hence, this pipe will be plugged to the `QUERY` pipe. It is of type `LoopDataProcessor` and it contains a `sub_pipeline` field which contains the sub-pipeline which will be used by the pipe.
 
 * The pipe `GEOJSON` will be plugged to the `LOOP_PROCESSING` pipe. It is of type `GeoJSONFormatter`.
 

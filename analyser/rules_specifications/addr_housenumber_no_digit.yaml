@@ -9,7 +9,7 @@ QUERY:
   out:
     LOOP_PROCESSING:
       type: LoopDataProcessor
-      /SP\sub_pipeline:
+      sub_pipeline: !sub-pipeline
         NO_DIGIT_FILTER:
           type: AddrHouseNumberNoDigitFilter
           out:

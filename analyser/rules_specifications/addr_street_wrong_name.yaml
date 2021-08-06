@@ -11,7 +11,7 @@ QUERY:
   out:
     LOOP_PROCESSING:
       type: LoopDataProcessor
-      /SP\sub_pipeline:
+      sub_pipeline: !sub-pipeline
         GEOMETRY_CONVERTER:
           type: GeometryConverter
           geometry_type: Node

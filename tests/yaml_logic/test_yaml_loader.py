@@ -1,11 +1,10 @@
-import os
 from pathlib import Path
 
 import analyser.core.yaml_logic.yaml_loader as yaml_loader
 import pytest
 import yaml
 from analyser.core.yaml_logic.yaml_loader import load_yaml_rule
-
+from analyser.core import Pipe
 
 def test_load_yaml_rule() -> None:
     """
@@ -33,3 +32,14 @@ def test_load_wrong_yaml() -> None:
     yaml_loader.base_rules_path = Path(__file__).parent
     with pytest.raises(yaml.YAMLError):
         load_yaml_rule('test_load_wrong_yaml')
+
+def test_construct_sub_pipeline() -> None:
+    """
+        Test that the sub_pipeline_constructor() is well called when
+        a specific type !sub-pipeline is present in the YAML file.
+
+        The value should be a Pipe after loading.
+    """
+    yaml_loader.base_rules_path = Path(__file__).parent
+    loaded_data = load_yaml_rule('test_construct_sub_pipeline')
+    assert isinstance(loaded_data['QUERY']['sub_pipeline'], Pipe)

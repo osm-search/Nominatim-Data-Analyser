@@ -11,7 +11,7 @@ def test_process_one_data_not_none(loop_data_processor: LoopDataProcessor,
                                    geometry_converter: GeometryConverter,
                                    geojson_feature_converter: GeoJSONFeatureConverter) -> None:
     """
-        Test the process_one_data() method with a subpipeline which should not return None.
+        Test the process_one_data() method with a sub-pipeline which should not return None.
     """
     geometry_converter.plug_pipe(geojson_feature_converter)
     loop_data_processor.processing_pipeline = geometry_converter
@@ -25,7 +25,7 @@ def test_process_one_data_none(loop_data_processor: LoopDataProcessor,
                                monkeypatch) -> None:
     """
         Test the process_one_data() method with 
-        a pipe in the middle of the subpipeline which returns None.
+        a pipe in the middle of the sub-pipeline which returns None.
         Therefore, the result should be None.
     """
     geometry_converter.plug_pipe(filling_pipe).plug_pipe(geojson_feature_converter)
