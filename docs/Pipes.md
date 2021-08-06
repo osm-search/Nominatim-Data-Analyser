@@ -110,89 +110,89 @@ Here is a basic documentation for all the main pipes:
 
 Executes an SQL query and returns the results as [RealDictCursor](https://www.psycopg.org/docs/extras.html#real-dictionary-cursor) objects.
 
-Class name (type) -> `SQLProcessor`
+**Class name (type)** -> `SQLProcessor`
 
-Mandatory fields:
+**Mandatory fields**:
 
 * `query` -> The SQL query to execute.
 
-Expected inputs -> `None`
+**Expected inputs** -> `None`
 
-Output -> List of [RealDictCursor](https://www.psycopg.org/docs/extras.html#real-dictionary-cursor) objects.
+**Output** -> List of [RealDictCursor](https://www.psycopg.org/docs/extras.html#real-dictionary-cursor) objects.
 
 ## GeometryConverter
 
 Converts the data contains in the `geometry_holder` of the input dictionnary to the geometry class of type `geometry_type`.
 
-Class name (type) -> `GeometryConverter`
+**Class name (type)** -> `GeometryConverter`
 
-Mandatory fields:
+**Mandatory fields**:
 
 * `geometry_type` -> The geometry type to use.
 
-Expected inputs -> `Dictionnary` with one key equal to `geometry_holder` which should be a `string` of a [Well-known text representation of geometry](https://en.wikipedia.org/wiki/Well-known_text_representation_of_geometry).
+**Expected inputs** -> `Dictionnary` with one key equal to `geometry_holder` which should be a `string` of a [Well-known text representation of geometry](https://en.wikipedia.org/wiki/Well-known_text_representation_of_geometry).
 
-Output -> `Dictionnary` with the `geometry_holder` modified.
+**Output** -> `Dictionnary` with the `geometry_holder` modified.
 
 ## LoopDataProcessor
 
 Processes each `data` of the input list through a `sub pipeline` and returns the new list of `data`.
 
-Class name (type) -> `LoopDataProcessor`
+**Class name (type)** -> `LoopDataProcessor`
 
-Mandatory fields:
+**Mandatory fields**:
 
 * `sub_pipeline` -> A sub pipeline.
 
-Expected inputs -> `List` of data of `any` type.
+**Expected inputs** -> `List` of data of `any` type.
 
-Output -> `List` of data of `any` type.
+**Output** -> `List` of data of `any` type.
 
 ## GeoJSONFeatureConverter
 
 Converts a dictionnary of data containing at least the `geometry_holder` field to a `GeoJSON Feature` from the [geojson python package](https://github.com/jazzband/geojson).
 
-Class name (type) -> `GeoJSONFeatureConverter`
+**Class name (type)** -> `GeoJSONFeatureConverter`
 
-Optional fields:
+**Optional fields**:
 
 * `properties` -> `Dictionnary` of properties to add to the generated `Feature`.
 
-Expected inputs -> `Dictionnary` with one key equal to `geometry_holder` which contains a `Geometry` class (Often received from a previous `GeometryConverter` pipe).
+**Expected inputs** -> `Dictionnary` with one key equal to `geometry_holder` which contains a `Geometry` class (Often received from a previous `GeometryConverter` pipe).
 
-Output -> `Feature` object from the [geojson python package](https://github.com/jazzband/geojson).
+**Output** -> [geojson python package](https://github.com/jazzband/geojson) object.
 
 ## GeoJSONFormatter
 
 Generates a `GeoJSON file` from a list of [Feature](https://github.com/jazzband/geojson#feature).
 
-Class name (type) -> `GeoJSONFormatter`
+**Class name (type)** -> `GeoJSONFormatter`
 
-Optional fields:
+**Optional fields**:
 
 * `file_name` -> The file name for the generated file.
 
-Expected inputs -> `List` of [Feature](https://github.com/jazzband/geojson#feature).
+**Expected inputs** -> `List` of [Feature](https://github.com/jazzband/geojson#feature).
 
-Output -> (Subject to change).
+**Output** -> (Subject to change).
 
 ## VectorTileFormatter
 
 Generates a `Vector tile` folder with a hierarchy of vector tiles inside from a list of [Feature](https://github.com/jazzband/geojson#feature). This pipe makes a call to [Tippecanoe](https://github.com/mapbox/tippecanoe) to generate the vector tiles.
 
-Class name (type) -> `VectorTileFormatter`
+**Class name (type)** -> `VectorTileFormatter`
 
-Expected inputs -> `List` of [Feature](https://github.com/jazzband/geojson#feature).
+**Expected inputs** -> `List` of [Feature](https://github.com/jazzband/geojson#feature).
 
-Output -> (Subject to change).
+**Output** -> (Subject to change).
 
 ## OsmoscopeLayerFormatter
 
 Generates a `Layer` file following the [Layer specification](https://github.com/osmoscope/osmoscope-ui/blob/master/doc/creating-layers.md#the-layer-file) of Osmoscope.
 
-Class name (type) -> `OsmoscopeLayerFormatter`
+**Class name (type)** -> `OsmoscopeLayerFormatter`
 
-Optional fields:
+**Optional fields**:
 
 * `file_name` -> The file name for the generated file.
 * `updates` -> When are the data updated.
@@ -201,11 +201,11 @@ Optional fields:
     * `why_problem` -> Why is there a problem with the data on this layer.
     * `how_to_fix` -> How to fix data on this layer.
 
-Mandatory fields:
+**Mandatory fields**:
 
 * `data_format_url` -> `geojson_url` or `vector_tile_url`.
 * `name` -> The name of the rule.
 
-Expected inputs -> (Subject to change).
+**Expected inputs** -> (Subject to change).
 
-Output -> `None`.
+**Output** -> `None`.

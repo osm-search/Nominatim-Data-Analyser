@@ -49,7 +49,7 @@ Each `Pipe` should have a `type` defined. The `type` value should be equal to th
 
 The `Pipe` definition can then contain others key/values needed for its good functioning and/or for its configuration.
 
-To get an overview of what `type` of `pipes` exist with a basic explanation of what they do and their `configuration` and `required fields`, see the [Pipes](Pipes.md) chapter.
+To get an overview of what `type` of `pipes` exist with a basic explanation of what they do and their `configuration` and `required fields`, see the [Main pipes](Pipes.md#Main-pipes) chapter.
 
 The `out` field is used to specify which pipes to plug to the current pipe. This field contains the definition of the pipes to plug to the current pipe. It can contain multiples pipes and not only one, just like this example:
 
