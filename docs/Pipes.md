@@ -1,0 +1,1 @@
+#TODO Explain how the base Pipe class works and it should be referenced inside Add-New-Rule.md.
