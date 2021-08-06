@@ -3,7 +3,13 @@
 The Nominatim Data Analyser is a QA tool used to scan the nominatim database and extract
 suspect data from it. These data are then presented to mappers through a visual interface so that they can correct them directly.
 
+# Documentation
+
 The advanced documentation of this tool can be found there: [docs/Overview.md](docs/Overview.md).
+
+# Reporting errors in the rule
+
+To report some errors in the rule, please follow the [CONTRIBUTING.md](CONTRIBUTING.md)
 
 # Installation procedure
 
