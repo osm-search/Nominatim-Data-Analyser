@@ -16,7 +16,7 @@ class SQLProcessor(Pipe):
         send the results to the next pipe.
     """
     def on_created(self) -> None:
-        self.query = self.extract_data('query')
+        self.query = self.extract_data('query', required=True)
 
     def process(self, data: any = None) -> List[Dict]:
         """

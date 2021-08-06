@@ -10,7 +10,7 @@ class GeoJSONFeatureConverter(Pipe):
         to geojson features.
     """
     def on_created(self) -> None:
-        self.properties_pattern: Dict = self.extract_data('properties')
+        self.properties_pattern: Dict = self.extract_data('properties', default={})
         self.current_id = -1
 
     def process(self, elements: Dict) -> Feature:
