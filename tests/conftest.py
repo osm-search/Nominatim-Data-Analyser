@@ -87,10 +87,10 @@ def filling_pipe(execution_context: ExecutionContext) -> FillingPipe:
 @pytest.fixture
 def geojson_feature_converter(execution_context: ExecutionContext) -> GeoJSONFeatureConverter:
     return GeoJSONFeatureConverter({
-        'properties': {
-            'prop1': 'val1',
-            'prop2': 'val2'
-        }
+        'properties': [
+            {'prop1': 'val1'},
+            {'prop2': 'val2'}
+        ]
     }, execution_context)
 
 @pytest.fixture

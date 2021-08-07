@@ -15,7 +15,7 @@ QUERY:
             FEATURE_CONVERTER:
               type: GeoJSONFeatureConverter
               properties:
-                relation_id: $osm_id
+                - relation_id: !variable osm_id
       out:
         GEOJSON:
           type: GeoJSONFormatter

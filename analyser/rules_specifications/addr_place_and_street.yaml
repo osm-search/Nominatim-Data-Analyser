@@ -15,11 +15,16 @@ QUERY:
             FEATURE_CONVERTER:
               type: GeoJSONFeatureConverter
               properties:
-                /?nwr?/ -> $osm_type:
-                  - node_id: $osm_id
-                  - way_id: $osm_id
-                  - relation_id: $osm_id
-                address: $address
+                - !switch
+                    expression: osm_type
+                    cases:
+                      'N': 
+                        node_id: !variable osm_id
+                      'W': 
+                        way_id: !variable osm_id
+                      'R': 
+                        relation_id: !variable osm_id
+                - address: !variable address
       out:
         VECTOR_TILE:
           type: VectorTileFormatter

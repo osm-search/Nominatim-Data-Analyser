@@ -1,3 +1,5 @@
+from analyser.core.dynamic_value.switch import Switch
+from analyser.core.dynamic_value.variable import Variable
 from analyser.core.assembler import PipelineAssembler
 from analyser.logger.logger import LOG
 from pathlib import Path
@@ -12,11 +14,14 @@ def load_yaml_rule(file_name: str) -> dict:
     """
     sub_pipeline_lambda = lambda loader, node: sub_pipeline_constructor(loader, node, file_name)
     yaml.add_constructor(u'!sub-pipeline', sub_pipeline_lambda, Loader=yaml.SafeLoader)
+    yaml.add_constructor(u'!variable', variable_constructor, Loader=yaml.SafeLoader)
+    yaml.add_constructor(u'!switch', switch_constructor, Loader=yaml.SafeLoader)
 
     path = Path(base_rules_path / Path(file_name + '.yaml')).resolve()
     with open(str(path), 'r') as file:
         try:
-            return yaml.safe_load(file)
+            loaded = yaml.safe_load(file)
+            return loaded
         except yaml.YAMLError as exc:
             LOG.error('Error while loading the YAML rule file %s: %s',
                         file_name, exc)
@@ -31,3 +36,16 @@ def sub_pipeline_constructor(loader: yaml.SafeLoader, node: yaml.MappingNode, ru
     """
     pipeline_specification = loader.construct_mapping(node, deep=True)
     return PipelineAssembler(pipeline_specification, rule_name).assemble()
+
+def variable_constructor(loader: yaml.SafeLoader, node: yaml.ScalarNode):
+    """
+        Creates a Variable object using the node's data.
+    """
+    return Variable(loader.construct_scalar(node))
+
+def switch_constructor(loader: yaml.SafeLoader, node: yaml.MappingNode):
+    """
+        Creates a Switch object using the node's data.
+    """
+    data = loader.construct_mapping(node, deep=True)
+    return Switch(data['expression'], data['cases'])

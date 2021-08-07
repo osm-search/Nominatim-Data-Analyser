@@ -18,7 +18,7 @@ QUERY:
             FEATURE_CONVERTER:
               type: GeoJSONFeatureConverter
               properties:
-                way_id: $osm_id
+                - way_id: !variable osm_id
       out:
         VECTOR_TILE:
           type: VectorTileFormatter

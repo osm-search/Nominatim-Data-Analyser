@@ -19,12 +19,17 @@ QUERY:
             FEATURE_CONVERTER:
               type: GeoJSONFeatureConverter
               properties:
-                /?nwr?/ -> $osm_type:
-                  - node_id: $osm_id
-                  - way_id: $osm_id
-                  - relation_id: $osm_id
-                street_name: $street_name
-                parent_name: $parent_name
+                - !switch
+                    expression: osm_type
+                    cases:
+                      'N': 
+                        node_id: !variable osm_id
+                      'W': 
+                        way_id: !variable osm_id
+                      'R': 
+                        relation_id: !variable osm_id
+                - street_name: !variable street_name
+                - parent_name: !variable parent_name
       out:
         VECTOR_TILE:
           type: VectorTileFormatter
