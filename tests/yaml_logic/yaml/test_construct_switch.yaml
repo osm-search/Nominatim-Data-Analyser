@@ -1,0 +1,7 @@
+DUMB_NODE:
+  value: !switch
+    expression: expression_value
+    cases:
+      'case1': val1
+      'case2': val2
+      'case3': val3

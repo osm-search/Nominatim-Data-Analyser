@@ -1,0 +1,2 @@
+DUMB_NODE:
+  value: !variable variable_name

@@ -16,6 +16,6 @@ class Switch(DynamicValue):
             raise Exception(f'The expression {self.expression} was not found in the input dictionnary.')
         
         if data[self.expression] not in self.cases:
-            raise Exception(f'The case {data[self.expression]} is not in the configured switch cases: {self.cases}')
+            raise Exception(f'The case {data[self.expression]} is not in the configured switch cases: {list(self.cases.keys())}')
 
         return self.cases[data[self.expression]]
