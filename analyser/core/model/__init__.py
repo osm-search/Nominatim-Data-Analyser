@@ -6,4 +6,3 @@
 
 from .node import Node
 from .geometry import Geometry
-from .paths import Paths

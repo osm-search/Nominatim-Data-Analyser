@@ -1,5 +1,4 @@
 from analyser.core.pipes.output_formatters import GeoJSONFormatter
-from analyser.core.model import Paths
 from geojson import Feature, Point, FeatureCollection, loads
 from analyser.config import Config
 
@@ -23,10 +22,9 @@ def test_process_geojson_formatter(config: Config,
         Feature(geometry=Point((10, 20)))
     ]
 
-    result: Paths = geojson_formatter.process(features)
-    assert result.local_path == str((tmp_path / 'test_folder' / 'test_file.json').resolve())
-    assert result.web_path == 'test_prefix_path/test_rule/geojson/test_file.json'
+    result: str = geojson_formatter.process(features)
+    assert result == 'test_prefix_path/test_rule/geojson/test_file.json'
 
     #Verify the content of the geojson created
-    with open(result.local_path, 'r') as file:
+    with open(tmp_path/'test_folder/test_file.json' , 'r') as file:
         assert loads(file.read()) == FeatureCollection(features)

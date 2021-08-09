@@ -23,6 +23,5 @@ def test_process_vector_tile_formatter(vector_tile_formatter: VectorTileFormatte
         Feature(geometry=Point((10, 20)))
     ]
 
-    paths = vector_tile_formatter.process(features)
-    assert paths.web_path == 'test_prefix_path/test_rule/vector-tiles/{z}/{x}/{y}.pbf'
-    assert paths.local_path == str((tmp_path / 'test_folder').resolve())
+    web_path = vector_tile_formatter.process(features)
+    assert web_path == 'test_prefix_path/test_rule/vector-tiles/{z}/{x}/{y}.pbf'

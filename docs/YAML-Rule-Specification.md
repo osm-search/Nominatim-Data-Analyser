@@ -26,7 +26,7 @@ QUERY:
             FEATURE_CONVERTER:
               type: GeoJSONFeatureConverter
               properties:
-                relation_id: $osm_id
+                relation_id: !variable osm_id
       out:
         GEOJSON:
           type: GeoJSONFormatter
@@ -65,8 +65,6 @@ QUERY:
   out:
     FEATURE_CONVERTER:
         type: GeoJSONFeatureConverter
-        properties:
-        relation_id: $osm_id
     GEOJSON:
         type: GeoJSONFormatter
 ```
@@ -91,13 +89,58 @@ LOOP_PROCESSING:
       out:
         FEATURE_CONVERTER:
           type: GeoJSONFeatureConverter
-          properties:
-            relation_id: $osm_id
 ```
 
 The value of the `sub_pipeline` field is set to `!sub-pipeline` and then a pipeline specification is set as its content. By using the `!sub-pipeline` custom type, the YAML loader knows that it should use the content of the field to assemble a pipeline. 
 
 Here, the assembled sub-pipeline will be composed of a `GeoJSONFeatureConverter` pipe plugged to a `GeometryConverter` pipe.
+
+### !variable
+
+The `!variable` type is used to create a value which will be resoled dynamically at runtime depending on the input data. The variable has a name which will be looked up 
+in the data dictionnary given to resolve this variable in the python code:
+
+```yaml
+- address: !variable address
+```
+
+Here the YAML Loader will automatically asigns a `Variable` object to the value of the key `address`. This `Variable` can then be resolved by getting a data dictionnary as input. It will look for the `address` key in this dictionnary and it will return its value.
+
+More explanations on the DynamicValue type can be found in the [DynamicValue chapter](Dynamic-Value.md).
+
+### !switch
+
+The `!switch` type is used to create a switch condition in the YAML spécification. The switch is a dynamic value which will be resolved at runtime depending on the data 
+dictionnary given to resolve it.
+
+It works the same way as the [switch statement](https://en.wikipedia.org/wiki/Switch_statement) in many programming language. If we take the following JavaScript switch statement as an example:
+
+```javascript
+switch(geometryType) {
+  case 'N':
+    return 'Node';
+  case 'W':
+    return 'Way';
+  case 'R':
+    return 'Relation';
+}
+```
+
+It can be recreated in our YAML Specification like this:
+
+```yaml
+- our_value: !switch
+    expression: geometryType
+    cases:
+      'N': Node
+      'W': Way
+      'R': Relation
+```
+
+Here the YAML Loader will automatically asigns a `Switch` object to the value of the key `our_value`. This `Switch` can then be resolved by getting a data dictionnary as input.
+It will look for the key equal to the expression `geometryType`. Then, if the value assigned to this key is for example equal to `'N'`, the value `Node` will be returned.
+
+More explanations on the DynamicValue type can be found in the [DynamicValue chapter](Dynamic-Value.md).
 
 # Example explanation
 
@@ -121,7 +164,7 @@ QUERY:
             FEATURE_CONVERTER:
               type: GeoJSONFeatureConverter
               properties:
-                relation_id: $osm_id
+                relation_id: !variable osm_id
       out:
         GEOJSON:
           type: GeoJSONFormatter
@@ -142,6 +185,8 @@ We can explain it like that:
 * First, a `QUERY` pipe is defined. This pipe is of type `SQLProcessor`. It contains a `query` field which corresponds to the SQL query wich will be executed by the pipe.
 
 * In the `out` field of the `QUERY` pipe, a `LOOP_PROCESSING` pipe is defined. Hence, this pipe will be plugged to the `QUERY` pipe. It is of type `LoopDataProcessor` and it contains a `sub_pipeline` field which contains the sub-pipeline which will be used by the pipe.
+
+* The `sub-pipeline` contains a `GeoJSONFeatureConverter` pipe which contains one property of name 'relation_id' where its value is a `!variable` type of name 'osm_id'. At runtime, each record from the `SQL Query` result will produce a different value for this variable which will be equal to the value of the 'osm_id' field from the `SQL Query`.
 
 * The pipe `GEOJSON` will be plugged to the `LOOP_PROCESSING` pipe. It is of type `GeoJSONFormatter`.
 

@@ -7,6 +7,8 @@ def resolve_all(data_to_resolve: Any, resolver_data: Dict, ) -> Any:
         Resolves the given data_to_resolve by resolving all data inside which are
         of type DynamicValue. The resolved data are resolved again if they also contain
         DynamicValue.
+
+        Parameter resolver_data is the data dictionnary used to resolve the dynamic values.
     """
     while(is_resolvable(data_to_resolve)):
         data_to_resolve = resolve_one(data_to_resolve, resolver_data)

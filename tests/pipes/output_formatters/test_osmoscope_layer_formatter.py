@@ -1,4 +1,3 @@
-from analyser.core.model.paths import Paths
 from analyser.config import Config
 from analyser.core.pipes import OsmoscopeLayerFormatter
 import json
@@ -51,12 +50,11 @@ def test_process_osmoscope_layer_formatter(osmoscope_layer_formatter: OsmoscopeL
     osmoscope_layer_formatter.data['id'] = 'test_id'
     osmoscope_layer_formatter.file_name = 'test_file'
     osmoscope_layer_formatter.data_format_url = 'vector_tile_url'
-    paths = Paths('web_path', 'local_path')
-    osmoscope_layer_formatter.process(paths)
+    osmoscope_layer_formatter.process('web_path')
 
     with open(tmp_path / 'test_folder/test_file.json', 'r') as file:
         data = json.load(file)
     assert data == {
         'id': 'test_id',
-        'vector_tile_url': paths.web_path
+        'vector_tile_url': 'web_path'
     }

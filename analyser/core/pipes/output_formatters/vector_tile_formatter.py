@@ -2,7 +2,6 @@ from __future__ import annotations
 from geojson.feature import Feature, FeatureCollection
 from geojson import dumps
 from analyser.logger.timer import Timer
-from analyser.core.model import Paths
 from analyser.config import Config
 from analyser.core import Pipe
 from pathlib import Path
@@ -17,7 +16,7 @@ class VectorTileFormatter(Pipe):
     def on_created(self) -> None:
         self.base_folder_path = Path(f'{Config.values["RulesFolderPath"]}/{self.exec_context.rule_name}/vector-tiles')
 
-    def process(self, features: List[Feature]) -> Paths:
+    def process(self, features: List[Feature]) -> str:
         """
             Converts a GeoJSON file to Vector tiles by
             calling tippecanoe from the command line.
@@ -32,7 +31,7 @@ class VectorTileFormatter(Pipe):
         self.log(f'Vector tile conversion executed in {elapsed_mins} mins {elapsed_secs} secs')
 
         web_path = f'{Config.values["WebPrefixPath"]}/{self.exec_context.rule_name}/vector-tiles/' + '{z}/{x}/{y}.pbf'
-        return Paths(web_path, str(self.base_folder_path.resolve()))
+        return web_path
     
     def call_tippecanoe(self, output_dir: Path, feature_collection: FeatureCollection) -> None:
         """

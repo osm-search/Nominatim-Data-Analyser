@@ -1,5 +1,4 @@
 from __future__ import annotations
-from analyser.core.model.paths import Paths
 from analyser.config import Config
 from analyser.core import Pipe
 from pathlib import Path
@@ -15,14 +14,14 @@ class OsmoscopeLayerFormatter(Pipe):
         self.data_format_url = self.extract_data('data_format_url', required=True)
         self.data['id'] = 'SuspectsData'
 
-    def process(self, paths: Paths) -> None:
+    def process(self, data_source_path: str) -> None:
         """
             Create the JSON layer file containing the right data.
             
             It gets the GeoJSON url as data parameter and set it
             inside the layer file.
         """
-        self.data[self.data_format_url] = paths.web_path
+        self.data[self.data_format_url] = data_source_path
         self.base_folder_path.mkdir(parents=True, exist_ok=True)
         full_path = self.base_folder_path / f'{self.file_name}.json'
 
