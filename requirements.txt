@@ -1,0 +1,3 @@
+geojson==2.5.0
+psycopg2==2.8.4
+PyYAML==5.3.1

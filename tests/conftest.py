@@ -61,7 +61,7 @@ def temp_db_cursor(dsn: str) -> cursor:
     conn.close()
 
 @pytest.fixture
-def config(dsn: str) -> Config:
+def config() -> Config:
     """
         Loads the config and returns it.
     """
