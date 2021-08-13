@@ -28,6 +28,7 @@ function generate(radius, output_dir) {
         if (rmdir_err) throw rmdir_err;
         console.time('Vector tiles creation')
         for (let z = 0; z <= MAX_ZOOM + 1; z++) {
+            console.log(z)
             const zoomDimension = Math.pow(2, z);
             for (let x = 0; x < zoomDimension; x++) {
                 for (let y = 0; y < zoomDimension; y++) {
@@ -38,7 +39,8 @@ function generate(radius, output_dir) {
                         continue;
                     }
 
-                    var pbfData = VTpbf.fromGeojsonVt({ 'geojsonLayer': tile }, {version: 2, extent: 256});
+                    var pbfData = VTpbf.fromGeojsonVt({ 'geojsonLayer': tile }, { extent: 256 });
+
                     fs.mkdir(`${output_dir}/${z}/${x}`, { recursive: true }, (mkdir_err) => {
                         if (mkdir_err) throw mkdir_err;
                         fs.writeFileSync(`${output_dir}/${z}/${x}/${y}.pbf`, pbfData);

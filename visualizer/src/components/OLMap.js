@@ -14,14 +14,17 @@ import VectorTileLayer from 'ol/layer/VectorTile';
 import VectorTileSource from 'ol/source/VectorTile';
 import { Style, Circle, Stroke, Fill, Text } from "ol/style";
 import MVT from 'ol/format/MVT';
+import GeoJSON from 'ol/format/GeoJSON';
 
 const OLMap = () => {
-    const [map, setMap] = useState()
-    const mapContainer = useRef()
-    const style = new Style({image: new Circle({fill: new Fill({color: 'rgba(255,84,71,1)'}), radius: 5})})
+    const [map, setMap] = useState();
+    const mapContainer = useRef();
+
+    const vectorTileStyle = new Style({image: new Circle({fill: new Fill({color: 'rgba(255,84,71,1)'}), radius: 5})});
+    const geoJSONStyle = new Style({image: new Circle({fill: new Fill({color: 'rgba(66,135,245,1)'}), radius: 3})});
+
     useEffect(() => {
-        //Vector tiles
-        const styleCache = {};
+        //Vector tile layer
         const vtLayer = new VectorTileLayer({
             declutter: true,
             source: new VectorTileSource({
@@ -30,7 +33,15 @@ const OLMap = () => {
               }),
               url: 'https://gsoc2021-qa.nominatim.org/QA-data/BA_way_not_part_relation/vector-tiles/{z}/{x}/{y}.pbf'
             }),
-            style: style
+            style: vectorTileStyle
+        });
+        //GeoJSON layer
+        const geoJSONLayer = new LayerVector({
+            source: new SourceVector({
+                url: 'https://gsoc2021-qa.nominatim.org/QA-data/BA_way_not_part_relation/geojson/BA_way_not_part_relation.json',
+                format: new GeoJSON()
+            }),
+            style: geoJSONStyle
         });
         //Map
         const initialMap = new Map({
@@ -38,7 +49,8 @@ const OLMap = () => {
                 new TileLayer({
                 source: new OSM(),
                 }),
-                vtLayer
+                vtLayer,
+                geoJSONLayer
             ],
             target: mapContainer.current,
             view: new View({
