@@ -9,7 +9,7 @@ from typing import List
 import subprocess
 import logging
 
-class VectorTileFormatter(Pipe):
+class ClustersVtFormatter(Pipe):
     """
         Handles the creation of the GeoJSON file.
     """
@@ -19,36 +19,35 @@ class VectorTileFormatter(Pipe):
     def process(self, features: List[Feature]) -> str:
         """
             Converts a GeoJSON file to Vector tiles by
-            calling tippecanoe from the command line.
+            calling clustering-vt from the command line.
         """
         feature_collection = FeatureCollection(features)
         self.base_folder_path.mkdir(parents=True, exist_ok=True)
         timer = Timer().start_timer()
 
-        self.call_tippecanoe(self.base_folder_path, feature_collection)
+        self.call_clustering_vt(self.base_folder_path, feature_collection)
 
         elapsed_mins, elapsed_secs = timer.get_elapsed()
-        self.log(f'Vector tile conversion executed in {elapsed_mins} mins {elapsed_secs} secs')
+        self.log(f'Clustering vector tiles executed in {elapsed_mins} mins {elapsed_secs} secs')
 
         web_path = f'{Config.values["WebPrefixPath"]}/{self.exec_context.rule_name}/vector-tiles/' + '{z}/{x}/{y}.pbf'
         return web_path
     
-    def call_tippecanoe(self, output_dir: Path, feature_collection: FeatureCollection) -> None:
+    def call_clustering_vt(self, output_dir: Path, feature_collection: FeatureCollection) -> None:
         """
-            Calls Tippecanoe through a subprocess and send the feature collection as a stream
+            Calls clustering-vt through a subprocess and send the feature collection as a stream
             in the stdin of the subprocess.
         """
         try:
             result = subprocess.run(
-                ['tippecanoe', f'--output-to-directory={output_dir}', 
-                '--force',
-                '-zg'],
+                ['create-clusters', 'generate', '40', output_dir],
                 check=True,
                 input=dumps(feature_collection).encode(),
-                stdout=subprocess.PIPE
+                capture_output=True
             )
+            print(result.stdout)
             self.log(result)
         except subprocess.TimeoutExpired as e:
-            self.log(logging.FATAL, e)
+            self.log(e, logging.FATAL)
         except subprocess.CalledProcessError as e:
-            self.log(logging.FATAL, e)
+            self.log(e, logging.FATAL)

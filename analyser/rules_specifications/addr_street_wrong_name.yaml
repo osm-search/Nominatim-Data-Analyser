@@ -32,7 +32,7 @@ QUERY:
                 - parent_name: !variable parent_name
       out:
         VECTOR_TILE:
-          type: VectorTileFormatter
+          type: GeoJSONFormatter
           out:
             LAYER_FILE:
               type: OsmoscopeLayerFormatter

@@ -21,7 +21,7 @@ QUERY:
                 - way_id: !variable osm_id
       out:
         VECTOR_TILE:
-          type: VectorTileFormatter
+          type: ClustersVtFormatter
           out:
             LAYER_FILE:
               type: OsmoscopeLayerFormatter
