@@ -31,8 +31,9 @@ QUERY:
                             relation_id: !variable osm_id
                     - address: !variable address
       out:
-        VECTOR_TILE:
-          type: VectorTileFormatter
+        CLUSTERING_VECTOR_TILES:
+          type: ClustersVtFormatter
+          radius: 350
           out:
             LAYER_FILE:
               type: OsmoscopeLayerFormatter

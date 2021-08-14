@@ -15,6 +15,7 @@ import VectorTileSource from 'ol/source/VectorTile';
 import { Style, Circle, Stroke, Fill, Text } from "ol/style";
 import MVT from 'ol/format/MVT';
 import GeoJSON from 'ol/format/GeoJSON';
+import {get} from 'ol/proj';
 
 const OLMap = () => {
     const [map, setMap] = useState();
@@ -25,32 +26,37 @@ const OLMap = () => {
 
     useEffect(() => {
         //Vector tile layer
+        const vtSource = new VectorTileSource({
+            format: new MVT({
+              featureClass: Feature
+            }),
+            url: 'https://gsoc2021-qa.nominatim.org/QA-data/addr_housenumber_no_digit/vector-tiles/{z}/{x}/{y}.pbf'
+        })
         const vtLayer = new VectorTileLayer({
             declutter: true,
-            source: new VectorTileSource({
-              format: new MVT({
-                featureClass: Feature
-              }),
-              url: 'https://gsoc2021-qa.nominatim.org/QA-data/BA_way_not_part_relation/vector-tiles/{z}/{x}/{y}.pbf'
-            }),
+            source: vtSource,
             style: vectorTileStyle
         });
-        //GeoJSON layer
-        const geoJSONLayer = new LayerVector({
-            source: new SourceVector({
-                url: 'https://gsoc2021-qa.nominatim.org/QA-data/BA_way_not_part_relation/geojson/BA_way_not_part_relation.json',
-                format: new GeoJSON()
-            }),
-            style: geoJSONStyle
+        vtSource.on('tileloadend', function(evt) {
+            var z = evt.tile.getTileCoord()[0];
+            var features = evt.tile.getFeatures();
+            console.log('FEATURES: ' + features.length);
         });
-        //Map
+        //GeoJSON layer
+        // const geoJSONLayer = new LayerVector({
+        //     source: new SourceVector({
+        //         url: 'https://gsoc2021-qa.nominatim.org/QA-data/BA_way_not_part_relation/geojson/BA_way_not_part_relation.json',
+        //         format: new GeoJSON()
+        //     }),
+        //     style: geoJSONStyle
+        // });
+        // //Map
         const initialMap = new Map({
             layers: [
                 new TileLayer({
                 source: new OSM(),
                 }),
-                vtLayer,
-                geoJSONLayer
+                vtLayer
             ],
             target: mapContainer.current,
             view: new View({

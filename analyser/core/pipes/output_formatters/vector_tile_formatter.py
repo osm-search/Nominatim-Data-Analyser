@@ -11,14 +11,14 @@ import logging
 
 class VectorTileFormatter(Pipe):
     """
-        Handles the creation of the GeoJSON file.
+        Handles the creation of the Vector tiles.
     """
     def on_created(self) -> None:
         self.base_folder_path = Path(f'{Config.values["RulesFolderPath"]}/{self.exec_context.rule_name}/vector-tiles')
 
     def process(self, features: List[Feature]) -> str:
         """
-            Converts a GeoJSON file to Vector tiles by
+            Converts a list of features to vector tiles by
             calling tippecanoe from the command line.
         """
         feature_collection = FeatureCollection(features)

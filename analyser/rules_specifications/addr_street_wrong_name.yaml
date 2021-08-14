@@ -31,8 +31,9 @@ QUERY:
                 - street_name: !variable street_name
                 - parent_name: !variable parent_name
       out:
-        VECTOR_TILE:
-          type: GeoJSONFormatter
+        CLUSTERING_VECTOR_TILES:
+          type: ClustersVtFormatter
+          radius: 350
           out:
             LAYER_FILE:
               type: OsmoscopeLayerFormatter

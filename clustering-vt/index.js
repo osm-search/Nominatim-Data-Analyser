@@ -7,7 +7,7 @@ const fs = require('fs');
 
 const MAX_ZOOM = 13;
 
-const features = [];
+var features = [];
 
 program
     .command('generate <radius> <output_dir>')
@@ -18,38 +18,44 @@ function generate(radius, output_dir) {
     if(!features) {
         throw new Error('A FeatureCollection should be sent through stdin.');
     }
-    const superCluster = new Supercluster({ radius: radius, maxZoom: MAX_ZOOM, extent: 256});
+
+    const superCluster = new Supercluster({ radius: radius, maxZoom: MAX_ZOOM, extent: 4096 });
     console.time('Clusters generation');
     const clusteredFeatures = superCluster.load(features);
+    features = [] //Clear features which are not used anymore.
     console.timeEnd('Clusters generation');
 
-    //Remove the output directory with its content if it exists.
-    fs.rm(output_dir, { recursive: true, force: true }, (rmdir_err) => {
-        if (rmdir_err) throw rmdir_err;
-        console.time('Vector tiles creation')
-        for (let z = 0; z <= MAX_ZOOM + 1; z++) {
-            console.log(z)
-            const zoomDimension = Math.pow(2, z);
-            for (let x = 0; x < zoomDimension; x++) {
-                for (let y = 0; y < zoomDimension; y++) {
-                    const tile = clusteredFeatures.getTile(z, x, y);
+    console.time('Vector tiles creation')
+    for (let z = 0; z <= MAX_ZOOM + 1; z++) {
+        const zoomDimension = Math.pow(2, z); // Number of max tiles is 2^z * 2^z -> https://wiki.openstreetmap.org/wiki/Slippy_map_tilenames
+        //Remove the output_dir/{z} if it already exists
+        fs.rmSync(`${output_dir}/${z}`, { recursive: true, force: true });
 
-                    //Do not serialize empty tiles.
-                    if (!tile || !tile.features) {
-                        continue;
-                    }
+        for (let x = 0; x < zoomDimension; x++) {
+            for (let y = 0; y < zoomDimension; y++) {
 
-                    var pbfData = VTpbf.fromGeojsonVt({ 'geojsonLayer': tile }, { extent: 256 });
-
-                    fs.mkdir(`${output_dir}/${z}/${x}`, { recursive: true }, (mkdir_err) => {
-                        if (mkdir_err) throw mkdir_err;
-                        fs.writeFileSync(`${output_dir}/${z}/${x}/${y}.pbf`, pbfData);
-                    });
+                const tile = clusteredFeatures.getTile(z, x, y);
+                
+                //Do not serialize empty tiles.
+                if (!tile || !tile.features) {
+                    continue;
                 }
+
+                //Add the cluster expansion zoom to the properties of the feature if its a cluster.
+                for (const feature of tile.features) {
+                    if (feature.tags.cluster_id) {
+                        feature.tags['clusterExpansionZoom'] = clusteredFeatures.getClusterExpansionZoom(feature.tags.cluster_id);
+                    }
+                }
+
+                var pbfData = VTpbf.fromGeojsonVt({ 'clusterLayer': tile }, { extent: 4096 });
+                
+                fs.mkdirSync(`${output_dir}/${z}/${x}`, { recursive: true });
+                fs.writeFileSync(`${output_dir}/${z}/${x}/${y}.pbf`, pbfData);
             }
         }
-        console.timeEnd('Vector tiles creation')
-    });
+    }
+    console.timeEnd('Vector tiles creation');
 }
 
 // Read data from stdin before parsing the args
@@ -58,10 +64,11 @@ if(process.stdin.isTTY) {
 } else {
     var currentBuffer = "";
     var startParsing = false;
+
     process.stdin.on('readable', function() {
         var chunk = this.read(); 
-
         if (chunk !== null) {
+            //Parse the FeatureCollection input to extract all features
             chunk.forEach(element => {
                 currentBuffer += String.fromCharCode(element);
                 //Ignore the beggining of the FeatureCollection
@@ -78,9 +85,6 @@ if(process.stdin.isTTY) {
                             currentBuffer = currentBuffer.slice(-18); //Keep only {"type": "Feature"
                             feature = JSON.parse(strFeatureToParse);
                             features.push(feature);
-                            if (features.length % 5000 == 0) {                       
-                                console.log(features.length);
-                            }
                         }
                     }
                 }
@@ -88,6 +92,10 @@ if(process.stdin.isTTY) {
         }
     });
     process.stdin.on('end', function() {
+        //Parse the last feature
+        currentBuffer = currentBuffer.slice(0, -2); // remove the ]} at the end of the FeatureCollection JSON
+        feature = JSON.parse(currentBuffer);
+        features.push(feature);
         program.parse(process.argv); 
     });
 }

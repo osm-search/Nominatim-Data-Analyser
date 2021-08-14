@@ -20,8 +20,9 @@ QUERY:
               properties:
                 - way_id: !variable osm_id
       out:
-        VECTOR_TILE:
+        CLUSTERING_VECTOR_TILES:
           type: ClustersVtFormatter
+          radius: 350
           out:
             LAYER_FILE:
               type: OsmoscopeLayerFormatter

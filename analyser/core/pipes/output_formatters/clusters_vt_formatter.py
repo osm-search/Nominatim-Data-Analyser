@@ -11,14 +11,15 @@ import logging
 
 class ClustersVtFormatter(Pipe):
     """
-        Handles the creation of the GeoJSON file.
+        Handles the creation of the clusters and vector tiles.
     """
     def on_created(self) -> None:
         self.base_folder_path = Path(f'{Config.values["RulesFolderPath"]}/{self.exec_context.rule_name}/vector-tiles')
+        self.radius: int = self.extract_data('radius', default=300)
 
     def process(self, features: List[Feature]) -> str:
         """
-            Converts a GeoJSON file to Vector tiles by
+            Converts a list of GeoJSON features to clusters vector tiles by
             calling clustering-vt from the command line.
         """
         feature_collection = FeatureCollection(features)
@@ -28,7 +29,7 @@ class ClustersVtFormatter(Pipe):
         self.call_clustering_vt(self.base_folder_path, feature_collection)
 
         elapsed_mins, elapsed_secs = timer.get_elapsed()
-        self.log(f'Clustering vector tiles executed in {elapsed_mins} mins {elapsed_secs} secs')
+        self.log(f'Clustering and vector tiles creation executed in {elapsed_mins} mins {elapsed_secs} secs')
 
         web_path = f'{Config.values["WebPrefixPath"]}/{self.exec_context.rule_name}/vector-tiles/' + '{z}/{x}/{y}.pbf'
         return web_path
@@ -40,7 +41,7 @@ class ClustersVtFormatter(Pipe):
         """
         try:
             result = subprocess.run(
-                ['create-clusters', 'generate', '40', output_dir],
+                ['create-clusters', 'generate', str(self.radius), output_dir],
                 check=True,
                 input=dumps(feature_collection).encode(),
                 capture_output=True
