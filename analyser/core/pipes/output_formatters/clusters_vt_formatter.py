@@ -15,7 +15,7 @@ class ClustersVtFormatter(Pipe):
     """
     def on_created(self) -> None:
         self.base_folder_path = Path(f'{Config.values["RulesFolderPath"]}/{self.exec_context.rule_name}/vector-tiles')
-        self.radius: int = self.extract_data('radius', default=300)
+        self.radius: int = self.extract_data('radius', default=60)
 
     def process(self, features: List[Feature]) -> str:
         """

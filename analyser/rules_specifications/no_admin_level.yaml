@@ -27,5 +27,5 @@ QUERY:
               updates: Every evening
               doc:
                 description: Every relation with boundary=administrative should have an admin_level value set.
-                why_problem: Check the <a href="https://wiki.openstreetmap.org/wiki/Tag%3Aboundary%3Dadministrative" target="_blank">wiki page</a> for more informations.
+                why_problem: Check the [wiki page](https://wiki.openstreetmap.org/wiki/Tag%3Aboundary%3Dadministrative) for more informations.
                 how_to_fix: Add a tag 'admin_level' to the boundary relation.

@@ -1,5 +1,12 @@
 #! /usr/bin/env node
 
+/**
+ * This tool takes a GeoJSON FeatureCollection as input through stdin.
+ * It parses and extract the features and then generates clusters with SuperCluster: https://github.com/mapbox/supercluster
+ * All possible tiles (z, x, y) are extracted from the generated clusters index and are saved as pbf files under the
+ * output_dir given as parameter when executing the tool.
+ */
+
 const { program } = require('commander')
 const Supercluster = require('supercluster');
 const VTpbf = require('vt-pbf');
@@ -19,7 +26,7 @@ function generate(radius, output_dir) {
         throw new Error('A FeatureCollection should be sent through stdin.');
     }
 
-    const superCluster = new Supercluster({ radius: radius, maxZoom: MAX_ZOOM, extent: 4096 });
+    const superCluster = new Supercluster({ radius: radius, maxZoom: MAX_ZOOM, extent: 256 });
     console.time('Clusters generation');
     const clusteredFeatures = superCluster.load(features);
     features = [] //Clear features which are not used anymore.
@@ -48,7 +55,7 @@ function generate(radius, output_dir) {
                     }
                 }
 
-                var pbfData = VTpbf.fromGeojsonVt({ 'clusterLayer': tile }, { extent: 4096 });
+                var pbfData = VTpbf.fromGeojsonVt({ 'clusterLayer': tile }, { extent: 256 });
                 
                 fs.mkdirSync(`${output_dir}/${z}/${x}`, { recursive: true });
                 fs.writeFileSync(`${output_dir}/${z}/${x}/${y}.pbf`, pbfData);

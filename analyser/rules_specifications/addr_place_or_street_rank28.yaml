@@ -28,7 +28,7 @@ QUERY:
       out:
         CLUSTERING_VECTOR_TILES:
           type: ClustersVtFormatter
-          radius: 350
+          radius: 60
           out:
             LAYER_FILE:
               type: OsmoscopeLayerFormatter
