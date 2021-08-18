@@ -42,7 +42,11 @@ class VectorTileFormatter(Pipe):
             result = subprocess.run(
                 ['tippecanoe', f'--output-to-directory={output_dir}', 
                 '--force',
-                '-zg',
+                '--no-tile-compression',
+                '--no-tile-size-limit',
+                '--no-feature-limit',
+                '--buffer=120',
+                '--no-clipping',
                 '-r1',
                 '--cluster-distance=60'],
                 check=True,

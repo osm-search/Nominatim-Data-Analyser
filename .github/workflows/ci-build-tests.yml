@@ -28,4 +28,4 @@ jobs:
         sudo -u postgres createuser -s runner
     - name: Test with pytest
       run: |
-        pytest tests/analyser
+        pytest tests/

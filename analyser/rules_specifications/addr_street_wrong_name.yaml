@@ -31,9 +31,8 @@ QUERY:
                 - street_name: !variable street_name
                 - parent_name: !variable parent_name
       out:
-        CLUSTERING_VECTOR_TILES:
-          type: ClustersVtFormatter
-          radius: 60
+        VECTOR_TILES:
+          type: VectorTileFormatter
           out:
             LAYER_FILE:
               type: OsmoscopeLayerFormatter
