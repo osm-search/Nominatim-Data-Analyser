@@ -2,7 +2,6 @@
   "name": "visualizer",
   "version": "0.1.0",
   "private": true,
-  "homepage": "https://gsoc2021-qa.nominatim.org/supercluster",
   "dependencies": {
     "@testing-library/jest-dom": "^5.14.1",
     "@testing-library/react": "^11.2.7",
