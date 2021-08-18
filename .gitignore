@@ -129,7 +129,3 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
-
-#node modules and build folder
-node_modules/
-build/

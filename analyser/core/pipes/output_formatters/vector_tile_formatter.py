@@ -42,7 +42,9 @@ class VectorTileFormatter(Pipe):
             result = subprocess.run(
                 ['tippecanoe', f'--output-to-directory={output_dir}', 
                 '--force',
-                '-zg'],
+                '-zg',
+                '-r1',
+                '--cluster-distance=60'],
                 check=True,
                 input=dumps(feature_collection).encode(),
                 stdout=subprocess.PIPE
