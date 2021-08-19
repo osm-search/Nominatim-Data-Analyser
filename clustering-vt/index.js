@@ -11,8 +11,9 @@ const { program } = require('commander')
 const Supercluster = require('supercluster');
 const VTpbf = require('vt-pbf');
 const fs = require('fs');
+const { execSync } = require('child_process');
 
-const MAX_ZOOM = 13;
+const MAX_ZOOM = 5;
 
 var features = [];
 
@@ -56,9 +57,30 @@ function generate(radius, output_dir) {
                 }
 
                 var pbfData = VTpbf.fromGeojsonVt({ 'clusterLayer': tile }, { extent: 256 });
-                
-                fs.mkdirSync(`${output_dir}/${z}/${x}`, { recursive: true });
-                fs.writeFileSync(`${output_dir}/${z}/${x}/${y}.pbf`, pbfData);
+                // const vtFeatureCollection = {
+                //     'type': 'FeatureCollection',
+                //     'properties': {
+                //         'zoom': 0,
+                //         'x': x,
+                //         'y': y,
+                //         'compressed': false
+                //     },
+                //     'features': [
+                //         {
+                //             'type': 'FeatureCollection',
+                //             'properties': {
+                //                 'layer': 'clusterLayer',
+                //                 'version': 1,
+                //                 'extent': 256
+                //             },
+                //             'features': tile.features
+                //         }
+                //     ]
+                // }
+                execSync('python3 python-vt.py --output ' + `${output_dir}/${z}/${x}/${y}.pbf`, { cwd: __dirname, input: JSON.stringify(tile.features)});
+                //fs.mkdirSync(`${output_dir}/${z}/${x}`, { recursive: true });
+                fs.writeFileSync(`${output_dir}/${z}/${x}/${y}real.pbf`, pbfData);
+                //fs.writeFileSync(`${output_dir}/file.json`, JSON.stringify(tile.features));
             }
         }
     }

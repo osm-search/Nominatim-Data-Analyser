@@ -1,0 +1,15 @@
+{"type":"FeatureCollection","properties":{"zoom":0,"x":16050,"y":10399,"compressed":false},"features":[{"type":"FeatureCollection","properties":{"layer":"clusterLayer","version":1,"extent":256},"features":[{"type":1,"geometry":[[165,159]],"tags":{"relation_id":2726124},"id":735}]}]}import argparse
+import mapbox_vector_tile
+import sys
+
+# parser = argparse.ArgumentParser(prog='python-vt')
+
+# parser.add_argument('--execute', action='store_true', help='Executes all the QA rules')
+# parser.add_argument('--filter', metavar='<QA rules names>', nargs='+', help='Filters some QA rules so they are not executed.')
+# parser.add_argument('--output', metavar='<QA rule name>', action='store', type=str, help='Executes the given QA rule')
+
+# args = parser.parse_args()
+
+print('e')
+if not sys.stdin.isatty():
+    string = sys.stdin.read()
