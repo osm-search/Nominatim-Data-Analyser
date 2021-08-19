@@ -45,7 +45,7 @@ class VectorTileFormatter(Pipe):
                 '--no-tile-compression',
                 '--no-tile-size-limit',
                 '--no-feature-limit',
-                '--buffer=120',
+                '--buffer=125',
                 '--no-clipping',
                 '-r1',
                 '--cluster-distance=60'],
@@ -55,6 +55,6 @@ class VectorTileFormatter(Pipe):
             )
             self.log(result)
         except subprocess.TimeoutExpired as e:
-            self.log(logging.FATAL, e)
+            self.log(e, logging.FATAL)
         except subprocess.CalledProcessError as e:
-            self.log(logging.FATAL, e)
+            self.log(e, logging.FATAL)
