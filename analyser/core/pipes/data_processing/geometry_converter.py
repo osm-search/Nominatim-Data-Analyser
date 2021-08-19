@@ -15,6 +15,9 @@ class GeometryConverter(Pipe):
             Converts the given Well-Known Text representation of a
             geometry into a Geometry class based on the geometry_type.
         """
+        #If one data doesn't contain a geometry_holder it should be ignored.
+        if (data['geometry_holder'] is None):
+            return None
         module = importlib.import_module('analyser.core.model')
         dclass = getattr(module, self.geometry_type)
         convert = getattr(dclass, 'create_from_WKT_string')

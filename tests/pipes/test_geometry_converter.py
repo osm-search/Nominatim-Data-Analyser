@@ -15,3 +15,10 @@ def test_process_geometry_converter(geometry_converter: GeometryConverter) -> No
     """
     data_result = geometry_converter.process({'geometry_holder': 'POINT(10 15)'})
     assert data_result['geometry_holder'].coordinates[0] == 10 and data_result['geometry_holder'].coordinates[1] == 15
+
+def test_process_geometry_converter_none_geometry_holder(geometry_converter: GeometryConverter) -> None:
+    """
+        Test the process() method of the GeometryConverter with one data containing a None value for the geometry_holder.
+    """
+    data_result = geometry_converter.process({'geometry_holder': None})
+    assert data_result is None

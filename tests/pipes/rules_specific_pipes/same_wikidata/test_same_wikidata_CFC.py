@@ -13,8 +13,8 @@ def test_same_wikidata_CFC(same_wikidata_CFC: SameWikiDataFeatureConverter) -> N
     data = [
         {
             'wikidata': 'dumb_wikidata1',
-            'ids': ['ID1', 'ID2'],
-            'centroids': ['POINT(5 2)', 'POINT(8 3)']
+            'ids': ['ID1', 'ID2', 'ID3'],
+            'centroids': ['POINT(5 2)', 'POINT(8 3)', None]
         },
         {
             'wikidata': 'dumb_wikidata2',
@@ -26,24 +26,24 @@ def test_same_wikidata_CFC(same_wikidata_CFC: SameWikiDataFeatureConverter) -> N
         {
             "geometry": {"coordinates": [5.0, 2.0], "type": "Point"}, 
             "id": 0, 
-            "properties": {"n/@idNode in common 0": "ID2", "node_id": "ID1", "wikidata in common": "dumb_wikidata1"}, 
+            "properties": {"n/@idNode in common 1": "ID2", "n/@idNode in common 2": "ID3", "node_id": "ID1", "wikidata in common": "dumb_wikidata1"}, 
             "type": "Feature"
         }, 
         {
             "geometry": {"coordinates": [8.0, 3.0], "type": "Point"}, 
             "id": 1, 
-            "properties": {"n/@idNode in common 0": "ID1", "node_id": "ID2", "wikidata in common": "dumb_wikidata1"}, 
+            "properties": {"n/@idNode in common 1": "ID1", "n/@idNode in common 2": "ID3", "node_id": "ID2", "wikidata in common": "dumb_wikidata1"}, 
             "type": "Feature"
         }, 
         {
             "geometry": {"coordinates": [8.0, 10.0], "type": "Point"}, 
             "id": 2, 
-            "properties": {"n/@idNode in common 0": "ID5", "node_id": "ID4", "wikidata in common": "dumb_wikidata2"}, 
+            "properties": {"n/@idNode in common 1": "ID5", "node_id": "ID4", "wikidata in common": "dumb_wikidata2"}, 
             "type": "Feature"}, 
         {
             "geometry": {"coordinates": [80.0, 30.0], "type": "Point"}, 
             "id": 3, 
-            "properties": {"n/@idNode in common 0": "ID4", "node_id": "ID5", "wikidata in common": "dumb_wikidata2"}, 
+            "properties": {"n/@idNode in common 1": "ID4", "node_id": "ID5", "wikidata in common": "dumb_wikidata2"}, 
             "type": "Feature"
         }
     ]
