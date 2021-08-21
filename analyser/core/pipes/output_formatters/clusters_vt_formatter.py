@@ -8,6 +8,7 @@ from pathlib import Path
 from typing import List
 import subprocess
 import logging
+import shutil
 
 class ClustersVtFormatter(Pipe):
     """
@@ -21,10 +22,16 @@ class ClustersVtFormatter(Pipe):
         """
             Converts a list of GeoJSON features to clusters vector tiles by
             calling clustering-vt from the command line.
+
+            The outputfolder is initially deleted if it exists.
         """
         feature_collection = FeatureCollection(features)
         self.base_folder_path.mkdir(parents=True, exist_ok=True)
         timer = Timer().start_timer()
+
+        #Remove the output_dir with its content if it exists.
+        if self.base_folder_path.exists() and self.base_folder_path.is_dir():
+            shutil.rmtree(self.base_folder_path)
 
         self.call_clustering_vt(self.base_folder_path, feature_collection)
 
@@ -41,7 +48,7 @@ class ClustersVtFormatter(Pipe):
         """
         try:
             result = subprocess.run(
-                ['create-clusters', 'generate', str(self.radius), output_dir],
+                [f'{Path(__file__).parent.resolve()}/../../../../clustering-vt/build/clustering-vt', output_dir, str(self.radius)],
                 check=True,
                 input=dumps(feature_collection).encode(),
                 capture_output=True

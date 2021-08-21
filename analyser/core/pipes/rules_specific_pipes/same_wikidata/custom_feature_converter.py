@@ -17,6 +17,9 @@ class SameWikiDataFeatureConverter(Pipe):
         current_feature_id = 0
         for record in data:
             for i, centroid in enumerate(record['centroids']):
+                #If one centroid is None the data should be ignored.
+                if (centroid is None):
+                    continue
                 node = Node.create_from_WKT_string(centroid)
                 nodes_in_common = list()
                 #Fetch concerning node id and id of each other nodes with the
