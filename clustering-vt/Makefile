@@ -1,4 +1,4 @@
-CFLAGS += -I include --std=c++17 -pthread
+CFLAGS += -I include --std=c++17
 
 export MASON_DIR = $(shell pwd)/.mason
 export MASON = $(MASON_DIR)/mason

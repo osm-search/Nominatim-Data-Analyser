@@ -11,6 +11,16 @@ The repository containing the frontend of the tool can be found [there](https://
 
 ## Dependencies
 
+### Code
+
+Clone this repository by running:
+
+```
+git clone --recursive https://github.com/osm-search/Nominatim-Data-Analyser
+```
+
+### Python
+
 Install python (version 3.5+) and pip.
 
 Install the following python packages:
@@ -19,7 +29,20 @@ Install the following python packages:
 pip install pyyaml geojson wheel psycopg2
 ```
 
-You need [Tippecanoe](https://github.com/mapbox/tippecanoe) to be installed on your server. Installation instructions can be found [there](https://github.com/mapbox/tippecanoe#installation).
+### Clustering-vt
+
+If you didn't clone the repository with the ```--recursive``` parameter run:
+
+```
+git submodule update --recursive
+```
+
+To set up clustering-vt g++17 minimum is needed:
+
+```
+cd clustering-vt/
+make
+```
 
 ## Database
 
