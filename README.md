@@ -31,12 +31,6 @@ pip install pyyaml geojson wheel psycopg2
 
 ### Clustering-vt
 
-If you didn't clone the repository with the ```--recursive``` parameter run:
-
-```
-git submodule update --recursive
-```
-
 To set up clustering-vt g++17 minimum is needed:
 
 ```

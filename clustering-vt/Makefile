@@ -18,10 +18,13 @@ RAPIDJSON_DEP = `$(MASON) cflags $(RAPIDJSON)`
 default:
 	make build/clustering-vt
 
-$(MASON_DIR):
-	git submodule update --init $(MASON_DIR)
+$(MASON):
+ifeq (,$(wildcard $(MASON)))
+		rm -f -R ${MASON_DIR}
+		git submodule update --init --recursive --force
+endif
 
-mason_packages: $(MASON_DIR)
+mason_packages: $(MASON)
 	$(MASON) install $(SUPERCLUSTER)
 	$(MASON) install $(KDBUSH)
 	$(MASON) install $(RAPIDJSON)
