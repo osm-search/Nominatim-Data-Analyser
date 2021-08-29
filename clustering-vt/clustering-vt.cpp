@@ -16,7 +16,7 @@
 #include <iterator>
 #include <filesystem>
 
-const int maxZoom = 11;
+const int maxZoom = 13;
 
 struct properties_to_point_feature_builder {
     vtzero::point_feature_builder& featureBuilder;
@@ -71,6 +71,87 @@ void write_data_to_file(const std::string& buffer, const std::string& filename) 
     stream.close();
 }
 
+/**
+ * Recursively generates all tiles.
+ * 
+ * The firstTileX and firstTileY parameters are the coordinates of
+ * the top left tile of the group of subtiles that we want to generate. 
+ * See https://docs.microsoft.com/en-us/bingmaps/articles/bing-maps-tile-system
+ * 
+ * For each of the four tiles of the group, if a tile contains features and contains at least
+ * one cluster, all its child tiles (four tiles again) are generated for the next zoom level 
+ * by the same function recursively.
+ * 
+ * The recursion stop when we read the max zoom level + 1 or if there is no tiles left to generate because
+ * there are no clusters left.
+ */
+void generate_tiles(const short zoom, 
+                    const int firstTileX, 
+                    const int firstTileY, 
+                    const std::string& outputFolder, 
+                    mapbox::supercluster::Supercluster superclusterIndex) {
+    for (int x = firstTileX; x < firstTileX + 2; x++) {
+        for (int y = firstTileY; y < firstTileY + 2; y++) {
+            mapbox::feature::feature_collection<std::int16_t> tile = superclusterIndex.getTile(zoom, x, y);
+            if (tile.size() != 0) {
+                vtzero::tile_builder tileBuilder;
+                vtzero::layer_builder layerBuilder{tileBuilder, "clustersLayer", 1, 256};
+                vtzero::key_index<std::unordered_map> idx{layerBuilder};
+
+                bool hasCluster = false;
+
+                for (auto &f : tile) {
+                    const mapbox::geometry::point<std::int16_t> featurePoint = f.geometry.get<mapbox::geometry::point<std::int16_t>>();
+
+                    {
+                        vtzero::point_feature_builder featureBuilder{layerBuilder};
+                        featureBuilder.add_point(featurePoint.x, featurePoint.y);
+                        properties_to_point_feature_builder {featureBuilder}(f.properties);
+
+                        //Add the clusterExpansionZoom to a property if the feature is a cluster.
+                        const auto iterator = f.properties.find("cluster_id");
+                        if (iterator != f.properties.end() && iterator->second.get<uint64_t>()) {
+                            hasCluster = true;
+                            uint8_t expansionZoom = superclusterIndex.getClusterExpansionZoom(f.properties["cluster_id"].get<uint64_t>());
+                            featureBuilder.add_property("clusterExpansionZoom", expansionZoom);
+                        }
+
+                        featureBuilder.commit();
+                    }
+                }
+
+                const auto data = tileBuilder.serialize();
+
+                std::ostringstream folderPath;
+                folderPath << outputFolder << "/" << zoom << "/" << x;
+
+                std::ostringstream pbfPath;
+                pbfPath << outputFolder << "/" << zoom << "/" << x << "/" << y << ".pbf";
+
+                std::filesystem::create_directories(folderPath.str());
+                write_data_to_file(data, pbfPath.str());
+
+                //If there is features and clusters inside the tile, we need to also generate its child tiles.
+                //Generate until maxZoom + 1 to also add features where there is no clusters left.
+                if (hasCluster && zoom + 1 <= maxZoom + 1) {
+                    generate_tiles(
+                        zoom + 1,
+                        2*x, //To understand how we get the subtiles coordinates, check the "subtiles" section: https://wiki.openstreetmap.org/wiki/Slippy_map_tilenames
+                        2*y,  //We only call the generate_tiles for the subtile in the top left corner of the four subtiles.
+                        outputFolder,
+                        superclusterIndex
+                    );
+                }
+            }
+
+            //At zoom level = 0 there is only 1 one tile, so we should return after it has been generated.
+            if (zoom == 0 && firstTileX == 0 && firstTileY == 0) {
+                return;
+            }
+        }
+    }
+}
+
 int main(int argc, char *argv[]) {
     if (argc == 1) {
         std::cerr << "The output folder is missing!\n";
@@ -113,51 +194,7 @@ int main(int argc, char *argv[]) {
 
         timer("total supercluster time");
 
-       for (int z = 0; z <= maxZoom + 1; z++) {
-            const int zoomDimension = std::pow(2, z);
-            for (int x = 0; x < zoomDimension; x++) {
-                for (int y = 0; y < zoomDimension; y++) {
-
-                    mapbox::feature::feature_collection<std::int16_t> tile = index.getTile(z, x, y);
-
-                    if (tile.size() != 0) {
-                        vtzero::tile_builder tileBuilder;
-                        vtzero::layer_builder layerBuilder{tileBuilder, "clustersLayer", 1, 256};
-                        vtzero::key_index<std::unordered_map> idx{layerBuilder};
-
-                        for (auto &f : tile) {
-                            const mapbox::geometry::point<std::int16_t> featurePoint = f.geometry.get<mapbox::geometry::point<std::int16_t>>();
-
-                            {
-                                vtzero::point_feature_builder featureBuilder{layerBuilder};
-                                featureBuilder.add_point(featurePoint.x, featurePoint.y);
-                                properties_to_point_feature_builder {featureBuilder}(f.properties);
-
-                                //Add the clusterExpansionZoom to a property if the feature is a cluster.
-                                const auto iterator = f.properties.find("cluster_id");
-                                if (iterator != f.properties.end() && iterator->second.get<uint64_t>()) {
-                                    uint8_t expansionZoom = index.getClusterExpansionZoom(f.properties["cluster_id"].get<uint64_t>());
-                                    featureBuilder.add_property("clusterExpansionZoom", expansionZoom);
-                                }
-
-                                featureBuilder.commit();
-                            }
-                        }
-
-                        const auto data = tileBuilder.serialize();
-
-                        std::ostringstream folderPath;
-                        folderPath << argv[1] << "/" << z << "/" << x;
-
-                        std::ostringstream pbfPath;
-                        pbfPath << argv[1] << "/" << z << "/" << x << "/" << y << ".pbf";
-
-                        std::filesystem::create_directories(folderPath.str());
-                        write_data_to_file(data, pbfPath.str());
-                    }
-                }
-            }
-        }
+        generate_tiles(0, 0, 0, argv[1], index);
 
         timer("total tiles generation time");
     }else {
