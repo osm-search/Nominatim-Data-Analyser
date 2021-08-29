@@ -89,7 +89,7 @@ void generate_tiles(const short zoom,
                     const int firstTileX, 
                     const int firstTileY, 
                     const std::string& outputFolder, 
-                    mapbox::supercluster::Supercluster superclusterIndex) {
+                    mapbox::supercluster::Supercluster& superclusterIndex) {
     for (int x = firstTileX; x < firstTileX + 2; x++) {
         for (int y = firstTileY; y < firstTileY + 2; y++) {
             mapbox::feature::feature_collection<std::int16_t> tile = superclusterIndex.getTile(zoom, x, y);
