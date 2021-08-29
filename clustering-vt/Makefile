@@ -36,7 +36,7 @@ mason_packages: $(MASON)
 
 build/clustering-vt: clustering-vt.cpp mason_packages Makefile
 	mkdir -p build
-	$(CXX) clustering-vt.cpp $(CFLAGS) -O3 $(DEPS) $(RAPIDJSON_DEP) -o build/clustering-vt
+	$(CXX) clustering-vt.cpp $(CFLAGS) -O3 $(DEPS) $(RAPIDJSON_DEP) -lstdc++fs -o build/clustering-vt
 
 clean:
 	rm -rf build
