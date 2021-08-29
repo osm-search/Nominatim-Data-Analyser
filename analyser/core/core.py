@@ -5,7 +5,6 @@ from analyser.logger.timer import Timer
 from analyser.config import Config
 from pathlib import Path
 from typing import Dict
-import os
 
 class Core():
     """
@@ -22,10 +21,9 @@ class Core():
             If a filter is given as parameter, the rules inside this
             filter wont be executed.
         """
-        for rule in os.listdir(str(self.rules_path.resolve())):
-            file_without_ext = os.path.splitext(rule)[0]
-            if not filter or file_without_ext not in filter:
-                self.execute_one(file_without_ext)
+        for rule_file in self.rules_path.glob('*.yaml'):
+            if not filter or rule_file.stem not in filter:
+                self.execute_one(rule_file.stem)
 
     def execute_one(self, name: str) -> None:
         """
