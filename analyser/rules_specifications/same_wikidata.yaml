@@ -9,8 +9,9 @@ QUERY:
     CONVERTER:
       type: SameWikiDataFeatureConverter
       out:
-        VECTOR_TILES:
-          type: VectorTileFormatter
+        CLUSTERING_VECTOR_TILES:
+          type: ClustersVtFormatter
+          radius: 60
           out:
             LAYER_FILE:
               type: OsmoscopeLayerFormatter

@@ -69,7 +69,7 @@ void write_data_to_file(const std::string& buffer, const std::string& filename) 
     stream.close();
 }
 
-const int maxZoom = 11;
+const int maxZoom = 5;
 
 int main(int argc, char *argv[]) {
     if (argc == 1) {
