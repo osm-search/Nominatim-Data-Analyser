@@ -16,6 +16,8 @@
 #include <iterator>
 #include <filesystem>
 
+const int maxZoom = 11;
+
 struct properties_to_point_feature_builder {
     vtzero::point_feature_builder& featureBuilder;
     std::string key = "";
@@ -69,8 +71,6 @@ void write_data_to_file(const std::string& buffer, const std::string& filename) 
     stream.close();
 }
 
-const int maxZoom = 5;
-
 int main(int argc, char *argv[]) {
     if (argc == 1) {
         std::cerr << "The output folder is missing!\n";
@@ -113,11 +113,11 @@ int main(int argc, char *argv[]) {
 
         timer("total supercluster time");
 
-        for (int z = 0; z <= maxZoom + 1; z++) {
+       for (int z = 0; z <= maxZoom + 1; z++) {
             const int zoomDimension = std::pow(2, z);
             for (int x = 0; x < zoomDimension; x++) {
                 for (int y = 0; y < zoomDimension; y++) {
-                    
+
                     mapbox::feature::feature_collection<std::int16_t> tile = index.getTile(z, x, y);
 
                     if (tile.size() != 0) {
