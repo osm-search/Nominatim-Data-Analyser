@@ -3,7 +3,12 @@ QUERY:
   type: SQLProcessor
   query: >
     SELECT ST_AsText(centroid) AS geometry_holder, osm_id, osm_type, address, class, type
-    FROM placex WHERE (class != 'place' OR type != 'postcode') AND (address ? 'street' or address ? 'place' ) AND rank_address < 28;
+    FROM placex p WHERE (address ? 'street' or address ? 'place')
+                  AND rank_address < 28
+                  AND NOT (class in ('landuse')
+                           OR (country_code in ('ca', 'us') and class = 'leisure' and type = 'park'))
+                           AND NOT EXISTS (SELECT * FROM placex o
+                                           WHERE o.osm_id = p.osm_id and o.osm_type = p.osm_type and rank_address = 30);
   out:
     LOOP_PROCESSING:
       type: LoopDataProcessor
