@@ -2,7 +2,7 @@
 QUERY:
   type: SQLProcessor
   query: >
-    SELECT ST_AsText(centroid) AS geometry_holder, osm_id, osm_type, address
+    SELECT ST_AsText(centroid) AS geometry_holder, osm_id, osm_type, address, class, type
     FROM placex WHERE (class != 'place' OR type != 'postcode') AND (address ? 'street' or address ? 'place' ) AND rank_address < 28;
   out:
     LOOP_PROCESSING:
@@ -15,6 +15,8 @@ QUERY:
             FEATURE_CONVERTER:
               type: GeoJSONFeatureConverter
               properties:
+                - key: !variable class
+                - value: !variable type
                 - !switch
                     expression: osm_type
                     cases:
@@ -33,8 +35,11 @@ QUERY:
             LAYER_FILE:
               type: OsmoscopeLayerFormatter
               data_format_url: vector_tile_url
-              name: addr:place or addr:street rank < 28
+              name: addr:* tags on non-addressable places
               updates: Every evening
               doc:
-                description: addr:street or addr:place on objects with rank < 28.
-                how_to_fix: objects with rank < 28 can't have addr:street or addr:place.
+                description: addr:street or addr:place on objects that normally do not have an address.
+                how_to_fix: |
+                  Check if the object really should have an address. Remove all tags 'addr:*'.
+                  If this is not the case or convert them to a more appropriate tag,
+                  for example using 'contact:*' tags.
