@@ -1,4 +1,4 @@
-# Nominatim-Data-Analyser ![CI Build-Tests](https://github.com/AntoJvlt/Nominatim-Data-Analyser/actions/workflows/ci-build-tests.yml/badge.svg)
+# Nominatim-Data-Analyser ![CI Build-Tests](https://github.com/osm-search/Nominatim-Data-Analyser/actions/workflows/ci-build-tests.yml/badge.svg)
 
 The Nominatim Data Analyser is a QA tool used to scan the nominatim database and extract
 suspect data from it. These data are then presented to mappers through a visual interface so that they can correct them directly.
