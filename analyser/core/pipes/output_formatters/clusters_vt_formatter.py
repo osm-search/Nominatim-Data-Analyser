@@ -26,12 +26,7 @@ class ClustersVtFormatter(Pipe):
             The outputfolder is initially deleted if it exists.
         """
         feature_collection = FeatureCollection(features)
-        self.base_folder_path.mkdir(parents=True, exist_ok=True)
         timer = Timer().start_timer()
-
-        #Remove the output_dir with its content if it exists.
-        if self.base_folder_path.exists() and self.base_folder_path.is_dir():
-            shutil.rmtree(self.base_folder_path)
 
         self.call_clustering_vt(self.base_folder_path, feature_collection)
 
