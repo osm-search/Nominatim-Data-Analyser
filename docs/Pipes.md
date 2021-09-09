@@ -194,6 +194,7 @@ Generates a `Layer` file following the [Layer specification](https://github.com/
 
 **Optional fields**:
 
+* `id` -> Id of the layer, should be only composed of [a-z0-9_] and it should be unique among all the rules. Default value if not provided is the name of the YAML file of this rule.
 * `file_name` -> The file name for the generated file.
 * `updates` -> When are the data updated.
 * `doc` -> Dictionnary containing documentation of the layer:

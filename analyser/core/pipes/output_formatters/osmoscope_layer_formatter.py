@@ -12,7 +12,7 @@ class OsmoscopeLayerFormatter(Pipe):
         self.base_folder_path = Path(f'{Config.values["RulesFolderPath"]}/{self.exec_context.rule_name}/osmoscope-layer')
         self.file_name = self.extract_data('file_name', 'layer')
         self.data_format_url = self.extract_data('data_format_url', required=True)
-        self.data['id'] = 'SuspectsData'
+        self.data['id'] = self.extract_data('id', default=self.exec_context.rule_name)
 
     def process(self, data_source_path: str) -> None:
         """
