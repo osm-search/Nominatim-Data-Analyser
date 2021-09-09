@@ -8,7 +8,6 @@ from pathlib import Path
 from typing import List
 import subprocess
 import logging
-import shutil
 
 class ClustersVtFormatter(Pipe):
     """
@@ -45,10 +44,9 @@ class ClustersVtFormatter(Pipe):
             result = subprocess.run(
                 [f'{Path(__file__).parent.resolve()}/../../../../clustering-vt/build/clustering-vt', output_dir, str(self.radius)],
                 check=True,
-                input=dumps(feature_collection).encode(),
+                input=dumps(feature_collection, sort_keys=True).encode(),
                 capture_output=True
             )
-            print(result.stdout)
             self.log(result)
         except subprocess.TimeoutExpired as e:
             self.log(e, logging.FATAL)

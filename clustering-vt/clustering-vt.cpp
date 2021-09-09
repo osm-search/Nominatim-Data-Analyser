@@ -68,7 +68,6 @@ void write_data_to_file(const std::string& buffer, const std::string& filename) 
     }
 
     stream.exceptions(std::ifstream::failbit);
-
     stream.write(buffer.data(), static_cast<std::streamsize>(buffer.size()));
 
     stream.close();
@@ -185,7 +184,7 @@ void generate_tiles(const short zoom,
                             outputFolder,
                             superclusterIndex
                         );
-                    }else {      
+                    }else {
                         shouldDeleteChildTiles = true;
                     }
                 }
