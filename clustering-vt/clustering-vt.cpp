@@ -18,6 +18,9 @@
 
 const int maxZoom = 13;
 
+int amountRemoved = 0;
+int amountCreated = 0;
+
 struct properties_to_point_feature_builder {
     vtzero::point_feature_builder& featureBuilder;
     std::string key = "";
@@ -65,10 +68,49 @@ void write_data_to_file(const std::string& buffer, const std::string& filename) 
     }
 
     stream.exceptions(std::ifstream::failbit);
-
     stream.write(buffer.data(), static_cast<std::streamsize>(buffer.size()));
 
     stream.close();
+}
+
+bool try_delete_tile(const std::string& pbfPath) {
+    const bool removed = std::filesystem::remove(pbfPath);
+    if (removed) {
+        amountRemoved++;
+    }
+    return removed;
+}
+
+std::string getTileFolderPath(const std::string& outputFolder, const short zoom, const int x) {
+    std::ostringstream folderPathStream;
+    folderPathStream << outputFolder << "/" << zoom << "/" << x;
+    return folderPathStream.str();
+}
+
+std::string getTilePbfPath(const std::string& outputFolder, const short zoom, const int x, const int y) {
+    std::ostringstream pbfPathStream;
+    pbfPathStream << outputFolder << "/" << zoom << "/" << x << "/" << y << ".pbf";
+    return pbfPathStream.str();
+}
+
+void delete_sub_tiles(const short zoom, 
+                      const int firstTileX, 
+                      const int firstTileY, 
+                      const std::string& outputFolder) {
+    for (int x = firstTileX; x < firstTileX + 2; x++) {
+        for (int y = firstTileY; y < firstTileY + 2; y++) {
+            const std::string pbfPath = getTilePbfPath(outputFolder, zoom, x, y);
+
+            if (try_delete_tile(pbfPath) && zoom + 1 <= maxZoom + 1) {
+                delete_sub_tiles(
+                    zoom + 1,
+                    2*x, //To understand how we get the subtiles coordinates, check the "subtiles" section: https://wiki.openstreetmap.org/wiki/Slippy_map_tilenames
+                    2*y,  //We only call the generate_tiles for the subtile in the top left corner of the four subtiles.
+                    outputFolder
+                );
+            }
+        }
+    }
 }
 
 /**
@@ -93,6 +135,12 @@ void generate_tiles(const short zoom,
     for (int x = firstTileX; x < firstTileX + 2; x++) {
         for (int y = firstTileY; y < firstTileY + 2; y++) {
             mapbox::feature::feature_collection<std::int16_t> tile = superclusterIndex.getTile(zoom, x, y);
+            
+            bool shouldDeleteChildTiles = false;
+
+            const std::string folderPath = getTileFolderPath(outputFolder, zoom, x);
+            const std::string pbfPath = getTilePbfPath(outputFolder, zoom, x, y);
+
             if (tile.size() != 0) {
                 vtzero::tile_builder tileBuilder;
                 vtzero::layer_builder layerBuilder{tileBuilder, "clustersLayer", 1, 256};
@@ -102,7 +150,6 @@ void generate_tiles(const short zoom,
 
                 for (auto &f : tile) {
                     const mapbox::geometry::point<std::int16_t> featurePoint = f.geometry.get<mapbox::geometry::point<std::int16_t>>();
-
                     {
                         vtzero::point_feature_builder featureBuilder{layerBuilder};
                         featureBuilder.add_point(featurePoint.x, featurePoint.y);
@@ -122,26 +169,38 @@ void generate_tiles(const short zoom,
 
                 const auto data = tileBuilder.serialize();
 
-                std::ostringstream folderPath;
-                folderPath << outputFolder << "/" << zoom << "/" << x;
-
-                std::ostringstream pbfPath;
-                pbfPath << outputFolder << "/" << zoom << "/" << x << "/" << y << ".pbf";
-
-                std::filesystem::create_directories(folderPath.str());
-                write_data_to_file(data, pbfPath.str());
+                std::filesystem::create_directories(folderPath);
+                write_data_to_file(data, pbfPath);
+                amountCreated++;
 
                 //If there is features and clusters inside the tile, we need to also generate its child tiles.
                 //Generate until maxZoom + 1 to also add features where there is no clusters left.
-                if (hasCluster && zoom + 1 <= maxZoom + 1) {
-                    generate_tiles(
-                        zoom + 1,
-                        2*x, //To understand how we get the subtiles coordinates, check the "subtiles" section: https://wiki.openstreetmap.org/wiki/Slippy_map_tilenames
-                        2*y,  //We only call the generate_tiles for the subtile in the top left corner of the four subtiles.
-                        outputFolder,
-                        superclusterIndex
-                    );
+                if (zoom + 1 <= maxZoom + 1) {
+                    if (hasCluster) {
+                        generate_tiles(
+                            zoom + 1,
+                            2*x, //To understand how we get the subtiles coordinates, check the "subtiles" section: https://wiki.openstreetmap.org/wiki/Slippy_map_tilenames
+                            2*y,  //We only call the generate_tiles for the subtile in the top left corner of the four subtiles.
+                            outputFolder,
+                            superclusterIndex
+                        );
+                    }else {
+                        shouldDeleteChildTiles = true;
+                    }
                 }
+            }else {
+                if (try_delete_tile(pbfPath) && zoom + 1 <= maxZoom + 1) {
+                    shouldDeleteChildTiles = true;
+                }
+            }
+
+            if (shouldDeleteChildTiles) {
+                delete_sub_tiles(
+                    zoom + 1,
+                    2*x, //To understand how we get the subtiles coordinates, check the "subtiles" section: https://wiki.openstreetmap.org/wiki/Slippy_map_tilenames
+                    2*y,  //We only call the generate_tiles for the subtile in the top left corner of the four subtiles.
+                    outputFolder
+                );
             }
 
             //At zoom level = 0 there is only 1 one tile, so we should return after it has been generated.
@@ -197,6 +256,8 @@ int main(int argc, char *argv[]) {
         generate_tiles(0, 0, 0, argv[1], index);
 
         timer("total tiles generation time");
+        std::cout << "Tiles created: " << amountCreated << "\n";
+        std::cout << "Tiles removed: " << amountRemoved << "\n";
     }else {
         std::cerr << "GeoJSON is needed in stdin!\n";
         return 1;
