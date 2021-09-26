@@ -32,4 +32,4 @@ class Core():
         timer = Timer().start_timer()
         loaded_yaml: Dict = load_yaml_rule(name)
         PipelineAssembler(loaded_yaml, name).assemble().process_and_next()
-        LOG.info('Rule <%s> : The whole rule executed in %s mins %s secs', name, *timer.get_elapsed())
+        LOG.info('<%s> The whole rule executed in %s mins %s secs', name, *timer.get_elapsed())

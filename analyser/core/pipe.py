@@ -81,4 +81,4 @@ class Pipe(metaclass=ABCMeta):
             Log the given message with the given log level (default is INFO).
             The rule name is automatically prefixed to the log message.
         """
-        LOG.log(level, f'Rule <{self.exec_context.rule_name}> : {msg}')
+        LOG.log(level, f'<{self.exec_context.rule_name}> {msg}')
