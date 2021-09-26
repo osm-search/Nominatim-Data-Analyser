@@ -37,7 +37,7 @@ class PipelineAssembler():
             pipe = PipeFactory.assemble_pipe(node, self.exec_context)
             #Plug the new pipe to the current last pipe of the deque
             self.nodes_history[-1].plug_pipe(pipe)
-            LOG.info("Rule <%s> : Assembler -> %s plugged to %s", self.rule_name, pipe, self.nodes_history[-1])
+            LOG.info("<%s> Assembler -> %s plugged to %s", self.rule_name, pipe, self.nodes_history[-1])
             self.nodes_history.append(pipe)
 
     def on_backtrack(self) -> None:
