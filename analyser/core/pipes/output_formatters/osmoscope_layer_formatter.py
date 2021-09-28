@@ -1,4 +1,5 @@
 from __future__ import annotations
+from analyser.database.connection import connect
 from analyser.config import Config
 from analyser.core import Pipe
 from pathlib import Path
@@ -21,6 +22,7 @@ class OsmoscopeLayerFormatter(Pipe):
             It gets the GeoJSON url as data parameter and set it
             inside the layer file.
         """
+        self.add_last_update_date_layer_info()
         self.data[self.data_format_url] = data_source_path
         self.base_folder_path.mkdir(parents=True, exist_ok=True)
         full_path = self.base_folder_path / f'{self.file_name}.json'
@@ -30,6 +32,21 @@ class OsmoscopeLayerFormatter(Pipe):
         
         file_url = f'{Config.values["WebPrefixPath"]}/{self.exec_context.rule_name}/osmoscope-layer/{self.file_name}.json'
         self.add_layer_to_global_layers_file(file_url)
+        
+    def add_last_update_date_layer_info(self) -> None:
+        """
+            Add a "last_update" field to the layer information.
+            This field contains the date of the last database update. 
+            The date is extracted from the lastimportdate table of the database.
+        """
+        with connect(Config.values['Dsn']) as conn:
+            with conn.cursor() as cur:
+                cur.execute("SELECT to_char(lastimportdate, 'YYYY-MM-DD HH24:MI:SS TZ') FROM import_status")
+                last_update_date = cur.fetchone()
+        if last_update_date:
+            if not 'doc' in self.data:
+                self.data['doc'] = {}
+            self.data['doc']['last_update'] = last_update_date[0]
 
     def add_layer_to_global_layers_file(self, path: str) -> None:
         """
