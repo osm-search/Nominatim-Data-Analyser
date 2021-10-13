@@ -42,10 +42,18 @@ QUERY:
               name: addr:street wrong name
               updates: Every evening
               doc:
-                description: The addr:street tag does not match the name of the street the address was assigned to.
-                why_problem: The addr:street tag should have exactly the same name as the street.
+                description: |
+                  This view shows addresses where the addr:street tag differs
+                  from the name of the street that Nominatim has assigned to
+                  the address. There are two different reasons that this
+                  happens: 1) there is a typo in addr:street or the street name.
+                  2) The addr:street part does not refer to a street at all
+                     but to a place (village, hamlet, area).
+                why_problem: |
+                  1) The addr:street tag should have exactly the same name as the street.
+                  2) addr:street must only be used when the house number is attached
+                     to an existing street nearby.
                 how_to_fix: |
-                  Check if there is a typo in the addr:street tag or
-                  in the name of the street. Another possible cause for this
-                  error: the address is part of an associatedStreet relation
-                  that has an error.
+                  1) Check if there is a typo in the addr:street tag or
+                  in the name of the street and fix it.
+                  2) If addr:street refers to a place, use change it to addr:place.
