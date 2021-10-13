@@ -7,7 +7,8 @@ QUERY:
     SELECT * FROM placex WHERE rank_address=30 AND address ? 'street'
     ) AS px1 INNER JOIN placex AS px2 
     ON px1.parent_place_id = px2.place_id 
-    WHERE not px1.address->'street' = any(avals(px2.name));
+    WHERE not px1.address->'street' = any(avals(px2.name))
+          and not lower(px1.address->'street') = lower(px2.name->'name');
   out:
     LOOP_PROCESSING:
       type: LoopDataProcessor
