@@ -4,7 +4,8 @@ QUERY:
   query: >
     SELECT wikidata, ids, centroids FROM (SELECT extratags->'wikidata' as wikidata, array_agg(osm_id) as ids, 
     array_agg(ST_AsText(centroid)) as centroids, count(1) FROM placex
-    WHERE class='place' AND osm_type='N' AND extratags ? 'wikidata' GROUP BY wikidata) foo WHERE count > 1
+    WHERE class='place' and rank_search < 26
+          AND osm_type='N' AND extratags ? 'wikidata' GROUP BY wikidata) foo WHERE count > 1
   out:
     CONVERTER:
       type: SameWikiDataFeatureConverter
