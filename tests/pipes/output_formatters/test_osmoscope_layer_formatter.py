@@ -78,7 +78,7 @@ def test_process_osmoscope_layer_formatter(osmoscope_layer_formatter: OsmoscopeL
 def import_status_table(temp_db_cursor):
     temp_db_cursor.execute("""
         CREATE TABLE import_status (
-            lastimportdate timestamp with time zone NOT NULL
+            lastimportdate timestamptz
         );
 
         SET timezone = 'Europe/Paris';
