@@ -47,7 +47,7 @@ def test_add_last_update_date_layer_info(osmoscope_layer_formatter: OsmoscopeLay
                                          import_status_table) -> None:
     config.values['Dsn'] = dsn
     osmoscope_layer_formatter.add_last_update_date_layer_info();
-    assert osmoscope_layer_formatter.data['doc']['last_update'] == '2021-09-28 20:10:25 CEST' 
+    assert osmoscope_layer_formatter.data['doc']['last_update'] == '2021-09-28 20:10:25 UTC' 
                 
 def test_process_osmoscope_layer_formatter(osmoscope_layer_formatter: OsmoscopeLayerFormatter,
                                            tmp_path,
@@ -71,7 +71,7 @@ def test_process_osmoscope_layer_formatter(osmoscope_layer_formatter: OsmoscopeL
     assert data == {
         'id': 'test_id',
         'vector_tile_url': 'web_path',
-        'doc': {'last_update': '2021-09-28 20:10:25 CEST'}
+        'doc': {'last_update': '2021-09-28 20:10:25 UTC'}
     }
 
 @pytest.fixture
@@ -81,9 +81,6 @@ def import_status_table(temp_db_cursor):
             lastimportdate timestamptz
         );
 
-        SET timezone = 'Europe/Paris';
-
         INSERT INTO import_status (lastimportdate)
-        VALUES('2021-09-28 20:10:25');
-
+        VALUES('2021-09-28 20:10:25 UTC');
     """)

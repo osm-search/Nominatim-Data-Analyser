@@ -41,7 +41,7 @@ class OsmoscopeLayerFormatter(Pipe):
         """
         with connect(Config.values['Dsn']) as conn:
             with conn.cursor() as cur:
-                cur.execute("SELECT to_char(lastimportdate, 'YYYY-MM-DD HH24:MI:SS TZ') FROM import_status")
+                cur.execute("SELECT to_char(lastimportdate at time zone 'UTC', 'YYYY-MM-DD HH24:MI:SS UTC') FROM import_status")
                 last_update_date = cur.fetchone()
         if last_update_date:
             if not 'doc' in self.data:
