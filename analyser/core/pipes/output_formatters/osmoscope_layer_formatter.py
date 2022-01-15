@@ -55,7 +55,8 @@ class OsmoscopeLayerFormatter(Pipe):
         """
         folder_path = Path(f'{Config.values["RulesFolderPath"]}')
         folder_path.mkdir(parents=True, exist_ok=True)
-        full_path = folder_path / 'layers.json'
+        # Check if the folder_path has a parent because /layers.json will require sudo permissions.
+        full_path = folder_path / 'layers.json' if len(folder_path.parents) > 0 else Path('layers.json')
         full_path.touch(exist_ok=True)
 
         with open(full_path, 'r') as json_file:
