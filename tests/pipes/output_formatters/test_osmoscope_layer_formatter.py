@@ -1,5 +1,7 @@
+from tests.conftest import temp_db_cursor
 from analyser.config import Config
 from analyser.core.pipes import OsmoscopeLayerFormatter
+import pytest
 import json
 
 def test_add_layer_to_global_layers_file_doesnt_exist(osmoscope_layer_formatter: OsmoscopeLayerFormatter,
@@ -39,12 +41,24 @@ def test_add_layer_to_global_layers_file_exist(osmoscope_layer_formatter: Osmosc
         data = json.load(file)
     assert data['layers'] == ['layer_already_in', 'test/test_layer_path.json']
 
+def test_add_last_update_date_layer_info(osmoscope_layer_formatter: OsmoscopeLayerFormatter,
+                                         config: Config,
+                                         dsn,
+                                         import_status_table) -> None:
+    config.values['Dsn'] = dsn
+    osmoscope_layer_formatter.add_last_update_date_layer_info();
+    assert osmoscope_layer_formatter.data['doc']['last_update'] == '2021-09-28 20:10:25 UTC' 
+                
 def test_process_osmoscope_layer_formatter(osmoscope_layer_formatter: OsmoscopeLayerFormatter,
-                                           tmp_path) -> None:
+                                           tmp_path,
+                                           dsn,
+                                           config: Config,
+                                           import_status_table) -> None:
     """
         Test the process() method.
         The layer file should be created with the right data inside.
     """
+    config.values['Dsn'] = dsn
     osmoscope_layer_formatter.base_folder_path = tmp_path / 'test_folder'
     osmoscope_layer_formatter.data = dict()
     osmoscope_layer_formatter.data['id'] = 'test_id'
@@ -56,5 +70,17 @@ def test_process_osmoscope_layer_formatter(osmoscope_layer_formatter: OsmoscopeL
         data = json.load(file)
     assert data == {
         'id': 'test_id',
-        'vector_tile_url': 'web_path'
+        'vector_tile_url': 'web_path',
+        'doc': {'last_update': '2021-09-28 20:10:25 UTC'}
     }
+
+@pytest.fixture
+def import_status_table(temp_db_cursor):
+    temp_db_cursor.execute("""
+        CREATE TABLE import_status (
+            lastimportdate timestamptz
+        );
+
+        INSERT INTO import_status (lastimportdate)
+        VALUES('2021-09-28 20:10:25 UTC');
+    """)
