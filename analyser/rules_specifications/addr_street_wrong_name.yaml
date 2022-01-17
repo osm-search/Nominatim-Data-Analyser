@@ -39,16 +39,17 @@ QUERY:
             LAYER_FILE:
               type: OsmoscopeLayerFormatter
               data_format_url: vector_tile_url
-              name: addr:street wrong name
+              name: addr:street wrong name or missing road
               updates: Every evening
               doc:
                 description: |
                   This view shows addresses where the addr:street tag differs
                   from the name of the street that Nominatim has assigned to
-                  the address. There are two different reasons that this
+                  the address. There are three different reasons that this
                   happens: 1) there is a typo in addr:street or the street name.
                   2) The addr:street part does not refer to a street at all
                      but to a place (village, hamlet, area).
+                  3) Road is not mapped yet near address (or tts name is missing) 
                 why_problem: |
                   1) The addr:street tag should have exactly the same name as the street.
                   2) addr:street must only be used when the house number is attached
@@ -57,3 +58,4 @@ QUERY:
                   1) Check if there is a typo in the addr:street tag or
                   in the name of the street and fix it.
                   2) If addr:street refers to a place, use change it to addr:place.
+                  3) If road is missing, map it
