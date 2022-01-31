@@ -1,0 +1,62 @@
+---
+QUERY:
+  type: SQLProcessor
+  query: >
+      SELECT DISTINCT ON (osm_id) * FROM
+      (SELECT 'failed to parse house numbers' as problem, osm_id,
+               address->'interpolation' as interpolation,
+               ST_AsText(ST_Centroid(linegeo)) as geometry_holder
+         FROM location_property_osmline WHERE startnumber is null and indexed_status = 0
+       UNION ALL
+       SELECT 'bad addr:interpolation tag' as problem, osm_id,
+              address->'interpolation' as interpolation,
+              ST_AsText(ST_Centroid(geometry)) as geometry_holder
+         FROM place
+         WHERE address ? 'interpolation'
+               and not (address->'interpolation' in ('even', 'odd', 'all', 'alphabetic')
+                        or address->'interpolation' similar to '[1-9]')) u
+  out:
+    LOOP_PROCESSING:
+      type: LoopDataProcessor
+      sub_pipeline: !sub-pipeline
+        GEOMETRY_CONVERTER:
+          type: GeometryConverter
+          geometry_type: Node
+          out:
+            FEATURE_CONVERTER:
+              type: GeoJSONFeatureConverter
+              properties:
+                - problem: !variable problem
+                - way_id: !variable osm_id
+                - interpolation_tag: !variable interpolation
+      out:
+        CLUSTERING_VECTOR_TILES:
+          type: ClustersVtFormatter
+          radius: 60
+          out:
+            LAYER_FILE:
+              type: OsmoscopeLayerFormatter
+              data_format_url: vector_tile_url
+              name: Bad interpolation line
+              updates: Every evening
+              doc:
+                description: |
+                  This view shows address interpolation lines that are
+                  problematic. Either the addr:interpolation tag doesn't have
+                  one of the known values: all, even, odd, alphabetic or a
+                  number. Or the address nodes on the line that describe the
+                  start and end values to use for the interpolation cannot be
+                  parsed.
+                why_problem: |
+                  To process an interpolation, Nominatim needs numerical
+                  housenumber as the start and end value and it needs to know
+                  how to fill the space between the numbers (with odd, even
+                  or any number). The view also shows unnecessary interpolations.
+                  These are interpolation without a missing number. For example
+                  an interpolation starting at 1 and ending at 3 for odd numbers
+                  would never produce additional number between 1 and 3.
+                how_to_fix: |
+                  Check that the addr:interpolation tag and change it to one
+                  of the legal values, if it is wrong. Check that the
+                  interpolation line has a node with addr:housenumber at the
+                  beginning and end and check that the values are senisble.
