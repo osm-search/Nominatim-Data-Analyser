@@ -39,7 +39,7 @@ QUERY:
             LAYER_FILE:
               type: OsmoscopeLayerFormatter
               data_format_url: vector_tile_url
-              name: addr:street wrong name or missing road
+              name: Suspicious addr:street tag
               updates: Every evening
               doc:
                 description: |
