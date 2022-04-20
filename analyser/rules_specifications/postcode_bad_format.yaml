@@ -224,4 +224,4 @@ QUERY:
                   Nominatim thinks the object belongs to.
 
                   A postcode tag with multiple postcodes should usually be removed
-                  an the smaller areas with only one postcodes tagged instead.
+                  and smaller areas covering only one postcodes tagged instead.
