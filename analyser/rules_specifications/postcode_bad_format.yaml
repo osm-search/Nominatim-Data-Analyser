@@ -210,11 +210,18 @@ QUERY:
                 description: |
                   This view shows postcode tags (addr:postcode, postal_code etc.)
                   which are not formatted according to the official postcode
-                  standards of the country.
+                  standards of the country. Sometimes a postcode tag is
+                  highlighted because it contains multiple postcodes.
                 why_problem: |
-                  Postcodes in a different format are usually a typo.
+                  Postcodes in a different format are usually a typo. A postcode
+                  tag with multiple postcodes is rarely useful to a data user
+                  because they have no information where the postcodes belong
+                  to.
                 how_to_fix: |
                   The 'format' field gives you a hint about how the expected
                   postcode should look like. 'd' means a digit (0-9), 'l' means
                   an upper-case letter (A-Z). 'country' tells you what country
                   Nominatim thinks the object belongs to.
+
+                  A postcode tag with multiple postcodes should usually be removed
+                  an the smaller areas with only one postcodes tagged instead.
