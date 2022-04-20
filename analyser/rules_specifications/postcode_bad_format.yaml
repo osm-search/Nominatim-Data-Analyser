@@ -184,11 +184,18 @@ QUERY:
             FEATURE_CONVERTER:
               type: GeoJSONFeatureConverter
               properties:
-                - osm_type: !variable osm_type
-                - osm_id: !variable osm_id
+                - !switch
+                  expression: osm_type
+                  cases:
+                    'N':
+                      node_id: !variable osm_id
+                    'W':
+                      way_id: !variable osm_id
+                    'R':
+                      relation_id: !variable osm_id
                 - postcode: !variable postcode
-                - format: !variable format
                 - country: !variable country_code
+                - format: !variable format
       out:
         CLUSTERING_VECTOR_TILES:
           type: ClustersVtFormatter
