@@ -170,7 +170,7 @@ QUERY:
            address, address->'postcode' as postcode, postcode_formats.format,
            upper(placex.country_code) as country_code
            FROM placex, postcode_formats
-           WHERE address ? 'postcode'
+           WHERE address ? 'postcode' and address->'postcode' not similar to '%[,;]%'
                  and placex.country_code = postcode_formats.country_code
                  and address->'postcode' !~ ('^' || postcode_formats.expr || '$')
   out:
@@ -210,18 +210,11 @@ QUERY:
                 description: |
                   This view shows postcode tags (addr:postcode, postal_code etc.)
                   which are not formatted according to the official postcode
-                  standards of the country. Sometimes a postcode tag is
-                  highlighted because it contains multiple postcodes.
+                  standards of the country.
                 why_problem: |
-                  Postcodes in a different format are usually a typo. A postcode
-                  tag with multiple postcodes is rarely useful to a data user
-                  because they have no information where the postcodes belong
-                  to.
+                  Postcodes in a different format are usually a typo.
                 how_to_fix: |
                   The 'format' field gives you a hint about how the expected
                   postcode should look like. 'd' means a digit (0-9), 'l' means
                   an upper-case letter (A-Z). 'country' tells you what country
                   Nominatim thinks the object belongs to.
-
-                  A postcode tag with multiple postcodes should usually be removed
-                  and smaller areas covering only one postcodes tagged instead.
