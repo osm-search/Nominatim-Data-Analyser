@@ -171,6 +171,7 @@ QUERY:
            upper(placex.country_code) as country_code
            FROM placex, postcode_formats
            WHERE address ? 'postcode' and address->'postcode' not similar to '%[,;]%'
+                 and not address ? '_inherited'
                  and placex.country_code = postcode_formats.country_code
                  and address->'postcode' !~ ('^' || postcode_formats.expr || '$')
   out:
