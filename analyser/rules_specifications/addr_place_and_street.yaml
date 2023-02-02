@@ -3,7 +3,8 @@ QUERY:
   type: SQLProcessor
   query: >
     SELECT ST_AsText(centroid) AS geometry_holder, osm_id, osm_type, address FROM placex 
-    WHERE address ? 'place' AND address ? 'street' AND NOT address ? 'conscriptionnumber';
+    WHERE not address ? '_inherited'
+          AND address ? 'place' AND address ? 'street' AND NOT address ? 'conscriptionnumber';
   out:
     LOOP_PROCESSING:
       type: LoopDataProcessor

@@ -4,7 +4,8 @@ QUERY:
   query: >
     SELECT ST_AsText(px1.centroid) AS geometry_holder, px1.osm_id, px1.osm_type, px1.address->'street' as street_name,
     px2.name->'name' as parent_name FROM (
-    SELECT * FROM placex WHERE rank_address=30 AND address ? 'street'
+    SELECT * FROM placex
+      WHERE rank_address=30 AND address ? 'street' AND not address ? '_inherited'
     ) AS px1 INNER JOIN placex AS px2 
     ON px1.parent_place_id = px2.place_id
     WHERE px1.address->'street' not in (SELECT regexp_split_to_table(svals(px2.name), '\s*;\s*'))
