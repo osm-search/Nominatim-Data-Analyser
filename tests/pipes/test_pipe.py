@@ -1,8 +1,8 @@
 
-from analyser.core.exceptions.yaml_syntax_exception import YAMLSyntaxException
-from analyser.core.pipes.data_processing import GeometryConverter
-from analyser.core.qa_rule import ExecutionContext
-from analyser.core.pipes import FillingPipe
+from nominatim_data_analyser.core.exceptions.yaml_syntax_exception import YAMLSyntaxException
+from nominatim_data_analyser.core.pipes.data_processing import GeometryConverter
+from nominatim_data_analyser.core.qa_rule import ExecutionContext
+from nominatim_data_analyser.core.pipes import FillingPipe
 import logging
 import pytest
 
@@ -21,7 +21,7 @@ def test_process_and_next(filling_pipe: FillingPipe, execution_context: Executio
     def callback(self, data = None):
         nonlocal x
         x += 1
-    monkeypatch.setattr('analyser.core.pipes.filling_pipe.FillingPipe.process',
+    monkeypatch.setattr('nominatim_data_analyser.core.pipes.filling_pipe.FillingPipe.process',
                         callback)
     filling_pipe.process_and_next()
     assert x == 2

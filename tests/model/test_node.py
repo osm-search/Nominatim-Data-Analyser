@@ -1,4 +1,4 @@
-from analyser.core.model.node import Node
+from nominatim_data_analyser.core.model.node import Node
 from geojson.feature import Feature
 
 

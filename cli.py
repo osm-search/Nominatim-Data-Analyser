@@ -4,6 +4,6 @@ from pathlib import Path
 
 sys.path.insert(1, str(Path(__file__, '..', 'src').resolve()))
 
-from analyser.cli import cli
+from nominatim_data_analyser.cli import cli
 
 sys.exit(cli())

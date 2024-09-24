@@ -1,9 +1,9 @@
-from analyser.core.pipes.data_fetching.sql_processor import SQLProcessor
-from analyser.core.pipes.output_formatters import GeoJSONFeatureConverter
-from analyser.core.pipes.data_processing import GeometryConverter
-from analyser.core.pipes.filling_pipe import FillingPipe
-from analyser.core.assembler import PipelineAssembler
-from analyser.core.pipe import Pipe
+from nominatim_data_analyser.core.pipes.data_fetching.sql_processor import SQLProcessor
+from nominatim_data_analyser.core.pipes.output_formatters import GeoJSONFeatureConverter
+from nominatim_data_analyser.core.pipes.data_processing import GeometryConverter
+from nominatim_data_analyser.core.pipes.filling_pipe import FillingPipe
+from nominatim_data_analyser.core.assembler import PipelineAssembler
+from nominatim_data_analyser.core.pipe import Pipe
 import pytest
 
 def test_on_new_node(pipeline_assembler: PipelineAssembler, filling_pipe: Pipe) -> None:

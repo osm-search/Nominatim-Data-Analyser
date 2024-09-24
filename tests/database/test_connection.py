@@ -1,4 +1,4 @@
-from analyser.database.connection import connect
+from nominatim_data_analyser.database.connection import connect
 
 
 def test_connect(dsn) -> None:

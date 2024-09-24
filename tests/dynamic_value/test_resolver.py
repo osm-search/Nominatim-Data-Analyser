@@ -1,6 +1,6 @@
 import pytest
-from analyser.core.dynamic_value import Variable
-from analyser.core.dynamic_value.resolver import (_contains_dynamic_value,
+from nominatim_data_analyser.core.dynamic_value import Variable
+from nominatim_data_analyser.core.dynamic_value.resolver import (_contains_dynamic_value,
                                                   _is_dynamic_value,
                                                   _resolve_if_resolvable,
                                                   is_resolvable, resolve_all,

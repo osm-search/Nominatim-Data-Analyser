@@ -1,4 +1,4 @@
-from analyser.core.pipes.data_processing import GeometryConverter
+from nominatim_data_analyser.core.pipes.data_processing import GeometryConverter
 
 def test_on_created_geometry_converter(geometry_converter: GeometryConverter) -> None:
     """

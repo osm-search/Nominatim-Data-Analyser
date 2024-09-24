@@ -1,12 +1,12 @@
-from analyser.core.dynamic_value.variable import Variable
-from analyser.core.dynamic_value.switch import Switch
+from nominatim_data_analyser.core.dynamic_value.variable import Variable
+from nominatim_data_analyser.core.dynamic_value.switch import Switch
 from pathlib import Path
 
-import analyser.core.yaml_logic.yaml_loader as yaml_loader
+import nominatim_data_analyser.core.yaml_logic.yaml_loader as yaml_loader
 import pytest
 import yaml
-from analyser.core.yaml_logic.yaml_loader import load_yaml_rule
-from analyser.core import Pipe
+from nominatim_data_analyser.core.yaml_logic.yaml_loader import load_yaml_rule
+from nominatim_data_analyser.core import Pipe
 
 def test_load_yaml_rule(yaml_path) -> None:
     """

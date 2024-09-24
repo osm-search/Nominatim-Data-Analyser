@@ -6,17 +6,17 @@ import pytest
 # always test against source
 sys.path.insert(1, str(Path(__file__, '..', '..', 'src').resolve()))
 
-from analyser.config import Config
-from analyser.core.pipes import FillingPipe
-from analyser.core.pipes.data_fetching.sql_processor import SQLProcessor
-from analyser.core.pipes.data_processing import (GeometryConverter,
+from nominatim_data_analyser.config import Config
+from nominatim_data_analyser.core.pipes import FillingPipe
+from nominatim_data_analyser.core.pipes.data_fetching.sql_processor import SQLProcessor
+from nominatim_data_analyser.core.pipes.data_processing import (GeometryConverter,
                                                  LoopDataProcessor)
-from analyser.core.pipes.output_formatters import (GeoJSONFeatureConverter,
+from nominatim_data_analyser.core.pipes.output_formatters import (GeoJSONFeatureConverter,
                                                    GeoJSONFormatter,
                                                    OsmoscopeLayerFormatter,
                                                    VectorTileFormatter)
-from analyser.core.qa_rule import ExecutionContext
-from analyser.database.connection import connect
+from nominatim_data_analyser.core.qa_rule import ExecutionContext
+from nominatim_data_analyser.database.connection import connect
 from psycopg2._psycopg import connection, cursor
 
 

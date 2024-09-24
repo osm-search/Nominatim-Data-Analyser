@@ -1,6 +1,6 @@
-from analyser.core.pipes.data_processing.geometry_converter import GeometryConverter
-from analyser.core.assembler.pipe_factory import PipeFactory
-from analyser.core.exceptions import YAMLSyntaxException
+from nominatim_data_analyser.core.pipes.data_processing.geometry_converter import GeometryConverter
+from nominatim_data_analyser.core.assembler.pipe_factory import PipeFactory
+from nominatim_data_analyser.core.exceptions import YAMLSyntaxException
 import pytest
 
 def test_assemble_pipe_ok() -> None:
