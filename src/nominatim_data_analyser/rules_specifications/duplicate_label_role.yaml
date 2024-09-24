@@ -4,7 +4,7 @@ QUERY:
   query: >
     SELECT ST_AsText(centroid) AS geometry_holder, osm_id, osm_type, members FROM placex AS px JOIN planet_osm_rels AS por ON px.osm_id=por.id  
     WHERE class='boundary' AND type='administrative' AND
-    cardinality(array_positions(members, 'label')) >= 2;
+    jsonb_array_length(jsonb_path_query_array(members, '$[*].role ? (@ == "label")')) >= 2;
   out:
     LOOP_PROCESSING:
       type: LoopDataProcessor
