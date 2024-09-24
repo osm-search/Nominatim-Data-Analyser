@@ -62,5 +62,8 @@ package-dir = {"" = "src"}
 [tool.setuptools.package-data]
 analyser = ["rules_specifications/*.yaml"]
 
+[project.scripts]
+nominatim-data-analyser = "analyser.cli:cli"
+
 [tool.pytest.ini_options]
 testpaths = ["tests"]
