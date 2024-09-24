@@ -1,0 +1,66 @@
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "nominatim-data-analyser"
+authors = [
+    {name = "Antonin Jolivat", email = "antonin.jolivat@gmail.com"}
+]
+maintainers = [
+    {name = "Sarah Hoffmann", email = "lonvia@denofr.de"}
+]
+description = "QA Tool for Nominatim. Helps to improve the OpenStreetMap data quality and therefore the Nominatim search results."
+readme = "README.md"
+requires-python = ">=3.6"
+license = {text = "GPL-2.0-or-later"}
+classifiers = [
+    "Programming Language :: Python :: 3",
+]
+dependencies = [
+    "pyYAML==5.3.1",
+    "geojson==2.5.0",
+    "psycopg2==2.8.4"
+]
+version = "0.1.0"
+
+[project.urls]
+Homepage = "https://github.com/osm-search/Nominatim-Data-Analyser"
+
+[project.optional-dependencies]
+tests = [
+    'pytest',
+]
+
+[tool.setuptools]
+packages = ["analyser",
+            "analyser.database",
+            "analyser.config",
+            "analyser.logger",
+            "analyser.core",
+            "analyser.core.exceptions",
+            "analyser.core.yaml_logic",
+            "analyser.core.dynamic_value",
+            "analyser.core.deconstructor",
+            "analyser.core.model",
+            "analyser.core.pipes",
+            "analyser.core.pipes.rules_specific_pipes",
+            "analyser.core.pipes.rules_specific_pipes.place_nodes_close",
+            "analyser.core.pipes.rules_specific_pipes.addresses_pipes",
+            "analyser.core.pipes.rules_specific_pipes.addr_house_number_no_digit",
+            "analyser.core.pipes.rules_specific_pipes.duplicate_label_role",
+            "analyser.core.pipes.rules_specific_pipes.same_wikidata",
+            "analyser.core.pipes.output_formatters",
+            "analyser.core.pipes.data_processing",
+            "analyser.core.pipes.data_fetching",
+            "analyser.core.qa_rule",
+            "analyser.core.assembler",
+]
+
+package-dir = {"" = "src"}
+
+[tool.setuptools.package-data]
+analyser = ["rules_specifications/*.yaml"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

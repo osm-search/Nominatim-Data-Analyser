@@ -1,5 +1,11 @@
+import sys
+from pathlib import Path
 import psycopg2
 import pytest
+
+# always test against source
+sys.path.insert(1, str(Path(__file__, '..', '..', 'src').resolve()))
+
 from analyser.config import Config
 from analyser.core.pipes import FillingPipe
 from analyser.core.pipes.data_fetching.sql_processor import SQLProcessor

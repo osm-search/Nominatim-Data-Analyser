@@ -1,4 +1,6 @@
 *.pyc
+src/nominatim_data_analyser.egg-info
+dist
 
 analyser/config/config.yaml
 
