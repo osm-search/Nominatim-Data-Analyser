@@ -3,7 +3,3 @@ src/nominatim_data_analyser.egg-info
 dist
 
 src/nominatim_data_analyser/config/config.yaml
-
-.mason
-mason_packages
-build
