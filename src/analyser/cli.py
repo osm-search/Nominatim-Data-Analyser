@@ -1,4 +1,4 @@
-from analyser.core.core import Core
+from .core.core import Core
 import argparse
 
 def cli():

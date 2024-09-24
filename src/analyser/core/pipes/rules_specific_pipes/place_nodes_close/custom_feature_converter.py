@@ -1,4 +1,4 @@
-from analyser.core.pipe import Pipe
+from .....core.pipe import Pipe
 from geojson.feature import Feature
 from typing import Dict
 

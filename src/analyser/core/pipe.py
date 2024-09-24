@@ -1,13 +1,13 @@
 from __future__ import annotations
 from abc import ABCMeta, abstractmethod
-from analyser.logger.logger import LOG
-from analyser.core.exceptions import YAMLSyntaxException
+from ..logger.logger import LOG
+from .exceptions import YAMLSyntaxException
 import typing
 import uuid
 import logging
 
 if typing.TYPE_CHECKING: # pragma: no cover
-    from analyser.core.qa_rule import ExecutionContext
+    from .qa_rule import ExecutionContext
 
 class Pipe(metaclass=ABCMeta):
     """

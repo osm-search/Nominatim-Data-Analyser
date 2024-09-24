@@ -3,10 +3,10 @@ from __future__ import annotations
 from typing import Dict, List
 
 import psycopg2.extras
-from analyser.config.config import Config
-from analyser.core import Pipe
-from analyser.database.connection import connect
-from analyser.logger.timer import Timer
+from ....config.config import Config
+from ... import Pipe
+from ....database.connection import connect
+from ....logger.timer import Timer
 from psycopg2._psycopg import connection
 
 

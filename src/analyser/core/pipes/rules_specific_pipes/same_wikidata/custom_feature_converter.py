@@ -1,6 +1,6 @@
-from analyser.core.pipe import Pipe
+from ....pipe import Pipe
 from typing import List
-from analyser.core.model.node import Node
+from ....model.node import Node
 from geojson import Feature
 
 class SameWikiDataFeatureConverter(Pipe):

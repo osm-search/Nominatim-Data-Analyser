@@ -1,4 +1,4 @@
-from analyser.logger.logger import LOG
+from ..logger.logger import LOG
 from pathlib import Path
 import yaml
 

@@ -1,8 +1,8 @@
-from analyser.core.yaml_logic.yaml_loader import load_yaml_rule
-from analyser.core.assembler.pipeline_assembler import PipelineAssembler
-from analyser.logger.logger import LOG
-from analyser.logger.timer import Timer
-from analyser.config import Config
+from .yaml_logic.yaml_loader import load_yaml_rule
+from .assembler.pipeline_assembler import PipelineAssembler
+from ..logger.logger import LOG
+from ..logger.timer import Timer
+from ..config import Config
 from pathlib import Path
 from typing import Dict
 

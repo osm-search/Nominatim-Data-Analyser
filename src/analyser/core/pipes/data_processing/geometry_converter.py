@@ -1,7 +1,7 @@
 from __future__ import annotations
-import importlib
 from typing import Dict
-from analyser.core import Pipe
+from ... import Pipe
+from ... import model as core_model
 
 class GeometryConverter(Pipe):
     """
@@ -18,8 +18,7 @@ class GeometryConverter(Pipe):
         #If one data doesn't contain a geometry_holder it should be ignored.
         if (data['geometry_holder'] is None):
             return None
-        module = importlib.import_module('analyser.core.model')
-        dclass = getattr(module, self.geometry_type)
+        dclass = getattr(core_model, self.geometry_type)
         convert = getattr(dclass, 'create_from_WKT_string')
         data['geometry_holder'] = convert(data['geometry_holder'])
         return data

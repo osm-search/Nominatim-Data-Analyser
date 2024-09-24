@@ -1,4 +1,4 @@
-from analyser.core.pipe import Pipe
+from ....pipe import Pipe
 from typing import Dict
 import re
 

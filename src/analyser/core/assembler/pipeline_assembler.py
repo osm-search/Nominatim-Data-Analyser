@@ -1,15 +1,15 @@
 from __future__ import annotations
-from analyser.core.deconstructor import PipelineDeconstructor, BACKTRACKING_EVENT, NEW_NODE_EVENT
-from analyser.core.pipes import FillingPipe
-from analyser.core.qa_rule import ExecutionContext
-from analyser.logger.logger import LOG
+from ..deconstructor import PipelineDeconstructor, BACKTRACKING_EVENT, NEW_NODE_EVENT
+from ..pipes import FillingPipe
+from ..qa_rule import ExecutionContext
+from ...logger.logger import LOG
 from collections import deque
 from .pipe_factory import PipeFactory
 from typing import Deque, Dict
 import typing
 
 if typing.TYPE_CHECKING: # pragma: no cover
-    from analyser.core import Pipe
+    from .. import Pipe
 
 class PipelineAssembler():
     """

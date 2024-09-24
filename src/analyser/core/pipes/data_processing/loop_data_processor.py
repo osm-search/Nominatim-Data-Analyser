@@ -1,6 +1,6 @@
 from __future__ import annotations
-from analyser.logger.timer import Timer
-from analyser.core import Pipe
+from ....logger.timer import Timer
+from ... import Pipe
 from typing import List
 
 class LoopDataProcessor(Pipe):

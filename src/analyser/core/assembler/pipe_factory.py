@@ -1,10 +1,10 @@
 from __future__ import annotations
-from analyser.core.exceptions import YAMLSyntaxException
-import importlib
+from ..exceptions import YAMLSyntaxException
+from .. import pipes as pipes_module
 import typing
 
 if typing.TYPE_CHECKING: # pragma: no cover
-    from analyser.core.qa_rule import ExecutionContext
+    from ..qa_rule import ExecutionContext
 
 class PipeFactory():
     """
@@ -18,10 +18,8 @@ class PipeFactory():
         if 'type' not in node_data:
             raise YAMLSyntaxException("Each node of the tree (pipe) should have a type defined.")
 
-        module = importlib.import_module('analyser.core.pipes')
-
         try:
-            assembled_pipe = getattr(module, node_data['type'])(node_data, exec_context)
+            assembled_pipe = getattr(pipes_module, node_data['type'])(node_data, exec_context)
         except AttributeError:
             raise YAMLSyntaxException(f"The type {node_data['type']} doesn't exist.")
 

@@ -1,7 +1,7 @@
 from __future__ import annotations
-from analyser.database.connection import connect
-from analyser.config import Config
-from analyser.core import Pipe
+from ....database.connection import connect
+from ....config import Config
+from ... import Pipe
 from pathlib import Path
 import json
 

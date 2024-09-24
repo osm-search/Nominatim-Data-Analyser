@@ -1,5 +1,5 @@
 
-from analyser.core.dynamic_value import DynamicValue
+from . import DynamicValue
 from typing import Any, Dict, Iterable
 
 def resolve_all(data_to_resolve: Any, resolver_data: Dict, ) -> Any:

@@ -1,7 +1,7 @@
-from analyser.core.dynamic_value.switch import Switch
-from analyser.core.dynamic_value.variable import Variable
-from analyser.core.assembler import PipelineAssembler
-from analyser.logger.logger import LOG
+from ..dynamic_value.switch import Switch
+from ..dynamic_value.variable import Variable
+from ..assembler import PipelineAssembler
+from ...logger.logger import LOG
 from pathlib import Path
 import yaml
 

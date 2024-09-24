@@ -2,4 +2,4 @@
     Module handling the database.
 """
 
-from analyser.database.connection import connect
+from .connection import connect

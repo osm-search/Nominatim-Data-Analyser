@@ -1,4 +1,4 @@
-from analyser.core.dynamic_value import DynamicValue
+from . import DynamicValue
 from typing import Any, Dict
 
 class Switch(DynamicValue):

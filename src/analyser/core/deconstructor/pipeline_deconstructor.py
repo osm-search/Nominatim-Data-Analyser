@@ -1,6 +1,6 @@
 from typing import Callable, Deque, Dict, List
 from collections import deque
-from analyser.logger.logger import LOG
+from ...logger.logger import LOG
 
 NEW_NODE_EVENT = 'new_node'
 BACKTRACKING_EVENT = 'backtracking'

@@ -1,7 +1,7 @@
 from __future__ import annotations
-from analyser.core.dynamic_value import resolve_all
+from ...dynamic_value import resolve_all
 from typing import Dict
-from analyser.core import Pipe
+from ... import Pipe
 from geojson import Feature
 
 class GeoJSONFeatureConverter(Pipe):

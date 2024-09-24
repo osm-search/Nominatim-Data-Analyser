@@ -1,5 +1,5 @@
 from __future__ import annotations
-from analyser.core import Pipe
+from ...core import Pipe
 
 class FillingPipe(Pipe):
     """

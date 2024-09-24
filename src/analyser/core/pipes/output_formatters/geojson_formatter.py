@@ -1,8 +1,8 @@
 from __future__ import annotations
-from analyser.config import Config
+from ....config import Config
 from typing import List
 from geojson.feature import Feature
-from analyser.core import Pipe
+from ....core import Pipe
 from pathlib import Path
 from geojson import FeatureCollection, dump
 

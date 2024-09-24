@@ -1,9 +1,9 @@
 from __future__ import annotations
 from geojson.feature import Feature, FeatureCollection
 from geojson import dumps
-from analyser.logger.timer import Timer
-from analyser.config import Config
-from analyser.core import Pipe
+from ....logger.timer import Timer
+from ....config import Config
+from ... import Pipe
 from pathlib import Path
 from typing import List
 import subprocess
