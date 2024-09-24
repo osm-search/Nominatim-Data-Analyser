@@ -5,7 +5,7 @@ from ...logger.logger import LOG
 from pathlib import Path
 import yaml
 
-base_rules_path = Path('analyser/rules_specifications')
+base_rules_path = Path(__file__, '..', '..', '..', 'rules_specifications').resolve()
 
 def load_yaml_rule(file_name: str) -> dict:
     """

@@ -42,7 +42,7 @@ class ClustersVtFormatter(Pipe):
         """
         try:
             result = subprocess.run(
-                [f'{Path(__file__).parent.resolve()}/../../../../clustering-vt/build/clustering-vt', output_dir, str(self.radius)],
+                [f'./clustering-vt/build/clustering-vt', output_dir, str(self.radius)],
                 check=True,
                 input=dumps(feature_collection, sort_keys=True).encode(),
                 capture_output=True

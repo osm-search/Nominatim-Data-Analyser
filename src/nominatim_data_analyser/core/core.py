@@ -12,7 +12,7 @@ class Core():
     """
     def __init__(self) -> None:
         Config.load_config()
-        self.rules_path = Path('analyser/rules_specifications')
+        self.rules_path = Path(__file__, '..', '..', 'rules_specifications').resolve()
 
     def execute_all(self, filter=None) -> None:
         """
