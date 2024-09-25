@@ -1,4 +1,4 @@
-from analyser.core.dynamic_value.switch import Switch
+from nominatim_data_analyser.core.dynamic_value.switch import Switch
 import pytest
 
 def test_resolve_switch_ok(switch: Switch) -> None:

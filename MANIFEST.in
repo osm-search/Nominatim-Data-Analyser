@@ -1,0 +1,3 @@
+include src/nominatim_data_analyser/rules_specifications/*.yaml
+include src/nominatim_data_analyser/config/default.yaml
+recursive-include contrib *

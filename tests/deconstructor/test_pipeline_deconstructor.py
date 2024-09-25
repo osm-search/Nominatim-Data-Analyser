@@ -1,5 +1,5 @@
-from analyser.core.deconstructor.pipeline_deconstructor import BACKTRACKING_EVENT, NEW_NODE_EVENT
-from analyser.core.deconstructor import PipelineDeconstructor
+from nominatim_data_analyser.core.deconstructor.pipeline_deconstructor import BACKTRACKING_EVENT, NEW_NODE_EVENT
+from nominatim_data_analyser.core.deconstructor import PipelineDeconstructor
 import pytest
 
 def test_deconstruct_basic() -> None:
@@ -107,9 +107,9 @@ def test_send_current_node_and_explore(pipeline_deconstructor: PipelineDeconstru
         x += 1
     
     #Mock the methods
-    monkeypatch.setattr('analyser.core.deconstructor.pipeline_deconstructor.PipelineDeconstructor._notify_new_node',
+    monkeypatch.setattr('nominatim_data_analyser.core.deconstructor.pipeline_deconstructor.PipelineDeconstructor._notify_new_node',
                         callback)
-    monkeypatch.setattr('analyser.core.deconstructor.pipeline_deconstructor.PipelineDeconstructor._explore_deeper_or_backtrack',
+    monkeypatch.setattr('nominatim_data_analyser.core.deconstructor.pipeline_deconstructor.PipelineDeconstructor._explore_deeper_or_backtrack',
                         callback)
     pipeline_deconstructor._send_current_node_and_explore()
     assert x == 2
@@ -143,7 +143,7 @@ def test_explore_deeper_or_backtrack(pipeline_deconstructor: PipelineDeconstruct
     pipeline_deconstructor._event_callbacks[NEW_NODE_EVENT].append(new_node_callback)
 
     #Mock a dumb _backtrack method.
-    monkeypatch.setattr('analyser.core.deconstructor.pipeline_deconstructor.PipelineDeconstructor._backtrack',
+    monkeypatch.setattr('nominatim_data_analyser.core.deconstructor.pipeline_deconstructor.PipelineDeconstructor._backtrack',
                         lambda self: 1)
 
     pipeline_deconstructor.current_node = node1
@@ -170,7 +170,7 @@ def test_backtrack(pipeline_deconstructor: PipelineDeconstructor, monkeypatch) -
     pipeline_deconstructor.nodes_history.append(node)
 
     #Mock a dumb _explore_deeper_or_backtrack method to not launch the recursion.
-    monkeypatch.setattr('analyser.core.deconstructor.pipeline_deconstructor.PipelineDeconstructor._explore_deeper_or_backtrack',
+    monkeypatch.setattr('nominatim_data_analyser.core.deconstructor.pipeline_deconstructor.PipelineDeconstructor._explore_deeper_or_backtrack',
                         lambda self: 1)
 
     pipeline_deconstructor._backtrack()

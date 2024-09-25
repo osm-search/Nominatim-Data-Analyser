@@ -1,6 +1,6 @@
 from tests.conftest import temp_db_cursor
-from analyser.config import Config
-from analyser.core.pipes import OsmoscopeLayerFormatter
+from nominatim_data_analyser.config import Config
+from nominatim_data_analyser.core.pipes import OsmoscopeLayerFormatter
 import pytest
 import json
 

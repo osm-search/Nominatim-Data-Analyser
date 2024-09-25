@@ -1,3 +1,0 @@
-[submodule "clustering-vt/.mason"]
-	path = clustering-vt/.mason
-	url = https://github.com/mapbox/mason

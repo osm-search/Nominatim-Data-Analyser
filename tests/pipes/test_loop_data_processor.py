@@ -1,8 +1,8 @@
-from analyser.core.pipes.data_processing import LoopDataProcessor
-from analyser.core.pipes.data_processing.geometry_converter import \
+from nominatim_data_analyser.core.pipes.data_processing import LoopDataProcessor
+from nominatim_data_analyser.core.pipes.data_processing.geometry_converter import \
     GeometryConverter
-from analyser.core.pipes.filling_pipe import FillingPipe
-from analyser.core.pipes.output_formatters.geojson_feature_converter import \
+from nominatim_data_analyser.core.pipes.filling_pipe import FillingPipe
+from nominatim_data_analyser.core.pipes.output_formatters.geojson_feature_converter import \
     GeoJSONFeatureConverter
 from geojson.feature import Feature
 
@@ -31,7 +31,7 @@ def test_process_one_data_none(loop_data_processor: LoopDataProcessor,
     geometry_converter.plug_pipe(filling_pipe).plug_pipe(geojson_feature_converter)
 
     #Mock the FillingPipe process() method to return None.
-    monkeypatch.setattr('analyser.core.pipes.filling_pipe.FillingPipe.process',
+    monkeypatch.setattr('nominatim_data_analyser.core.pipes.filling_pipe.FillingPipe.process',
                         lambda self, data: None)
 
     loop_data_processor.processing_pipeline = geometry_converter
@@ -70,7 +70,7 @@ def test_process_multiple_result(loop_data_processor: LoopDataProcessor,
     geometry_converter.plug_pipe(geojson_feature_converter).plug_pipe(filling_pipe)
 
     #Mock the FillingPipe process() method to return the data 3 times (in a list).
-    monkeypatch.setattr('analyser.core.pipes.filling_pipe.FillingPipe.process',
+    monkeypatch.setattr('nominatim_data_analyser.core.pipes.filling_pipe.FillingPipe.process',
                         lambda self, data: [data, data, data])
 
     loop_data_processor.processing_pipeline = geometry_converter

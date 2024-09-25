@@ -1,5 +1,5 @@
-from analyser.core.pipes.output_formatters import GeoJSONFeatureConverter
-from analyser.core.model import Node
+from nominatim_data_analyser.core.pipes.output_formatters import GeoJSONFeatureConverter
+from nominatim_data_analyser.core.model import Node
 from geojson.feature import Feature
 
 def test_on_created_geojson_feature_converter(geojson_feature_converter: GeoJSONFeatureConverter) -> None:

@@ -1,8 +1,0 @@
-#Data source name for the database connection.
-Dsn: 'dbname=nominatim user=nominatim password='
-
-#Path to the folder where rules data are stored (geojson, vector tiles, etc).
-RulesFolderPath: '/'
-
-#Prefix path of the web URL to access the rules data (ex: https://nominatim.org/QA-data).
-WebPrefixPath: ''

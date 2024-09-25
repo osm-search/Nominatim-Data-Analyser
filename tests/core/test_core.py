@@ -2,8 +2,8 @@
 from pathlib import Path
 
 import pytest
-from analyser.config.config import Config
-from analyser.core.core import Core
+from nominatim_data_analyser.config.config import Config
+from nominatim_data_analyser.core.core import Core
 
 rules_path = Path(__file__).parent / 'rules'
 
@@ -36,7 +36,7 @@ def setup_mock(tmp_path, monkeypatch) -> None:
         Set the RulesFolderPath to the temporary folder of the
         test for the creation of output files.
     """
-    monkeypatch.setattr('analyser.core.yaml_logic.yaml_loader.base_rules_path',
+    monkeypatch.setattr('nominatim_data_analyser.core.yaml_logic.yaml_loader.base_rules_path',
                         rules_path)
     Config.values['RulesFolderPath'] = tmp_path
 

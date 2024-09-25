@@ -1,5 +1,5 @@
 
-from analyser.core.dynamic_value import Variable
+from nominatim_data_analyser.core.dynamic_value import Variable
 import pytest
 
 def test_resolve_variable_ok(variable: Variable) -> None:

@@ -1,7 +1,7 @@
 import pytest
-from analyser.core.pipes.rules_specific_pipes import \
+from nominatim_data_analyser.core.pipes.rules_specific_pipes import \
     AddrHouseNumberNoDigitFilter
-from analyser.core.qa_rule import ExecutionContext
+from nominatim_data_analyser.core.qa_rule import ExecutionContext
 
 
 def test_process_addr_HN_no_digit_filter(digits_filter: AddrHouseNumberNoDigitFilter) -> None:

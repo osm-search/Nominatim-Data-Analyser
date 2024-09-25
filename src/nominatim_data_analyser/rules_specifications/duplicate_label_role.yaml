@@ -1,0 +1,30 @@
+---
+QUERY:
+  type: SQLProcessor
+  query: >
+    SELECT ST_AsText(centroid) AS geometry_holder, osm_id, osm_type, members FROM placex AS px JOIN planet_osm_rels AS por ON px.osm_id=por.id  
+    WHERE class='boundary' AND type='administrative' AND
+    jsonb_array_length(jsonb_path_query_array(members, '$[*].role ? (@ == "label")')) >= 2;
+  out:
+    LOOP_PROCESSING:
+      type: LoopDataProcessor
+      sub_pipeline: !sub-pipeline
+        GEOMETRY_CONVERTER:
+          type: GeometryConverter
+          geometry_type: Node
+          out:
+            FEATURE_CONVERTER:
+              type: DuplicateLabelRoleCustomFeatureConverter
+      out:
+        GEOJSON:
+          type: GeoJSONFormatter
+          out:
+            LAYER_FILE:
+              type: OsmoscopeLayerFormatter
+              data_format_url: geojson_url
+              name: duplicate label role
+              updates: Every evening
+              doc:
+                description: Admin boundaries with more than one member with role 'label'.
+                why_problem: Boundary can have exactly one member with place label.
+                how_to_fix: Make sure that the admin boundary contains only one member with role 'label'.

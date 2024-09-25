@@ -1,5 +1,5 @@
-from analyser.core.pipes import VectorTileFormatter
-from analyser.config import Config
+from nominatim_data_analyser.core.pipes import VectorTileFormatter
+from nominatim_data_analyser.config import Config
 from geojson import Feature, Point
 
 def test_process_vector_tile_formatter(vector_tile_formatter: VectorTileFormatter,
@@ -26,7 +26,7 @@ def test_process_vector_tile_formatter(vector_tile_formatter: VectorTileFormatte
     ]
 
     #Mock the call to Tippecanoe
-    monkeypatch.setattr('analyser.core.pipes.output_formatters.vector_tile_formatter.VectorTileFormatter.call_tippecanoe',
+    monkeypatch.setattr('nominatim_data_analyser.core.pipes.output_formatters.vector_tile_formatter.VectorTileFormatter.call_tippecanoe',
                         lambda self, output_dir, feature_collection: None)
 
     web_path = vector_tile_formatter.process(features)

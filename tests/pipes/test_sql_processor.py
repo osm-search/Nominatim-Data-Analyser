@@ -1,4 +1,4 @@
-from analyser.core.pipes.data_fetching import SQLProcessor
+from nominatim_data_analyser.core.pipes.data_fetching import SQLProcessor
 from psycopg2._psycopg import connection, cursor
 
 

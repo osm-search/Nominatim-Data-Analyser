@@ -1,16 +1,31 @@
+import sys
+import sysconfig
+from pathlib import Path
 import psycopg2
 import pytest
-from analyser.config import Config
-from analyser.core.pipes import FillingPipe
-from analyser.core.pipes.data_fetching.sql_processor import SQLProcessor
-from analyser.core.pipes.data_processing import (GeometryConverter,
+
+SRC_DIR = Path(__file__, '..', '..').resolve()
+
+BUILD_DIR = f"build/lib.{sysconfig.get_platform()}-{sys.version_info[0]}.{sys.version_info[1]}"
+
+if not (SRC_DIR / BUILD_DIR).exists():
+    BUILD_DIR = f"build/lib.{sysconfig.get_platform()}-{sys.implementation.cache_tag}"
+
+if (SRC_DIR / BUILD_DIR).exists():
+    sys.path.insert(0, str(SRC_DIR / BUILD_DIR))
+
+
+from nominatim_data_analyser.config import Config
+from nominatim_data_analyser.core.pipes import FillingPipe
+from nominatim_data_analyser.core.pipes.data_fetching.sql_processor import SQLProcessor
+from nominatim_data_analyser.core.pipes.data_processing import (GeometryConverter,
                                                  LoopDataProcessor)
-from analyser.core.pipes.output_formatters import (GeoJSONFeatureConverter,
+from nominatim_data_analyser.core.pipes.output_formatters import (GeoJSONFeatureConverter,
                                                    GeoJSONFormatter,
                                                    OsmoscopeLayerFormatter,
                                                    VectorTileFormatter)
-from analyser.core.qa_rule import ExecutionContext
-from analyser.database.connection import connect
+from nominatim_data_analyser.core.qa_rule import ExecutionContext
+from nominatim_data_analyser.database.connection import connect
 from psycopg2._psycopg import connection, cursor
 
 

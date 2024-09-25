@@ -1,20 +1,19 @@
-from analyser.core.core import Core
-import argparse
+#!/usr/bin/python3
+import sys
+import sysconfig
+from pathlib import Path
 
-parser = argparse.ArgumentParser(prog='nominatim-analyser')
+SRC_DIR = Path(__file__, '..').resolve()
 
-parser.add_argument('--execute-all', action='store_true', help='Executes all the QA rules')
-parser.add_argument('--filter', metavar='<QA rules names>', nargs='+', help='Filters some QA rules so they are not executed.')
-parser.add_argument('--execute-one', metavar='<QA rule name>', action='store', type=str, help='Executes the given QA rule')
+BUILD_DIR = f"build/lib.{sysconfig.get_platform()}-{sys.version_info[0]}.{sys.version_info[1]}"
 
-args = parser.parse_args()
+if not (SRC_DIR / BUILD_DIR).exists():
+    BUILD_DIR = f"build/lib.{sysconfig.get_platform()}-{sys.implementation.cache_tag}"
 
-#Executes all the QA rules. If a filter is given, these rules are excluded from the execution.
-if args.execute_all:
-    if args.filter:
-        Core().execute_all(args.filter)
-    else:
-        Core().execute_all()
-elif args.execute_one:
-    #Execute the given QA rule.
-    Core().execute_one(args.execute_one)
+if (SRC_DIR / BUILD_DIR).exists():
+    sys.path.insert(0, str(SRC_DIR / BUILD_DIR))
+
+
+from nominatim_data_analyser.cli import cli
+
+sys.exit(cli())

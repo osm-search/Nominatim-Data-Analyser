@@ -1,0 +1,67 @@
+[build-system]
+requires = ["setuptools>=42", "pybind11>=2.10.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "nominatim-data-analyser"
+authors = [
+    {name = "Antonin Jolivat", email = "antonin.jolivat@gmail.com"}
+]
+maintainers = [
+    {name = "Sarah Hoffmann", email = "lonvia@denofr.de"}
+]
+description = "QA Tool for Nominatim. Helps to improve the OpenStreetMap data quality and therefore the Nominatim search results."
+readme = "README.md"
+requires-python = ">=3.6"
+license = {text = "GPL-2.0-or-later"}
+classifiers = [
+    "Programming Language :: Python :: 3",
+]
+dependencies = [
+    "pyYAML",
+    "geojson",
+    "psycopg2"
+]
+version = "0.1.0"
+
+[project.urls]
+Homepage = "https://github.com/osm-search/Nominatim-Data-Analyser"
+
+[project.optional-dependencies]
+tests = [
+    'pytest',
+]
+
+[tool.setuptools]
+packages = ["nominatim_data_analyser",
+            "nominatim_data_analyser.database",
+            "nominatim_data_analyser.config",
+            "nominatim_data_analyser.logger",
+            "nominatim_data_analyser.core",
+            "nominatim_data_analyser.core.exceptions",
+            "nominatim_data_analyser.core.yaml_logic",
+            "nominatim_data_analyser.core.dynamic_value",
+            "nominatim_data_analyser.core.deconstructor",
+            "nominatim_data_analyser.core.model",
+            "nominatim_data_analyser.core.pipes",
+            "nominatim_data_analyser.core.pipes.rules_specific_pipes",
+            "nominatim_data_analyser.core.pipes.rules_specific_pipes.place_nodes_close",
+            "nominatim_data_analyser.core.pipes.rules_specific_pipes.addresses_pipes",
+            "nominatim_data_analyser.core.pipes.rules_specific_pipes.addr_house_number_no_digit",
+            "nominatim_data_analyser.core.pipes.rules_specific_pipes.duplicate_label_role",
+            "nominatim_data_analyser.core.pipes.rules_specific_pipes.same_wikidata",
+            "nominatim_data_analyser.core.pipes.output_formatters",
+            "nominatim_data_analyser.core.pipes.data_processing",
+            "nominatim_data_analyser.core.pipes.data_fetching",
+            "nominatim_data_analyser.core.qa_rule",
+            "nominatim_data_analyser.core.assembler",
+            "nominatim_data_analyser.rules_specifications"
+]
+
+package-dir = {"" = "src"}
+
+[project.scripts]
+nominatim-data-analyser = "nominatim_data_analyser.cli:cli"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

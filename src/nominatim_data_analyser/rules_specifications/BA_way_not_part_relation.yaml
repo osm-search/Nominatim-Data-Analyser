@@ -1,0 +1,35 @@
+---
+QUERY:
+  type: SQLProcessor
+  query: >
+    SELECT ST_AsText(centroid) AS geometry_holder, osm_id FROM (
+      SELECT centroid, osm_id, array_agg(osm_id) AS array_osm_id FROM placex 
+      WHERE osm_type='W' AND class='boundary' AND type='administrative' GROUP BY osm_id, centroid
+    ) AS px 
+    WHERE NOT EXISTS(SELECT 1 FROM planet_osm_rels WHERE px.array_osm_id <@ planet_osm_member_ids(members, 'W'::char(1)));
+  out:
+    LOOP_PROCESSING:
+      type: LoopDataProcessor
+      sub_pipeline: !sub-pipeline
+        GEOMETRY_CONVERTER:
+          type: GeometryConverter
+          geometry_type: Node
+          out:
+            FEATURE_CONVERTER:
+              type: GeoJSONFeatureConverter
+              properties:
+                - way_id: !variable osm_id
+      out:
+        CLUSTERING_VECTOR_TILES:
+          type: ClustersVtFormatter
+          radius: 60
+          out:
+            LAYER_FILE:
+              type: OsmoscopeLayerFormatter
+              data_format_url: vector_tile_url
+              name: boundary ways without relation
+              updates: Every evening
+              doc:
+                description: Ways with boundary=administrative that are not part of a relation.
+                why_problem: Administrative boundary should always be mapped as relations. Every boundary way should be member of a relation.
+                how_to_fix: You might have to create an appropriate administrative relation.
