@@ -55,12 +55,10 @@ packages = ["nominatim_data_analyser",
             "nominatim_data_analyser.core.pipes.data_fetching",
             "nominatim_data_analyser.core.qa_rule",
             "nominatim_data_analyser.core.assembler",
+            "nominatim_data_analyser.rules_specifications"
 ]
 
 package-dir = {"" = "src"}
-
-[tool.setuptools.package-data]
-analyser = ["rules_specifications/*.yaml"]
 
 [project.scripts]
 nominatim-data-analyser = "nominatim_data_analyser.cli:cli"

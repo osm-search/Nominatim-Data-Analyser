@@ -4,9 +4,9 @@ from geojson import dumps
 from ....logger.timer import Timer
 from ....config import Config
 from ... import Pipe
+from ....clustering_vt import cluster
 from pathlib import Path
 from typing import List
-import subprocess
 import logging
 
 class ClustersVtFormatter(Pipe):
@@ -34,21 +34,13 @@ class ClustersVtFormatter(Pipe):
 
         web_path = f'{Config.values["WebPrefixPath"]}/{self.exec_context.rule_name}/vector-tiles/' + '{z}/{x}/{y}.pbf'
         return web_path
-    
+
+
     def call_clustering_vt(self, output_dir: Path, feature_collection: FeatureCollection) -> None:
         """
             Calls clustering-vt through a subprocess and send the feature collection as a stream
             in the stdin of the subprocess.
         """
-        try:
-            result = subprocess.run(
-                [f'./clustering-vt/build/clustering-vt', output_dir, str(self.radius)],
-                check=True,
-                input=dumps(feature_collection, sort_keys=True).encode(),
-                capture_output=True
-            )
-            self.log(result)
-        except subprocess.TimeoutExpired as e:
-            self.log(e, logging.FATAL)
-        except subprocess.CalledProcessError as e:
-            self.log(e, logging.FATAL)
+        result = cluster(str(output_dir), self.radius, (dumps(feat) for feat in feature_collection['features']))
+        if result != 0:
+            raise RuntimeError("Clustering failed.")

@@ -1,10 +1,10 @@
 
 #include <mapbox/geojson.hpp>
 #include <mapbox/geojson_impl.hpp>
-#include <rapidjson/document.h>
-#include "rapidjson/istreamwrapper.h"
 #include <vtzero/builder.hpp>
 #include <vtzero/index.hpp>
+
+#include <pybind11/pybind11.h>
 
 #define DEBUG_TIMER false
 
@@ -211,55 +211,36 @@ void generate_tiles(const short zoom,
     }
 }
 
-int main(int argc, char *argv[]) {
-    if (argc == 1) {
-        std::cerr << "The output folder is missing!\n";
-        return 1;
+int cluster(std::string const outdir, int radius, pybind11::iterable const json_features) {
+    mapbox::supercluster::Timer timer;
+
+    mapbox::feature::feature_collection<double> features;
+
+    for (auto const &obj: json_features) {
+        std::string feat = obj.cast<std::string>();
+        mapbox::geojson::feature feature = mapbox::geojson::parse<mapbox::geojson::feature>(feat);
+        features.push_back(feature);
     }
 
-    if (argc == 2) {
-        std::cerr << "The radius is missing!\n";
-        return 1;
-    }
+    timer("load features");
 
-    //Read GeoJSON data from stdin
-    std::cin.sync_with_stdio(false);
-    if (std::cin.rdbuf()->in_avail()) {
-        
-        mapbox::supercluster::Timer timer;
+    mapbox::supercluster::Options options;
+    options.maxZoom = maxZoom;
+    options.radius = radius;
+    options.extent = 256;
+    mapbox::supercluster::Supercluster index(features, options);
 
-        rapidjson::IStreamWrapper isw(std::cin);
-        mapbox::geojson::rapidjson_document d;
-        d.ParseStream<rapidjson::IStreamWrapper>(isw);
+    timer("total supercluster time");
 
-        timer("parse JSON");
+    generate_tiles(0, 0, 0, outdir, index);
 
-        const auto &json_features = d["features"];
+    timer("total tiles generation time");
+    std::cout << "Tiles created: " << amountCreated << "\n";
+    std::cout << "Tiles removed: " << amountRemoved << "\n";
 
-        mapbox::feature::feature_collection<double> features;
-        features.reserve(json_features.Size());
+    return 0;
+}
 
-        for (auto itr = json_features.Begin(); itr != json_features.End(); ++itr) {
-            mapbox::feature::feature<double> feature = mapbox::geojson::convert<mapbox::feature::feature<double>>(*itr);
-            features.push_back(feature);
-        }
-        timer("convert to geometry.hpp");
-
-        mapbox::supercluster::Options options;
-        options.maxZoom = maxZoom;
-        options.radius = std::atoi(argv[2]);
-        options.extent = 256;
-        mapbox::supercluster::Supercluster index(features, options);
-
-        timer("total supercluster time");
-
-        generate_tiles(0, 0, 0, argv[1], index);
-
-        timer("total tiles generation time");
-        std::cout << "Tiles created: " << amountCreated << "\n";
-        std::cout << "Tiles removed: " << amountRemoved << "\n";
-    }else {
-        std::cerr << "GeoJSON is needed in stdin!\n";
-        return 1;
-    }
+PYBIND11_MODULE(clustering_vt, m) {
+    m.def("cluster", &cluster);
 }
