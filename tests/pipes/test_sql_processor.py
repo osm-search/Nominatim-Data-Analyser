@@ -1,8 +1,8 @@
 from nominatim_data_analyser.core.pipes.data_fetching import SQLProcessor
-from psycopg2._psycopg import connection, cursor
+from nominatim_data_analyser.config import Config
 
 
-def test_on_created_sql_processor(sql_processor: SQLProcessor) -> None:
+def test_on_created_sql_processor(sql_processor: SQLProcessor):
     """
         Test the on_created() method of the SQLProcessor.
     """
@@ -11,9 +11,7 @@ def test_on_created_sql_processor(sql_processor: SQLProcessor) -> None:
     sql_processor.on_created()
     assert sql_processor.query == 'QUERY'
 
-def test_execute_query(sql_processor: SQLProcessor, 
-                       temp_db_conn: connection,
-                       temp_db_cursor: cursor) -> None:
+def test_execute_query(sql_processor: SQLProcessor, dsn, temp_db_cursor):
     """
         Test the execute_query() method of the SQLProcessor.
     """
@@ -23,5 +21,6 @@ def test_execute_query(sql_processor: SQLProcessor,
     """)
     sql_processor.query = 'SELECT * FROM test_table'
 
-    results = sql_processor.execute_query(temp_db_conn)
+    Config.values['Dsn'] = dsn
+    results = sql_processor.process(None)
     assert len(results) == 3 and results[0]['val'] == 'test1' and results[1]['val'] == 'test2' and results[2]['val'] == 'test3'
