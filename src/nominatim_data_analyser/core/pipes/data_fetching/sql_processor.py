@@ -10,7 +10,7 @@ from psycopg2._psycopg import connection
 
 class SQLProcessor(Pipe):
     """
-        Handles the execution of an SQL query and 
+        Handles the execution of an SQL query and
         send the results to the next pipe.
     """
     def on_created(self) -> None:

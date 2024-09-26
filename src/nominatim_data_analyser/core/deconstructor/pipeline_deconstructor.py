@@ -15,9 +15,9 @@ class PipelineDeconstructor():
         when reaching a leaf.
     """
     def __init__(self, pipeline_specification: dict[str, Any], rule_name: str) -> None:
-        #Add a root node needed for the exploration of the tree
+        # Add a root node needed for the exploration of the tree
         self._pipeline_specification = {
-            'ROOT_NODE': { 
+            'ROOT_NODE': {
                     'type': 'ROOT_NODE',
                     'out': pipeline_specification
                 }
@@ -55,22 +55,22 @@ class PipelineDeconstructor():
             self._send_current_node_and_explore()
         else:
             self._backtrack()
-    
+
     def _backtrack(self) -> None:
         """
             Backtracks in the tree by getting the top node in the
-            nodes_history deque. 
+            nodes_history deque.
 
-            If there is no node left in the nodes_history, 
+            If there is no node left in the nodes_history,
             the exploring process is terminated naturally.
 
             Then keep exploring.
         """
         if self.nodes_history:
-            #backtrack
+            # backtrack
             self._notify_backtracking()
             self.current_node = self.nodes_history.popleft()
-            #Remove 'out' key if it became empty
+            # Remove 'out' key if it became empty
             if not self.current_node['out']:
                 self.current_node.pop('out', None)
             self._explore_deeper_or_backtrack()
@@ -81,7 +81,7 @@ class PipelineDeconstructor():
             given event.
         """
         self._event_callbacks[event].append(callback)
-    
+
     def _notify_new_node(self, node: dict[str, Any]) -> None:
         """
             Notifies all subscribers that we reached a new node.
@@ -99,7 +99,7 @@ class PipelineDeconstructor():
 
     def _raise_event(self, event_name: str, *args: Any) -> None:
         """
-            Executes all registered callbacks of 
+            Executes all registered callbacks of
             the given event.
         """
         for callback in self._event_callbacks[event_name]:

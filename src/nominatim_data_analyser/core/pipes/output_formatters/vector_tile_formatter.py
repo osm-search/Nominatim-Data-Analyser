@@ -40,15 +40,15 @@ class VectorTileFormatter(Pipe):
         """
         try:
             result = subprocess.run(
-                ['tippecanoe', f'--output-to-directory={output_dir}', 
-                '--force',
-                '--no-tile-compression',
-                '--no-tile-size-limit',
-                '--no-feature-limit',
-                '--buffer=125',
-                '--no-clipping',
-                '-r1',
-                '--cluster-distance=60'],
+                ['tippecanoe', f'--output-to-directory={output_dir}',
+                 '--force',
+                 '--no-tile-compression',
+                 '--no-tile-size-limit',
+                 '--no-feature-limit',
+                 '--buffer=125',
+                 '--no-clipping',
+                 '-r1',
+                 '--cluster-distance=60'],
                 check=True,
                 input=dumps(feature_collection).encode(),
                 stdout=subprocess.PIPE

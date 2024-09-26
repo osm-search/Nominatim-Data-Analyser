@@ -4,10 +4,9 @@ from geojson import dumps
 from ....logger.timer import Timer
 from ....config import Config
 from ... import Pipe
-from ....clustering_vt import cluster # type: ignore[import-not-found]
+from ....clustering_vt import cluster  # type: ignore[import-not-found]
 from pathlib import Path
 from typing import List
-import logging
 
 class ClustersVtFormatter(Pipe):
     """
@@ -34,7 +33,6 @@ class ClustersVtFormatter(Pipe):
 
         web_path = f'{Config.values["WebPrefixPath"]}/{self.exec_context.rule_name}/vector-tiles/' + '{z}/{x}/{y}.pbf'
         return web_path
-
 
     def call_clustering_vt(self, output_dir: Path, feature_collection: FeatureCollection) -> None:
         """

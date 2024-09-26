@@ -17,12 +17,12 @@ class Node(Geometry):
         return feature
 
     @staticmethod
-    def create_from_WKT_string(geom: str) -> Node:
+    def create_from_WKT_string(geom: str) -> 'Node':
         """
             Parse a WKT geometry to instantiate a new
             Node class.
         """
-        pattern = "POINT\((.*) (.*)\)"
+        pattern = r"POINT\((.*) (.*)\)"
         results = re.match(pattern, geom)
         if results is None:
             raise RuntimeError("Not a valid WKT.")

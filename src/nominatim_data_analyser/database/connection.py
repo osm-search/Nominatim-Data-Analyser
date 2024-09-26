@@ -16,7 +16,7 @@ def connect(dsn: str) -> Any:
     try:
         conn = psycopg2.connect(dsn)
         ctxmgr = contextlib.closing(conn)
-        ctxmgr.connection = conn # type: ignore[attr-defined]
+        ctxmgr.connection = conn  # type: ignore[attr-defined]
         return ctxmgr
     except psycopg2.OperationalError as err:
         raise Exception("Cannot connect to database: {}".format(err)) from err

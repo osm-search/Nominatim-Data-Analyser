@@ -17,13 +17,13 @@ class SameWikiDataFeatureConverter(Pipe):
         current_feature_id = 0
         for record in data:
             for i, centroid in enumerate(record['centroids']):
-                #If one centroid is None the data should be ignored.
+                # If one centroid is None the data should be ignored.
                 if (centroid is None):
                     continue
                 node = Node.create_from_WKT_string(centroid)
                 nodes_in_common = list()
-                #Fetch concerning node id and id of each other nodes with the
-                #same wikidata
+                # Fetch concerning node id and id of each other nodes with the
+                # same wikidata
                 for j, id in enumerate(record['ids']):
                     if j == i:
                         node_id = id
@@ -38,4 +38,3 @@ class SameWikiDataFeatureConverter(Pipe):
                 features.append(node.to_geojson_feature(current_feature_id, properties))
                 current_feature_id += 1
         return features
-

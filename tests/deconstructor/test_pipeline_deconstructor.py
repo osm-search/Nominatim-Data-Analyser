@@ -111,7 +111,7 @@ def test_send_current_node_and_explore(pipeline_deconstructor: PipelineDeconstru
                         callback)
     monkeypatch.setattr('nominatim_data_analyser.core.deconstructor.pipeline_deconstructor.PipelineDeconstructor._explore_deeper_or_backtrack',
                         callback)
-    pipeline_deconstructor._send_current_node_and_explore()
+    pipeline_deconstructor.deconstruct()
     assert x == 2
 
 def test_explore_deeper_or_backtrack(pipeline_deconstructor: PipelineDeconstructor, monkeypatch) -> None:

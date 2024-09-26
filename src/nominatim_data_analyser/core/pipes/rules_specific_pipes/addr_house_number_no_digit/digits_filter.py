@@ -8,12 +8,11 @@ class AddrHouseNumberNoDigitFilter(Pipe):
 
     def process(self, elements: dict[str, Any]) -> dict[str, Any] | None:
         """
-            Filter the given data result by checking if 
+            Filter the given data result by checking if
             the housenumber contains any digit in any scripts
-            (by using the \d in python regex).
+            (by using the \\d in python regex).
         """
-        #Keep only data where we do not match at least one digit
+        # Keep only data where we do not match at least one digit
         if not self.any_digit_regex.match(elements['housenumber']):
             return elements
         return None
-

@@ -18,7 +18,7 @@ class Pipe(metaclass=ABCMeta):
         self.next_pipes: set['Pipe'] = set()
         self.on_created()
 
-    def plug_pipe(self, pipe: Pipe) -> Pipe:
+    def plug_pipe(self, pipe: 'Pipe') -> 'Pipe':
         """
             Plugs a pipe to the current pipe and returns the
             plugged pipe.
@@ -61,17 +61,17 @@ class Pipe(metaclass=ABCMeta):
         """
             Tries to get data from the data dictionary.
 
-            If the data name provided exists in the dictionary it gets pop out and it gets returned. 
+            If the data name provided exists in the dictionary it gets pop out and it gets returned.
             But if it doesn't exist, the default value provided is returned (None by default).
 
             if the required value is set to True and if the data can't be found, a YAMLSyntaxException is raised.
         """
         if name in self.data:
-             return self.data.pop(name)
-        elif required == False:
+            return self.data.pop(name)
+        if not required:
             return default
-        else:
-            raise YAMLSyntaxException(f'The field "{name}" is required for the pipe of type {type(self).__name__}')
+
+        raise YAMLSyntaxException(f'The field "{name}" is required for the pipe of type {type(self).__name__}')
 
     def log(self, msg: str, level: int = logging.INFO) -> None:
         """

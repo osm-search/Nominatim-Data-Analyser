@@ -10,7 +10,7 @@ def resolve_all(data_to_resolve: Any, resolver_data: dict[str, Any]) -> Any:
 
         Parameter resolver_data is the data dictionnary used to resolve the dynamic values.
     """
-    while(is_resolvable(data_to_resolve)):
+    while is_resolvable(data_to_resolve):
         data_to_resolve = resolve_one(data_to_resolve, resolver_data)
     return data_to_resolve
 
@@ -22,7 +22,7 @@ def resolve_one(data_to_resolve: Any, resolver_data: dict[str, Any]) -> Any:
         are resolved if of type DynamicValue.
     """
     if isinstance(data_to_resolve, Iterable):
-        #Resolve dictionnary by trying to resolve each key and each value.
+        # Resolve dictionnary by trying to resolve each key and each value.
         if isinstance(data_to_resolve, Dict):
             new_dict = dict()
             for k, v in data_to_resolve.items():
@@ -30,9 +30,10 @@ def resolve_one(data_to_resolve: Any, resolver_data: dict[str, Any]) -> Any:
                 v = _resolve_if_resolvable(resolver_data, v)
                 new_dict[k] = v
             data_to_resolve = new_dict
-        #Resolve all others classic iterables.
+        # Resolve all others classic iterables.
         else:
-            data_to_resolve = type(data_to_resolve)(map(lambda x: _resolve_if_resolvable(resolver_data, x), data_to_resolve)) # type: ignore[call-arg]
+            data_to_resolve = type(data_to_resolve)(
+               map(lambda x: _resolve_if_resolvable(resolver_data, x), data_to_resolve))  # type: ignore[call-arg]
     else:
         data_to_resolve = _resolve_if_resolvable(resolver_data, data_to_resolve)
 
@@ -46,7 +47,7 @@ def is_resolvable(data: Any) -> bool:
     """
     if isinstance(data, Iterable):
         if isinstance(data, dict):
-            #Checks all the keys and values of the dictionnary.
+            # Checks all the keys and values of the dictionnary.
             return _contains_dynamic_value(data.keys()) \
                 or _contains_dynamic_value(data.values())
         else:

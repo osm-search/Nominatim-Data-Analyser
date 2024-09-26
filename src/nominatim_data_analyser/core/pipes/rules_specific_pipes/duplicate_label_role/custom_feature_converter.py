@@ -17,7 +17,7 @@ class DuplicateLabelRoleCustomFeatureConverter(Pipe):
             The members array has the following syntax:
             ['w8125151','outer','w249285853','inner'.......]
             It works by pair where the first item ('w8125151' for example)
-            contains the object type (n, w, r) and its osm_id, then 
+            contains the object type (n, w, r) and its osm_id, then
             the second item is the role ('outer' for example).
         """
         self.current_feature_id += 1
@@ -30,8 +30,8 @@ class DuplicateLabelRoleCustomFeatureConverter(Pipe):
             role = members[i+1]
             if role == 'label':
                 label_members_count += 1
-                #Get the n/w/r type
+                # Get the n/w/r type
                 type = members[i][0]
                 properties[f'{type}/@idLabel {label_members_count}'] = members[i][1:]
-    
+
         return elements.pop('geometry_holder').to_geojson_feature(self.current_feature_id, properties)

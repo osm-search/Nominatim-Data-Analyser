@@ -14,8 +14,12 @@ def load_yaml_rule(file_name: str) -> dict[str, Any]:
         Load the YAML specification file.
         YAML constructors are added to handle custom types in the YAML.
     """
-    sub_pipeline_lambda = lambda loader, node: sub_pipeline_constructor(loader, node, file_name)
-    yaml.add_constructor(u'!sub-pipeline', sub_pipeline_lambda, Loader=yaml.SafeLoader)
+    def _sub_pipeline(loader: yaml.SafeLoader, node: yaml.Node) -> Pipe:
+        if not isinstance(node, yaml.MappingNode):
+            raise RuntimeError("!switch expects mapping.")
+        return sub_pipeline_constructor(loader, node, file_name)
+
+    yaml.add_constructor(u'!sub-pipeline', _sub_pipeline, Loader=yaml.SafeLoader)
     yaml.add_constructor(u'!variable', variable_constructor, Loader=yaml.SafeLoader)
     yaml.add_constructor(u'!switch', switch_constructor, Loader=yaml.SafeLoader)
 
@@ -25,7 +29,7 @@ def load_yaml_rule(file_name: str) -> dict[str, Any]:
             loaded = cast(dict[str, Any], yaml.safe_load(file))
         except yaml.YAMLError as exc:
             LOG.error('Error while loading the YAML rule file %s: %s',
-                        file_name, exc)
+                      file_name, exc)
             raise
 
     return loaded

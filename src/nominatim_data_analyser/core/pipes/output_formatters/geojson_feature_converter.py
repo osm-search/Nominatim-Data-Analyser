@@ -20,7 +20,7 @@ class GeoJSONFeatureConverter(Pipe):
         self.current_id += 1
         if self.properties_pattern:
             for prop in self.properties_pattern:
-                #Resolve dynamic values
+                # Resolve dynamic values
                 resolved_value = resolve_all(prop, elements)
                 for k, v in resolved_value.items():
                     properties[k] = v

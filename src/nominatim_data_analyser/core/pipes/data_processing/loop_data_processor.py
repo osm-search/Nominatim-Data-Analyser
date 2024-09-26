@@ -20,12 +20,12 @@ class LoopDataProcessor(Pipe):
         for d in data:
             processed_result = self.process_one_data(d)
             if processed_result:
-                #The result can be a list with multiple results or only one result
+                # The result can be a list with multiple results or only one result
                 if isinstance(processed_result, List):
                     processed_data.extend(processed_result)
                 else:
                     processed_data.append(processed_result)
-    
+
         elapsed_mins, elapsed_secs = timer.get_elapsed()
         self.log(f'Loop data processor executed in {elapsed_mins} mins {elapsed_secs} secs.')
         return processed_data
