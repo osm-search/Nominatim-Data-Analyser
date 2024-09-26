@@ -1,6 +1,5 @@
-from __future__ import annotations
+from typing import Any
 from ...dynamic_value import resolve_all
-from typing import Dict
 from ... import Pipe
 from geojson import Feature
 
@@ -10,18 +9,18 @@ class GeoJSONFeatureConverter(Pipe):
         to geojson features.
     """
     def on_created(self) -> None:
-        self.properties_pattern: Dict = self.extract_data('properties', default={})
+        self.properties_pattern = self.extract_data('properties', default={})
         self.current_id = -1
 
-    def process(self, elements: Dict) -> Feature:
+    def process(self, elements: dict[str, Any]) -> Feature:
         """
             Convert a query result to a geojson feature.
         """
-        properties = dict()
+        properties: dict[str, Any] = dict()
         self.current_id += 1
         if self.properties_pattern:
             for prop in self.properties_pattern:
-                #Resolve dynamic values
+                # Resolve dynamic values
                 resolved_value = resolve_all(prop, elements)
                 for k, v in resolved_value.items():
                     properties[k] = v

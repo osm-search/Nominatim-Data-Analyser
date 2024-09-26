@@ -24,7 +24,7 @@ def test_resolve_variable_dont_exist(variable: Variable) -> None:
         'test_key2': 'test_val2',
         'test_key3': 'test_val3'
     }
-    with pytest.raises(Exception, match='The variable name var_name was not found in the input dictionnary.'):
+    with pytest.raises(Exception, match='The variable name var_name was not found in the input dictionary.'):
         variable.resolve(data)
 
 @pytest.fixture

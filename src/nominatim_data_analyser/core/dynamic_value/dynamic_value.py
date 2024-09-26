@@ -1,5 +1,5 @@
 from abc import ABCMeta, abstractmethod
-from typing import Any, Dict
+from typing import Any
 
 class DynamicValue(metaclass=ABCMeta):
     """
@@ -10,7 +10,7 @@ class DynamicValue(metaclass=ABCMeta):
         dynamically depending on the data values.
     """
     @abstractmethod
-    def resolve(self, data: Dict) -> Any:
+    def resolve(self, data: dict[str, Any]) -> Any:
         """
             Assigns a concrete value to the dynamic value
             based on the input data dictionnary.

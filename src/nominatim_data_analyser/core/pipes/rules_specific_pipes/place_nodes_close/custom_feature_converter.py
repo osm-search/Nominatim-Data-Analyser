@@ -1,12 +1,12 @@
+from typing import Any
 from .....core.pipe import Pipe
 from geojson.feature import Feature
-from typing import Dict
 
 class PlaceNodesCloseCustomFeatureConverter(Pipe):
     def on_created(self) -> None:
         self.current_feature_id = -1
 
-    def process(self, elements: Dict) -> Feature:
+    def process(self, elements: dict[str, Any]) -> Feature:
         """
             Creates a Geojson feature for the given elements dictionnary.
             Adds a specific property for each id in the 'common_ids' field.

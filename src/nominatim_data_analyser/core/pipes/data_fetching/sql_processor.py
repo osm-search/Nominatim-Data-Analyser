@@ -1,6 +1,4 @@
-from __future__ import annotations
-
-from typing import Dict, List
+from typing import Any
 
 import psycopg2.extras
 from ....config.config import Config
@@ -12,25 +10,25 @@ from psycopg2._psycopg import connection
 
 class SQLProcessor(Pipe):
     """
-        Handles the execution of an SQL query and 
+        Handles the execution of an SQL query and
         send the results to the next pipe.
     """
     def on_created(self) -> None:
         self.query = self.extract_data('query', required=True)
 
-    def process(self, data: any = None) -> List[Dict]:
+    def process(self, data: Any) -> list[dict[str, Any]]:
         """
             Executes the query and returns the results.
         """
         with connect(Config.values['Dsn']) as conn:
             return self.execute_query(conn)
-    
-    def execute_query(self, conn: connection) -> List[Dict]:
+
+    def execute_query(self, conn: connection) -> list[dict[str, Any]]:
         """
             Executes the query and returns the results.
             Takes a database connection as input.
         """
-        results: List = None
+        results: list[dict[str, Any]]
         with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
             timer = Timer().start_timer()
             cur.execute(self.query)

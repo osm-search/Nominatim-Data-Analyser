@@ -14,6 +14,6 @@ if (SRC_DIR / BUILD_DIR).exists():
     sys.path.insert(0, str(SRC_DIR / BUILD_DIR))
 
 
-from nominatim_data_analyser.cli import cli
+from nominatim_data_analyser.cli import cli # noqa
 
 sys.exit(cli())

@@ -12,7 +12,7 @@ class GeoJSONFormatter(Pipe):
     """
     def on_created(self) -> None:
         self.base_folder_path = Path(f'{Config.values["RulesFolderPath"]}/{self.exec_context.rule_name}/geojson')
-        #Take the rule's name as default file name.
+        # Take the rule's name as default file name.
         self.file_name = self.extract_data('file_name', self.exec_context.rule_name)
 
     def process(self, features: List[Feature]) -> str:

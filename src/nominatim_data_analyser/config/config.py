@@ -1,9 +1,10 @@
+from typing import Any
 from ..logger.logger import LOG
 from pathlib import Path
 import yaml
 
 class Config():
-    values: dict = dict()
+    values: dict[str, Any] = dict()
     default_config_folder_path = Path(__file__).parent
 
     @staticmethod

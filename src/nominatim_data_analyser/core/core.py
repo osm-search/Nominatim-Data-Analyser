@@ -4,7 +4,6 @@ from ..logger.logger import LOG
 from ..logger.timer import Timer
 from ..config import Config
 from pathlib import Path
-from typing import Dict
 
 class Core():
     """
@@ -14,7 +13,7 @@ class Core():
         Config.load_config()
         self.rules_path = Path(__file__, '..', '..', 'rules_specifications').resolve()
 
-    def execute_all(self, filter=None) -> None:
+    def execute_all(self, filter: list[str] | None = None) -> None:
         """
             Execute each QA rules.
 
@@ -30,6 +29,6 @@ class Core():
             Execute one QA rule based on its YAML file name.
         """
         timer = Timer().start_timer()
-        loaded_yaml: Dict = load_yaml_rule(name)
+        loaded_yaml = load_yaml_rule(name)
         PipelineAssembler(loaded_yaml, name).assemble().process_and_next()
         LOG.info('<%s> The whole rule executed in %s mins %s secs', name, *timer.get_elapsed())
