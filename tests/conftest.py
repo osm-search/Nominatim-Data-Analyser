@@ -1,7 +1,9 @@
 import sys
 import sysconfig
 from pathlib import Path
-import psycopg2
+
+import psycopg
+from psycopg import sql as pysql
 import pytest
 
 SRC_DIR = Path(__file__, '..', '..').resolve()
@@ -25,8 +27,6 @@ from nominatim_data_analyser.core.pipes.output_formatters import (GeoJSONFeature
                                                    OsmoscopeLayerFormatter,
                                                    VectorTileFormatter)
 from nominatim_data_analyser.core.qa_rule import ExecutionContext
-from nominatim_data_analyser.database.connection import connect
-from psycopg2._psycopg import connection, cursor
 
 
 @pytest.fixture
@@ -35,45 +35,38 @@ def temp_db() -> str:
         Create an empty database for the test.
     """
     name = 'test_qa_tool_python_unittest'
-    conn = psycopg2.connect(database='postgres')
-
-    conn.set_isolation_level(0)
-    with conn.cursor() as cur:
-        cur.execute('DROP DATABASE IF EXISTS {}'.format(name))
-        cur.execute('CREATE DATABASE {}'.format(name))
-    conn.close()
+    with psycopg.connect(dbname='postgres', autocommit=True) as conn:
+        with conn.cursor() as cur:
+            cur.execute(pysql.SQL('DROP DATABASE IF EXISTS') + pysql.Identifier(name))
+            cur.execute(pysql.SQL('CREATE DATABASE') + pysql.Identifier(name))
 
     yield name
 
-    conn = psycopg2.connect(database='postgres')
-    conn.set_isolation_level(0)
-    with conn.cursor() as cur:
-        cur.execute('DROP DATABASE IF EXISTS {}'.format(name))
-    conn.close()
+    with psycopg.connect(dbname='postgres', autocommit=True) as conn:
+        with conn.cursor() as cur:
+            cur.execute(pysql.SQL('DROP DATABASE IF EXISTS') + pysql.Identifier(name))
 
 @pytest.fixture
 def dsn(temp_db: str) -> str:
     return 'dbname=' + temp_db
 
 @pytest.fixture
-def temp_db_conn(dsn: str) -> connection:
+def temp_db_conn(dsn: str):
     """
         Connection to the test database.
     """
-    with connect(dsn) as conn:
+    with psycopg.connect(dsn) as conn:
         yield conn
 
 @pytest.fixture
-def temp_db_cursor(dsn: str) -> cursor:
-    """     
+def temp_db_cursor(dsn: str):
+    """ 
         Connection and cursor towards the test database. 
         The connection will be in auto-commit mode.
     """
-    conn = psycopg2.connect(dsn)
-    conn.set_isolation_level(0)
-    with conn.cursor() as cur:
-        yield cur
-    conn.close()
+    with psycopg.connect(dsn, autocommit=True) as conn:
+        with conn.cursor() as cur:
+            yield cur
 
 @pytest.fixture
 def config() -> Config:

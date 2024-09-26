@@ -1,9 +1,10 @@
-from __future__ import annotations
-from ....database.connection import connect
-from ....config import Config
-from ... import Pipe
 from pathlib import Path
 import json
+
+import psycopg
+
+from ....config import Config
+from ... import Pipe
 
 class OsmoscopeLayerFormatter(Pipe):
     """
@@ -39,7 +40,7 @@ class OsmoscopeLayerFormatter(Pipe):
             This field contains the date of the last database update.
             The date is extracted from the lastimportdate table of the database.
         """
-        with connect(Config.values['Dsn']) as conn:
+        with psycopg.connect(Config.values['Dsn']) as conn:
             with conn.cursor() as cur:
                 cur.execute("SELECT to_char(lastimportdate at time zone 'UTC', "
                             "               'YYYY-MM-DD HH24:MI:SS UTC') FROM import_status")
