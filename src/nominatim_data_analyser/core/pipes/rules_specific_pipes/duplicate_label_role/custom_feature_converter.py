@@ -1,12 +1,12 @@
+from typing import Any
 from ....pipe import Pipe
 from geojson.feature import Feature
-from typing import Dict
 
 class DuplicateLabelRoleCustomFeatureConverter(Pipe):
     def on_created(self) -> None:
         self.current_feature_id = -1
 
-    def process(self, elements: Dict) -> Feature:
+    def process(self, elements: dict[str, Any]) -> Feature:
         """
             Creates Geojson features for the given result of the SQLProcessor.
 

@@ -1,5 +1,5 @@
 from . import DynamicValue
-from typing import Any, Dict
+from typing import Any
 
 class Variable(DynamicValue):
     """
@@ -9,8 +9,8 @@ class Variable(DynamicValue):
     def __init__(self, name: str) -> None:
         self.name = name
 
-    def resolve(self, data: Dict) -> Any:
+    def resolve(self, data: dict[str, Any]) -> Any:
         if self.name not in data:
-            raise Exception(f'The variable name {self.name} was not found in the input dictionnary.')
+            raise Exception(f'The variable name {self.name} was not found in the input dictionary.')
 
         return data[self.name]

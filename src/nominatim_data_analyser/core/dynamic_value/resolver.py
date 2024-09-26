@@ -1,8 +1,8 @@
-
-from . import DynamicValue
 from typing import Any, Dict, Iterable
 
-def resolve_all(data_to_resolve: Any, resolver_data: Dict, ) -> Any:
+from . import DynamicValue
+
+def resolve_all(data_to_resolve: Any, resolver_data: dict[str, Any]) -> Any:
     """
         Resolves the given data_to_resolve by resolving all data inside which are
         of type DynamicValue. The resolved data are resolved again if they also contain
@@ -14,7 +14,7 @@ def resolve_all(data_to_resolve: Any, resolver_data: Dict, ) -> Any:
         data_to_resolve = resolve_one(data_to_resolve, resolver_data)
     return data_to_resolve
 
-def resolve_one(data_to_resolve: Any, resolver_data: Dict, ) -> Any:
+def resolve_one(data_to_resolve: Any, resolver_data: dict[str, Any]) -> Any:
     """
         Resolves every DynamicValue of the given data_to_resolve.
         If the given data is an Iterable all values of type DynamicValue
@@ -32,7 +32,7 @@ def resolve_one(data_to_resolve: Any, resolver_data: Dict, ) -> Any:
             data_to_resolve = new_dict
         #Resolve all others classic iterables.
         else:
-            data_to_resolve = type(data_to_resolve)(map(lambda x: _resolve_if_resolvable(resolver_data, x), data_to_resolve))
+            data_to_resolve = type(data_to_resolve)(map(lambda x: _resolve_if_resolvable(resolver_data, x), data_to_resolve)) # type: ignore[call-arg]
     else:
         data_to_resolve = _resolve_if_resolvable(resolver_data, data_to_resolve)
 
@@ -45,7 +45,7 @@ def is_resolvable(data: Any) -> bool:
         Also, if the data is a Dictionnary every keys and every values are checked.
     """
     if isinstance(data, Iterable):
-        if isinstance(data, Dict):
+        if isinstance(data, dict):
             #Checks all the keys and values of the dictionnary.
             return _contains_dynamic_value(data.keys()) \
                 or _contains_dynamic_value(data.values())
@@ -54,7 +54,7 @@ def is_resolvable(data: Any) -> bool:
     else:
         return _is_dynamic_value(data)
 
-def _contains_dynamic_value(data: Iterable) -> bool:
+def _contains_dynamic_value(data: Iterable[Any]) -> bool:
     """
         Checks if the given Iterable contains any instance
         of the DynamicValue type.
@@ -67,7 +67,7 @@ def _is_dynamic_value(data: Any) -> bool:
     """
     return isinstance(data, DynamicValue)
 
-def _resolve_if_resolvable(resolver_data: Dict, data: Any) -> Any:
+def _resolve_if_resolvable(resolver_data: dict[str, Any], data: Any) -> Any:
     """
         If the given data is of type DynamicValue it gets resolved.
         Otherwise it gets returned as it is.

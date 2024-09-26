@@ -1,10 +1,11 @@
+from typing import Any
 import psycopg2
 import logging
 import contextlib
 
 LOG = logging.getLogger()
 
-def connect(dsn):
+def connect(dsn: str) -> Any:
     """
         Open a connection to the database.
 
@@ -15,7 +16,7 @@ def connect(dsn):
     try:
         conn = psycopg2.connect(dsn)
         ctxmgr = contextlib.closing(conn)
-        ctxmgr.connection = conn
+        ctxmgr.connection = conn # type: ignore[attr-defined]
         return ctxmgr
     except psycopg2.OperationalError as err:
         raise Exception("Cannot connect to database: {}".format(err)) from err

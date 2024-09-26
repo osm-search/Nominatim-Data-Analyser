@@ -32,7 +32,7 @@ class VectorTileFormatter(Pipe):
 
         web_path = f'{Config.values["WebPrefixPath"]}/{self.exec_context.rule_name}/vector-tiles/' + '{z}/{x}/{y}.pbf'
         return web_path
-    
+
     def call_tippecanoe(self, output_dir: Path, feature_collection: FeatureCollection) -> None:
         """
             Calls Tippecanoe through a subprocess and send the feature collection as a stream
@@ -53,8 +53,8 @@ class VectorTileFormatter(Pipe):
                 input=dumps(feature_collection).encode(),
                 stdout=subprocess.PIPE
             )
-            self.log(result)
+            self.log(str(result))
         except subprocess.TimeoutExpired as e:
-            self.log(e, logging.FATAL)
+            self.log(str(e), logging.FATAL)
         except subprocess.CalledProcessError as e:
-            self.log(e, logging.FATAL)
+            self.log(str(e), logging.FATAL)

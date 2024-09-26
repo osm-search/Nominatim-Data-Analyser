@@ -1,5 +1,4 @@
-from __future__ import annotations
-from typing import Dict
+from typing import Any
 from ... import Pipe
 from ... import model as core_model
 
@@ -10,7 +9,7 @@ class GeometryConverter(Pipe):
     def on_created(self) -> None:
         self.geometry_type = self.extract_data('geometry_type', required=True)
 
-    def process(self, data: Dict) -> Dict:
+    def process(self, data: dict[str, Any]) -> dict[str, Any] | None:
         """
             Converts the given Well-Known Text representation of a
             geometry into a Geometry class based on the geometry_type.

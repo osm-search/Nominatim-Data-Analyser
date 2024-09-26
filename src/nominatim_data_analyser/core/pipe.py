@@ -1,23 +1,21 @@
-from __future__ import annotations
-from typing import Any, TYPE_CHECKING
+from typing import Any
+import uuid
+import logging
 from abc import ABCMeta, abstractmethod
 from ..logger.logger import LOG
 from .exceptions import YAMLSyntaxException
-import uuid
-import logging
+from .qa_rule import ExecutionContext
 
-if TYPE_CHECKING: # pragma: no cover
-    from .qa_rule import ExecutionContext
 
 class Pipe(metaclass=ABCMeta):
     """
         This is the base class for every pipe.
     """
-    def __init__(self, data: dict, exec_context: ExecutionContext = None) -> None:
+    def __init__(self, data: dict[str, Any], exec_context: ExecutionContext) -> None:
         self.id = uuid.uuid1()
         self.exec_context = exec_context
         self.data = data
-        self.next_pipes = set()
+        self.next_pipes: set['Pipe'] = set()
         self.on_created()
 
     def plug_pipe(self, pipe: Pipe) -> Pipe:
@@ -38,23 +36,22 @@ class Pipe(metaclass=ABCMeta):
             result = pipe.process_and_next(result)
         return result
 
-    def __str__(self):
+    def __str__(self) -> str:
         return type(self).__name__ + ' ' + str(self.id)
 
     @abstractmethod
-    def process(self, data: Any = None) -> Any:
+    def process(self, data: Any) -> Any:
         """
             Contains the execution logic of this pipe.
         """
-        return
 
     def on_created(self) -> None:
         """
             This method is called when the pipe is created.
 
             It should be overriden by the child pipe if any action is needed
-            at the creation. 
-            
+            at the creation.
+
             This is needed because child pipes can't have their own
             constructor since pipes are created dynamically.
         """
@@ -81,4 +78,4 @@ class Pipe(metaclass=ABCMeta):
             Log the given message with the given log level (default is INFO).
             The rule name is automatically prefixed to the log message.
         """
-        LOG.log(level, f'<{self.exec_context.rule_name}> {msg}')
+        LOG.log(level, f'<{self.exec_context.rule_name if self.exec_context else "None"}> {msg}')

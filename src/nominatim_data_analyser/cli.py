@@ -1,7 +1,7 @@
 from .core.core import Core
 import argparse
 
-def cli():
+def cli() -> int:
     parser = argparse.ArgumentParser(prog='nominatim-analyser')
 
     parser.add_argument('--execute-all', action='store_true', help='Executes all the QA rules')
@@ -19,3 +19,5 @@ def cli():
     elif args.execute_one:
         #Execute the given QA rule.
         Core().execute_one(args.execute_one)
+
+    return 0

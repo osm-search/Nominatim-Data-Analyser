@@ -6,8 +6,7 @@ from geojson.feature import Feature
 @dataclass
 class Geometry(metaclass=ABCMeta):
     @abstractmethod
-    def to_geojson_feature(self, id: int, properties: dict = {}) -> Feature:
-        return
+    def to_geojson_feature(self, id: int, properties: dict[str, str]) -> Feature: ...
 
     @staticmethod
     @abstractmethod
@@ -16,4 +15,3 @@ class Geometry(metaclass=ABCMeta):
             Parse a WKT geometry to instantiate a new
             Geometry class.
         """
-        return

@@ -30,12 +30,12 @@ class LoopDataProcessor(Pipe):
         self.log(f'Loop data processor executed in {elapsed_mins} mins {elapsed_secs} secs.')
         return processed_data
 
-    def process_one_data(self, data) -> Any:
+    def process_one_data(self, data: Any) -> Any:
         """
             Processes one data through each pipe of the processing pipeline.
             If one pipe returns None the process is stopped and None is returned.
         """
-        current_pipe = self.processing_pipeline
+        current_pipe: Pipe | None = self.processing_pipeline
         while current_pipe:
             data = current_pipe.process(data)
             if data is None:

@@ -1,4 +1,4 @@
-from typing import Any, Callable, Deque, Dict, List
+from typing import Any, Callable
 from collections import deque
 from ...logger.logger import LOG
 
@@ -14,7 +14,7 @@ class PipelineDeconstructor():
         It uses a backtracking system to go back on upper nodes
         when reaching a leaf.
     """
-    def __init__(self, pipeline_specification: Dict, rule_name: str) -> None:
+    def __init__(self, pipeline_specification: dict[str, Any], rule_name: str) -> None:
         #Add a root node needed for the exploration of the tree
         self._pipeline_specification = {
             'ROOT_NODE': { 
@@ -23,15 +23,15 @@ class PipelineDeconstructor():
                 }
         }
         self.rule_name = rule_name
-        self.current_node: Dict = None
-        self.nodes_history: Deque[Dict] = deque()
+        self.current_node: dict[str, Any] | None = None
+        self.nodes_history: deque[dict[str, Any]] = deque()
         self._init_event_callbacks()
 
     def deconstruct(self) -> None:
         """
             Explores the pipeline specification tree.
         """
-        self.current_node: Dict = self._pipeline_specification['ROOT_NODE']
+        self.current_node = self._pipeline_specification['ROOT_NODE']
         self._send_current_node_and_explore()
 
     def _send_current_node_and_explore(self) -> None:
@@ -39,6 +39,7 @@ class PipelineDeconstructor():
             Notifies that a new node has been reached and
             keep exploring the tree.
         """
+        assert self.current_node is not None
         self._notify_new_node(self.current_node)
         self._explore_deeper_or_backtrack()
 
@@ -47,6 +48,7 @@ class PipelineDeconstructor():
             If the current node still has an 'out' field, keep exploring
             deeper. Otherwise backtrack in the tree.
         """
+        assert self.current_node is not None
         if 'out' in self.current_node:
             self.nodes_history.append(self.current_node)
             self.current_node = self.current_node['out'].pop(next(iter(self.current_node['out'])))
@@ -73,14 +75,14 @@ class PipelineDeconstructor():
                 self.current_node.pop('out', None)
             self._explore_deeper_or_backtrack()
 
-    def subscribe_event(self, event: str, callback: Callable) -> None:
+    def subscribe_event(self, event: str, callback: Callable[..., Any]) -> None:
         """
             Registers the given callback to the
             given event.
         """
         self._event_callbacks[event].append(callback)
     
-    def _notify_new_node(self, node: dict) -> None:
+    def _notify_new_node(self, node: dict[str, Any]) -> None:
         """
             Notifies all subscribers that we reached a new node.
         """
@@ -107,6 +109,6 @@ class PipelineDeconstructor():
         """
             Initializes all events and empty callbacks list.
         """
-        self._event_callbacks: Dict[str, List[Callable]] = dict()
+        self._event_callbacks: dict[str, list[Callable[..., Any]]] = dict()
         self._event_callbacks[NEW_NODE_EVENT] = []
         self._event_callbacks[BACKTRACKING_EVENT] = []

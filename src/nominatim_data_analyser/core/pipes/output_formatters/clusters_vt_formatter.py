@@ -4,7 +4,7 @@ from geojson import dumps
 from ....logger.timer import Timer
 from ....config import Config
 from ... import Pipe
-from ....clustering_vt import cluster
+from ....clustering_vt import cluster # type: ignore[import-not-found]
 from pathlib import Path
 from typing import List
 import logging

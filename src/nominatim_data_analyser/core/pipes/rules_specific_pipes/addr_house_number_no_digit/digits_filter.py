@@ -1,12 +1,12 @@
+from typing import Any
 from ....pipe import Pipe
-from typing import Dict
 import re
 
 class AddrHouseNumberNoDigitFilter(Pipe):
     def on_created(self) -> None:
         self.any_digit_regex = re.compile(r'.*\d.*')
 
-    def process(self, elements: Dict) -> Dict:
+    def process(self, elements: dict[str, Any]) -> dict[str, Any] | None:
         """
             Filter the given data result by checking if 
             the housenumber contains any digit in any scripts

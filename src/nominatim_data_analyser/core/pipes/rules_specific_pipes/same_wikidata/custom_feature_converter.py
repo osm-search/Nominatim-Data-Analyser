@@ -1,10 +1,10 @@
+from typing import Any
 from ....pipe import Pipe
-from typing import List
 from ....model.node import Node
 from geojson import Feature
 
 class SameWikiDataFeatureConverter(Pipe):
-    def process(self, data: List[dict]) -> List[Feature]:
+    def process(self, data: list[dict[str, Any]]) -> list[Feature]:
         """
             Creates Geojson features for each nodes.
             each result from the SQLProcessor contains
@@ -13,7 +13,7 @@ class SameWikiDataFeatureConverter(Pipe):
             data is a list of list of format:
             [wikidata, List[ids], List[centroids]]
         """
-        features: List[Feature] = list()
+        features: list[Feature] = list()
         current_feature_id = 0
         for record in data:
             for i, centroid in enumerate(record['centroids']):
