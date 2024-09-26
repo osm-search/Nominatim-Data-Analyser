@@ -1,10 +1,10 @@
 from __future__ import annotations
-from time import time
 from typing import Tuple
+from time import time
 
 class Timer():
     def __init__(self) -> None:
-        self.start_time = 0
+        self.start_time = 0.0
 
     def start_timer(self) -> Timer:
         self.start_time = time()
@@ -13,4 +13,4 @@ class Timer():
     def get_elapsed(self) -> Tuple[int, int]:
         hours, rem = divmod(time() - self.start_time, 3600)
         minutes, seconds = divmod(rem, 60)
-        return round(minutes, 1), round(seconds, 1)
+        return int(round(minutes, 1)), int(round(seconds, 1))

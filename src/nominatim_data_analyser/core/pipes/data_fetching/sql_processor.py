@@ -1,6 +1,5 @@
 from __future__ import annotations
-
-from typing import Dict, List
+from typing import Dict, List, Any
 
 import psycopg2.extras
 from ....config.config import Config
@@ -18,7 +17,7 @@ class SQLProcessor(Pipe):
     def on_created(self) -> None:
         self.query = self.extract_data('query', required=True)
 
-    def process(self, data: any = None) -> List[Dict]:
+    def process(self, data: Any = None) -> List[Dict]:
         """
             Executes the query and returns the results.
         """

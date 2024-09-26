@@ -1,4 +1,4 @@
-from typing import Callable, Deque, Dict, List
+from typing import Any, Callable, Deque, Dict, List
 from collections import deque
 from ...logger.logger import LOG
 
@@ -94,8 +94,8 @@ class PipelineDeconstructor():
         """
         LOG.info('<%s> Deconstruction -> BACKTRACK', self.rule_name)
         self._raise_event(BACKTRACKING_EVENT)
-    
-    def _raise_event(self, event_name: str, *args: any) -> None:
+
+    def _raise_event(self, event_name: str, *args: Any) -> None:
         """
             Executes all registered callbacks of 
             the given event.

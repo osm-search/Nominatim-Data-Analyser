@@ -1,12 +1,12 @@
 from __future__ import annotations
+from typing import Any, TYPE_CHECKING
 from abc import ABCMeta, abstractmethod
 from ..logger.logger import LOG
 from .exceptions import YAMLSyntaxException
-import typing
 import uuid
 import logging
 
-if typing.TYPE_CHECKING: # pragma: no cover
+if TYPE_CHECKING: # pragma: no cover
     from .qa_rule import ExecutionContext
 
 class Pipe(metaclass=ABCMeta):
@@ -28,7 +28,7 @@ class Pipe(metaclass=ABCMeta):
         self.next_pipes.add(pipe)
         return pipe
 
-    def process_and_next(self, data: any = None) -> any:
+    def process_and_next(self, data: Any = None) -> Any:
         """
             Process this pipe and process the plugged ones
             by giving them the result of this execution.
@@ -42,7 +42,7 @@ class Pipe(metaclass=ABCMeta):
         return type(self).__name__ + ' ' + str(self.id)
 
     @abstractmethod
-    def process(self, data: any = None) -> any:
+    def process(self, data: Any = None) -> Any:
         """
             Contains the execution logic of this pipe.
         """
@@ -60,7 +60,7 @@ class Pipe(metaclass=ABCMeta):
         """
         pass
 
-    def extract_data(self, name: str, default: any = None, required: bool = False) -> any:
+    def extract_data(self, name: str, default: Any = None, required: bool = False) -> Any:
         """
             Tries to get data from the data dictionary.
 
