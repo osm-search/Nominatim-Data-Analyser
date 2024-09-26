@@ -65,3 +65,7 @@ nominatim-data-analyser = "nominatim_data_analyser.cli:cli"
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+
+[[tool.mypy.overrides]]
+module = ["geojson", "geojson.feature"]
+ignore_missing_imports = true

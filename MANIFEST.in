@@ -1,3 +1,4 @@
 include src/nominatim_data_analyser/rules_specifications/*.yaml
 include src/nominatim_data_analyser/config/default.yaml
+include src/nominatim_data_analyser/py.typed
 recursive-include contrib *
