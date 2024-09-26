@@ -2,15 +2,15 @@ from .yaml_logic.yaml_loader import load_yaml_rule
 from .assembler.pipeline_assembler import PipelineAssembler
 from ..logger.logger import LOG
 from ..logger.timer import Timer
-from ..config import Config
+from ..config import load_config
 from pathlib import Path
 
 class Core():
     """
         Core of the analyser used to execute rules.
     """
-    def __init__(self) -> None:
-        Config.load_config()
+    def __init__(self, config_file: str | None) -> None:
+        load_config(None if config_file is None else Path(config_file))
         self.rules_path = Path(__file__, '..', '..', 'rules_specifications').resolve()
 
     def execute_all(self, filter: list[str] | None = None) -> None:

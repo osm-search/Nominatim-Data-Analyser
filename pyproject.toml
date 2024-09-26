@@ -34,7 +34,6 @@ tests = [
 
 [tool.setuptools]
 packages = ["nominatim_data_analyser",
-            "nominatim_data_analyser.config",
             "nominatim_data_analyser.logger",
             "nominatim_data_analyser.core",
             "nominatim_data_analyser.core.exceptions",
