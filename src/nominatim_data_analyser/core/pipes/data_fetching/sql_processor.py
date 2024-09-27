@@ -2,7 +2,7 @@ from typing import Any
 
 import psycopg
 
-from ....config.config import Config
+from ....config import Config
 from ... import Pipe
 from ....logger.timer import Timer
 

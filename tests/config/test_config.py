@@ -1,31 +1,39 @@
-
-from nominatim_data_analyser.config import Config
-from pathlib import Path
 import pytest
 import yaml
 
-def test_load_default_config(config: Config) -> None:
+from nominatim_data_analyser.config import Config, load_config
+
+def test_load_default_config() -> None:
     """
         Test the load_config() method. The default config should be
         returned because no config.yaml file is present in the
         default_config folder used as the config_folder_path.
     """
-    config.load_config(Path(__file__).parent / 'default_config')
-    assert config.values == {'Dsn': 'default_dsn'}
+    load_config(None)
+    assert Config.values['Dsn'] == 'dbname=nominatim'
+    assert Config.values['RulesFolderPath'] == 'qa-data'
 
-def test_load_custom_config(config: Config) -> None:
+def test_load_custom_config(tmp_path) -> None:
     """
         Test the load_config() method. The custom config should be
         returned because one config.yaml file is present in the
         custom_config folder used as the config_folder_path.
     """
-    config.load_config(Path(__file__).parent / 'custom_config')
-    assert config.values == {'Dsn': 'custom_dsn'}
+    cfgfile = tmp_path / 'myconfig.yaml'
+    cfgfile.write_text("Dsn: 'custom_dsn'")
 
-def test_load_broken_config(config: Config) -> None:
+    load_config(cfgfile)
+
+    assert Config.values['Dsn'] == 'custom_dsn'
+    assert Config.values['RulesFolderPath'] == 'qa-data'
+
+def test_load_broken_config(tmp_path) -> None:
     """
         Test the load_config() method. A YAMLError exception should
         be raised as the config file has a wrong syntax.
     """
+    cfgfile = tmp_path / 'myconfig.yaml'
+    cfgfile.write_text(">>>>>>>>Dsn: 'custom_dsn'")
+
     with pytest.raises(yaml.YAMLError):
-        config.load_config(Path(__file__).parent / 'broken_config')
+        load_config(cfgfile)

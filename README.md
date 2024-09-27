@@ -30,7 +30,11 @@ the database DSN by supplying a custom config.yaml file.
 
 ## Configuration file
 
-To modify the configuration, you need to copy the ```analyser/config/default.yaml``` to ```analyser/config/config.yaml``` and you can modify the values inside the config.yaml file.
+Some parts of the analyser are configurable. You can find the default
+configuration in `src/nominatim_data_analyser/default_config.yaml`. To
+modify the configuration create a copy of the file with the modified
+values and put it as `config.yaml` in the directory where the analyser
+is executed.
 
 ## Frontend set up
 
@@ -45,6 +49,7 @@ Analysis is run with the nominatim-data-analyser tool:
 * --execute-all: Executes all QA rules.
 * --filter [rules_names…]: Filters some QA rules so they are not executed.
 * --execute-one <rule_name>: Executes the given QA rule.
+* --config: Set a custom location for the configuration file.
 
 During development you can run the same tool directly from the source tree
 after having built everything using the supplied `cli.py`.

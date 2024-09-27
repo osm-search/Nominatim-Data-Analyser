@@ -17,7 +17,7 @@ if (SRC_DIR / BUILD_DIR).exists():
     sys.path.insert(0, str(SRC_DIR / BUILD_DIR))
 
 
-from nominatim_data_analyser.config import Config
+from nominatim_data_analyser.config import Config, load_config
 from nominatim_data_analyser.core.pipes import FillingPipe
 from nominatim_data_analyser.core.pipes.data_fetching.sql_processor import SQLProcessor
 from nominatim_data_analyser.core.pipes.data_processing import (GeometryConverter,
@@ -73,7 +73,7 @@ def config() -> Config:
     """
         Loads the config and returns it.
     """
-    Config.load_config()
+    load_config(None)
     return Config
 
 @pytest.fixture

@@ -1,15 +1,15 @@
 from typing import Any, cast
+from pathlib import Path
+
+import yaml
+
 from ..dynamic_value.switch import Switch
 from ..dynamic_value.variable import Variable
 from ..assembler import PipelineAssembler
 from .. import Pipe
 from ...logger.logger import LOG
-from pathlib import Path
-import yaml
 
-base_rules_path = Path(__file__, '..', '..', '..', 'rules_specifications').resolve()
-
-def load_yaml_rule(file_name: str) -> dict[str, Any]:
+def load_yaml_rule(rule_file: Path) -> dict[str, Any]:
     """
         Load the YAML specification file.
         YAML constructors are added to handle custom types in the YAML.
@@ -17,19 +17,18 @@ def load_yaml_rule(file_name: str) -> dict[str, Any]:
     def _sub_pipeline(loader: yaml.SafeLoader, node: yaml.Node) -> Pipe:
         if not isinstance(node, yaml.MappingNode):
             raise RuntimeError("!switch expects mapping.")
-        return sub_pipeline_constructor(loader, node, file_name)
+        return sub_pipeline_constructor(loader, node, rule_file.stem)
 
     yaml.add_constructor(u'!sub-pipeline', _sub_pipeline, Loader=yaml.SafeLoader)
     yaml.add_constructor(u'!variable', variable_constructor, Loader=yaml.SafeLoader)
     yaml.add_constructor(u'!switch', switch_constructor, Loader=yaml.SafeLoader)
 
-    path = Path(base_rules_path / Path(file_name + '.yaml')).resolve()
-    with open(str(path), 'r') as file:
+    with rule_file.open('r') as file:
         try:
             loaded = cast(dict[str, Any], yaml.safe_load(file))
         except yaml.YAMLError as exc:
             LOG.error('Error while loading the YAML rule file %s: %s',
-                      file_name, exc)
+                      rule_file.stem, exc)
             raise
 
     return loaded
