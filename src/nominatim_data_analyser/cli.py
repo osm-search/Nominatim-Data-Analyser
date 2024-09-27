@@ -20,10 +20,7 @@ def cli() -> int:
 
     # Executes all the QA rules. If a filter is given, these rules are excluded from the execution.
     if args.execute_all:
-        if args.filter:
-            core.execute_all(args.filter)
-        else:
-            core.execute_all()
+        core.execute_all(args.filter)
     elif args.execute_one:
         # Execute the given QA rule.
         core.execute_one(args.execute_one)
