@@ -1,0 +1,59 @@
+---
+QUERY:
+  type: SQLProcessor
+  query: >
+    WITH country_names AS MATERIALIZED (
+      SELECT
+        country_code,
+        ARRAY(
+          SELECT DISTINCT(LOWER(v)) FROM UNNEST(AVALS(derived_name)) as v
+        ) AS names_array
+      FROM country_name
+    )
+    SELECT ST_AsText(centroid) AS geometry_holder, osm_id, osm_type, address
+    FROM placex
+    JOIN country_names ON placex.country_code = country_names.country_code
+    WHERE
+      address ? 'state' AND
+      (
+        LOWER(address->'state') = placex.country_code
+        OR
+        LOWER(address->'state') = LOWER(address->'province')
+        OR
+        LOWER(address->'state') = ANY(country_names.names_array)
+      );
+  out:
+    LOOP_PROCESSING:
+      type: LoopDataProcessor
+      sub_pipeline: !sub-pipeline
+        GEOMETRY_CONVERTER:
+          type: GeometryConverter
+          geometry_type: Node
+          out:
+            FEATURE_CONVERTER:
+              type: GeoJSONFeatureConverter
+              properties:
+                - !switch
+                    expression: osm_type
+                    cases:
+                      'N': 
+                        node_id: !variable osm_id
+                      'W': 
+                        way_id: !variable osm_id
+                      'R': 
+                        relation_id: !variable osm_id
+                - address: !variable address
+      out:
+        CLUSTERING_VECTOR_TILES:
+          type: ClustersVtFormatter
+          radius: 60
+          out:
+            LAYER_FILE:
+              type: OsmoscopeLayerFormatter
+              data_format_url: vector_tile_url
+              name: Suspicious addr:state value
+              updates: Every evening
+              doc:
+                description: addr:state contains a country name, code or is same as province
+                why_problem: In addresses a state cannot also be the country.
+                how_to_fix: Make sure addr:state really contains a state name. Maybe in the addresses' country doesn't have states, then no value is required.
