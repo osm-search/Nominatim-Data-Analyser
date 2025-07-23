@@ -28,7 +28,7 @@ def test_deconstruct_basic() -> None:
     #Store new nodes added
     new_nodes = list()
     def new_node_callback(node: dict):
-        nonlocal new_nodes
+        # nonlocal new_nodes
         new_nodes.append(node)
     backtrack_count = 0
     def backtrack_callback():
@@ -77,7 +77,7 @@ def test_deconstruct_double_out() -> None:
     #Store new nodes added
     new_nodes = list()
     def new_node_callback(node: dict):
-        nonlocal new_nodes
+        # nonlocal new_nodes
         new_nodes.append(node)
     backtrack_count = 0
     def backtrack_callback():
@@ -138,7 +138,7 @@ def test_explore_deeper_or_backtrack(pipeline_deconstructor: PipelineDeconstruct
     #Store new nodes added
     new_nodes = list()
     def new_node_callback(node: dict):
-        nonlocal new_nodes
+        # nonlocal new_nodes
         new_nodes.append(node)
     pipeline_deconstructor._event_callbacks[NEW_NODE_EVENT].append(new_node_callback)
 
