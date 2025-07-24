@@ -10,7 +10,7 @@ QUERY:
         ) AS names_array
       FROM country_name
     )
-    SELECT ST_AsText(centroid) AS geometry_holder, osm_id, osm_type, address
+    SELECT ST_AsText(centroid) AS geometry_holder, osm_id, osm_type, address->'state' as state, address->'province' as province, placex.country_code as cc
     FROM placex
     JOIN country_names ON placex.country_code = country_names.country_code
     WHERE
@@ -42,7 +42,9 @@ QUERY:
                         way_id: !variable osm_id
                       'R': 
                         relation_id: !variable osm_id
-                - address: !variable address
+                - state: !variable state
+                - province: !variable province
+                - country_code: !variable cc
       out:
         CLUSTERING_VECTOR_TILES:
           type: ClustersVtFormatter
