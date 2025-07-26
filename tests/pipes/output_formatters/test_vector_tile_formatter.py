@@ -20,7 +20,7 @@ def test_process_vector_tile_formatter(vector_tile_formatter: VectorTileFormatte
     vector_tile_formatter.base_folder_path = tmp_path / 'test_folder'
 
     features = [
-        Feature(geometry=Point((5, 2))),
+        Feature(geometry=Point((5, 2)), properties={'key': 'value', 'null': None}),
         Feature(geometry=Point((4, 1))),
         Feature(geometry=Point((10, 20)))
     ]
