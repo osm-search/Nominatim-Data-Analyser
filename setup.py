@@ -7,13 +7,10 @@ ext_modules = [
         ["clustering-vt/clustering-vt.cpp"],
         include_dirs=[
             "contrib/geojson/0.4.3/include",
-            "contrib/protozero/1.7.0/include",
             "contrib/geometry/1.0.0/include",
-            "contrib/vtzero/1.1.0/include",
+            "contrib/vtzero/include",
             "contrib/kdbush/0.1.3/include",
             "contrib/supercluster/0.3.2/include",
-            "contrib/variant/1.2.0/include",
-            "contrib/rapidjson/1.1.0/include",
         ],
         cxx_std=17
     ),
