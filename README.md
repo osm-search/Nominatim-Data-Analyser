@@ -7,6 +7,18 @@ suspect data from it. These data are then presented to mappers through a [visual
 
 The repository containing the frontend of the tool can be found [there](https://github.com/osm-search/Nominatim-Data-Analyser-Frontend).
 
+# Prerequisites
+
+The following libraries are needed for compiling clustering-vt:
+
+* [rapidjson](https://rapidjson.org/)
+* [Mapbox variant](https://github.com/mapbox/variant)
+
+You need a recent version of the rapidjson library. On Debian install with:
+
+    sudo apt-get install rapidjson-dev libmapbox-variant-dev
+
+
 # Installation procedure
 
 Clone this repository by running:
@@ -14,10 +26,6 @@ Clone this repository by running:
 ```
 git clone https://github.com/osm-search/Nominatim-Data-Analyser
 ```
-
-You need a recent version of the rapidjson library. On Debian install with:
-
-    sudo apt-get install rapidjson-dev
 
 Then you can compile everything with
 
