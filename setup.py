@@ -13,7 +13,6 @@ ext_modules = [
             "contrib/kdbush/0.1.3/include",
             "contrib/supercluster/0.3.2/include",
             "contrib/variant/1.2.0/include",
-            "contrib/rapidjson/1.1.0/include",
         ],
         cxx_std=17
     ),

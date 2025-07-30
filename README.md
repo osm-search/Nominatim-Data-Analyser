@@ -15,6 +15,10 @@ Clone this repository by running:
 git clone https://github.com/osm-search/Nominatim-Data-Analyser
 ```
 
+You need a recent version of the rapidjson library. On Debian install with:
+
+    sudo apt-get install rapidjson-dev
+
 Then you can compile everything with
 
     python3 setup.py build
