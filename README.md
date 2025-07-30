@@ -1,6 +1,6 @@
 # Nominatim-Data-Analyser ![CI Build-Tests](https://github.com/osm-search/Nominatim-Data-Analyser/actions/workflows/ci-build-tests.yml/badge.svg)
 
-The Nominatim Data Analyser is a QA tool used to scan the nominatim database and extract
+The Nominatim Data Analyser is a QA tool used to scan the Nominatim database and extract
 suspect data from it. These data are then presented to mappers through a [visual interface](https://nominatim.org/qa/) so that they can correct them directly.
 
 # Frontend
@@ -13,10 +13,11 @@ The following libraries are needed for compiling clustering-vt:
 
 * [rapidjson](https://rapidjson.org/)
 * [Mapbox variant](https://github.com/mapbox/variant)
+* [protozero](https://github.com/mapbox/protozero)
 
-You need a recent version of the rapidjson library. On Debian install with:
+On Debian install with:
 
-    sudo apt-get install rapidjson-dev libmapbox-variant-dev
+    sudo apt-get install rapidjson-dev libmapbox-variant-dev libprotozero-dev
 
 
 # Installation procedure

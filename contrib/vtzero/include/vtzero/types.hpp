@@ -14,6 +14,7 @@ documentation.
 
 #include <array>
 #include <cassert>
+#include <limits>
 
 // @cond internal
 // Wrappers for assert() used for testing
@@ -124,7 +125,7 @@ namespace vtzero {
         /// @endcond
 
         /// value
-        data_view value{};
+        data_view value;
 
         /// Construct empty string_value_type
         constexpr string_value_type() noexcept = default;
@@ -335,8 +336,8 @@ namespace vtzero {
      */
     class index_value_pair {
 
-        index_value m_key{};
-        index_value m_value{};
+        index_value m_key;
+        index_value m_value;
 
     public:
 
@@ -385,7 +386,7 @@ namespace vtzero {
      */
     class geometry {
 
-        data_view m_data{};
+        data_view m_data;
         GeomType m_type = GeomType::UNKNOWN;
 
     public:

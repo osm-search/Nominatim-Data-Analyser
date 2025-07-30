@@ -188,7 +188,7 @@ namespace vtzero {
         }
 
         template <typename T>
-        using is_layer = std::is_same<typename std::remove_cv<typename std::remove_reference<T>::type>::type, layer>;
+        using is_layer = std::is_same<std::remove_cv_t<std::remove_reference_t<T>>, layer>;
 
     public:
 
@@ -213,7 +213,7 @@ namespace vtzero {
          * @param version The vector tile spec version of the new layer.
          * @param extent The extent of the new layer.
          */
-        template <typename TString, typename std::enable_if<!is_layer<TString>::value, int>::type = 0>
+        template <typename TString, typename std::enable_if_t<!is_layer<TString>::value, int> = 0>
         layer_builder(vtzero::tile_builder& tile, TString&& name, uint32_t version = 2, uint32_t extent = 4096) :
             m_layer(tile.add_layer(std::forward<TString>(name), version, extent)) {
         }
@@ -359,7 +359,7 @@ namespace vtzero {
     protected:
 
         /// Encoded geometry.
-        protozero::packed_field_uint32 m_pbf_geometry{};
+        protozero::packed_field_uint32 m_pbf_geometry;
 
         /// Number of points still to be set for the geometry to be complete.
         countdown_value m_num_points;
@@ -1032,7 +1032,7 @@ namespace vtzero {
                 m_pbf_geometry.add_element(detail::command_close_path());
             } else {
                 if (p == m_cursor) {
-                    throw geometry_exception{"Zero-length segments in linestrings are not allowed."};
+                    throw geometry_exception{"Zero-length segments in rings are not allowed."};
                 }
                 m_pbf_geometry.add_element(protozero::encode_zigzag32(p.x - m_cursor.x));
                 m_pbf_geometry.add_element(protozero::encode_zigzag32(p.y - m_cursor.y));
