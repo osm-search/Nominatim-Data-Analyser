@@ -17,7 +17,7 @@ QUERY:
             LAYER_FILE:
               type: OsmoscopeLayerFormatter
               data_format_url: vector_tile_url
-              name: duplicate wikidata id
+              name: Duplicate wikidata ID
               updates: Every evening
               doc:
                 description: A single wikidata id should be assigned to at most one place node.

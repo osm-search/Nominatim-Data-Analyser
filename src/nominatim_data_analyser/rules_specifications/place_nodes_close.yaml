@@ -25,7 +25,7 @@ QUERY:
             LAYER_FILE:
               type: OsmoscopeLayerFormatter
               data_format_url: vector_tile_url
-              name: place nodes close
+              name: Place nodes close
               updates: Every evening
               doc:
                 description: Place nodes of same type and name close to each other.

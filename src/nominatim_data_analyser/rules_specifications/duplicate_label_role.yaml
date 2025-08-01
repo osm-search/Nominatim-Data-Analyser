@@ -22,7 +22,7 @@ QUERY:
             LAYER_FILE:
               type: OsmoscopeLayerFormatter
               data_format_url: geojson_url
-              name: duplicate label role
+              name: Duplicate label role
               updates: Every evening
               doc:
                 description: Admin boundaries with more than one member with role 'label'.

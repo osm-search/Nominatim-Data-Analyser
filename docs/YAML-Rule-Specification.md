@@ -34,7 +34,7 @@ QUERY:
             LAYER_FILE:
               type: OsmoscopeLayerFormatter
               data_format_url: geojson_url
-              name: no admin level
+              name: No admin level
               updates: Every evening
               doc:
                 description: Every relation with boundary=administrative should have an admin_level value set.
@@ -172,7 +172,7 @@ QUERY:
             LAYER_FILE:
               type: OsmoscopeLayerFormatter
               data_format_url: geojson_url
-              name: no admin level
+              name: No admin level
               updates: Every evening
               doc:
                 description: Every relation with boundary=administrative should have an admin_level value set.
