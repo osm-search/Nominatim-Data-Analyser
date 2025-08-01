@@ -205,7 +205,7 @@ QUERY:
             LAYER_FILE:
               type: OsmoscopeLayerFormatter
               data_format_url: vector_tile_url
-              name: Unusual Postcode Format
+              name: Unusual postcode format
               update: Every evening
               doc:
                 description: |
