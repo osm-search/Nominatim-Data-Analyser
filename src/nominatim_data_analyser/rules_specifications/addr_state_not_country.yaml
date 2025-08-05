@@ -14,7 +14,7 @@ QUERY:
     FROM placex
     JOIN country_names ON placex.country_code = country_names.country_code
     WHERE
-      address ? 'state' AND
+      address ? 'state' AND not address ? '_inherited' AND
       (
         LOWER(address->'state') = placex.country_code
         OR
