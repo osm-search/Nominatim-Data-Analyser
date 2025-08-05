@@ -22,7 +22,7 @@ dependencies = [
     "geojson",
     "psycopg"
 ]
-version = "0.2.2"
+version = "0.2.3"
 
 [project.urls]
 Homepage = "https://github.com/osm-search/Nominatim-Data-Analyser"
