@@ -18,9 +18,15 @@ QUERY:
       (
         LOWER(address->'state') = placex.country_code
         OR
-        LOWER(address->'state') = LOWER(address->'province')
+        (
+          LOWER(address->'state') = LOWER(address->'province')
+          AND placex.country_code NOT IN ('ar', 'bd', 'bz')
+        )
         OR
-        LOWER(address->'state') = ANY(country_names.names_array)
+        (
+          LOWER(address->'state') = ANY(country_names.names_array)
+          AND placex.country_code NOT IN ('mx')
+        )
       );
   out:
     LOOP_PROCESSING:
