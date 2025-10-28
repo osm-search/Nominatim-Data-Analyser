@@ -170,10 +170,15 @@ QUERY:
            address, address->'postcode' as postcode, postcode_formats.format,
            upper(placex.country_code) as country_code
            FROM placex, postcode_formats
-           WHERE address ? 'postcode' and address->'postcode' not similar to '%[,;]%'
+           WHERE address ? 'postcode'
+                 and address->'postcode' not similar to '%[,;]%'
                  and not address ? '_inherited'
                  and placex.country_code = postcode_formats.country_code
-                 and address->'postcode' !~ ('^' || postcode_formats.expr || '$')
+                 and (
+                    address->'postcode' !~ ('^' || postcode_formats.expr || '$')
+                    or
+                    address->'postcode' ~ '^[0\- ]+$'
+                 )
   out:
     LOOP_PROCESSING:
       type: LoopDataProcessor
