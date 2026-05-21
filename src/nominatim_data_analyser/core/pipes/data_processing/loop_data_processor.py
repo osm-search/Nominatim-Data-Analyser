@@ -1,6 +1,6 @@
 from __future__ import annotations
 from typing import List, Any
-from ....logger.timer import Timer
+from ....timer import Timer
 from ... import Pipe
 
 class LoopDataProcessor(Pipe):
@@ -15,7 +15,7 @@ class LoopDataProcessor(Pipe):
         """
             Processes each data of the input list with the processing pipeline.
         """
-        timer = Timer().start_timer()
+        timer = Timer('Loop data processor')
         processed_data = list()
         for d in data:
             processed_result = self.process_one_data(d)
@@ -26,8 +26,7 @@ class LoopDataProcessor(Pipe):
                 else:
                     processed_data.append(processed_result)
 
-        elapsed_mins, elapsed_secs = timer.get_elapsed()
-        self.log(f'Loop data processor executed in {elapsed_mins} mins {elapsed_secs} secs.')
+        self.log(timer.elapsed_str)
         return processed_data
 
     def process_one_data(self, data: Any) -> Any:

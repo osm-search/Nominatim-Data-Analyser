@@ -1,12 +1,14 @@
 from typing import Any
+import logging
+
 from ..deconstructor import PipelineDeconstructor, BACKTRACKING_EVENT, NEW_NODE_EVENT
 from .. import Pipe
 from ..pipes import FillingPipe
 from ..qa_rule import ExecutionContext
-from ...logger.logger import LOG
 from collections import deque
 from .pipe_factory import PipeFactory
 
+LOG = logging.getLogger()
 
 class PipelineAssembler():
     """
@@ -34,7 +36,7 @@ class PipelineAssembler():
             pipe = PipeFactory.assemble_pipe(node, self.exec_context)
             # Plug the new pipe to the current last pipe of the deque
             self.nodes_history[-1].plug_pipe(pipe)
-            LOG.info("<%s> Assembler -> %s plugged to %s", self.rule_name, pipe, self.nodes_history[-1])
+            LOG.debug("<%s> Assembler -> %s plugged to %s", self.rule_name, pipe, self.nodes_history[-1])
             self.nodes_history.append(pipe)
 
     def on_backtrack(self) -> None:

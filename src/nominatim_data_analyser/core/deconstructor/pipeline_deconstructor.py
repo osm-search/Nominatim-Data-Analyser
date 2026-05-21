@@ -1,9 +1,11 @@
 from typing import Any, Callable
 from collections import deque
-from ...logger.logger import LOG
+import logging
 
 NEW_NODE_EVENT = 'new_node'
 BACKTRACKING_EVENT = 'backtracking'
+
+LOG = logging.getLogger()
 
 class PipelineDeconstructor():
     """
@@ -86,7 +88,7 @@ class PipelineDeconstructor():
         """
             Notifies all subscribers that we reached a new node.
         """
-        LOG.info('<%s> Deconstruction -> NEW_NODE %s', self.rule_name, node['type'])
+        LOG.debug('<%s> Deconstruction -> NEW_NODE %s', self.rule_name, node['type'])
         self._raise_event(NEW_NODE_EVENT, node)
 
     def _notify_backtracking(self,) -> None:
@@ -94,7 +96,7 @@ class PipelineDeconstructor():
             Notifies all subscribers that we are backtracking because
             the deconstructor reached a leaf.
         """
-        LOG.info('<%s> Deconstruction -> BACKTRACK', self.rule_name)
+        LOG.debug('<%s> Deconstruction -> BACKTRACK', self.rule_name)
         self._raise_event(BACKTRACKING_EVENT)
 
     def _raise_event(self, event_name: str, *args: Any) -> None:

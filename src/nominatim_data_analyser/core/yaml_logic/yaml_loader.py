@@ -1,5 +1,6 @@
 from typing import Any, cast
 from pathlib import Path
+import logging
 
 import yaml
 
@@ -7,7 +8,8 @@ from ..dynamic_value.switch import Switch
 from ..dynamic_value.variable import Variable
 from ..assembler import PipelineAssembler
 from .. import Pipe
-from ...logger.logger import LOG
+
+LOG = logging.getLogger()
 
 def load_yaml_rule(rule_file: Path) -> dict[str, Any]:
     """

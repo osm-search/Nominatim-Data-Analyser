@@ -1,12 +1,15 @@
-from __future__ import annotations
+import logging
+
 from geojson.feature import Feature, FeatureCollection
 from geojson import dumps
-from ....logger.timer import Timer
+from ....timer import Timer
 from ....config import Config
 from ... import Pipe
 from ....clustering_vt import cluster  # type: ignore[import-not-found]
 from pathlib import Path
 from typing import List
+
+LOG = logging.getLogger()
 
 class ClustersVtFormatter(Pipe):
     """
@@ -24,12 +27,11 @@ class ClustersVtFormatter(Pipe):
             The outputfolder is initially deleted if it exists.
         """
         feature_collection = FeatureCollection(features)
-        timer = Timer().start_timer()
+        timer = Timer('Clustering and vector tiles creation')
 
         self.call_clustering_vt(self.base_folder_path, feature_collection)
 
-        elapsed_mins, elapsed_secs = timer.get_elapsed()
-        self.log(f'Clustering and vector tiles creation executed in {elapsed_mins} mins {elapsed_secs} secs')
+        self.log(timer.elapsed_str)
 
         web_path = f'{Config.values["WebPrefixPath"]}/{self.exec_context.rule_name}/vector-tiles/' + '{z}/{x}/{y}.pbf'
         return web_path
@@ -39,6 +41,8 @@ class ClustersVtFormatter(Pipe):
             Calls clustering-vt through a subprocess and send the feature collection as a stream
             in the stdin of the subprocess.
         """
-        result = cluster(str(output_dir), self.radius, (dumps(feat) for feat in feature_collection['features']))
+        result = cluster(str(output_dir), self.radius,
+                         (dumps(feat) for feat in feature_collection['features']),
+                         LOG)
         if result != 0:
             raise RuntimeError("Clustering failed.")
