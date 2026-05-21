@@ -14,12 +14,14 @@ def cli() -> int:
                         type=str, help='Executes the given QA rule')
     parser.add_argument('--config', metavar='<YAML file>', default='config.yaml',
                         help='Location of config file (default: config.yaml)')
+    parser.add_argument('-v', '--verbose', action='store_true',
+                        help='Enable additional debug output.')
 
     args = parser.parse_args()
 
     logging.basicConfig(format='%(asctime)s: %(message)s',
                         datefmt='%Y-%m-%d %H:%M:%S',
-                        level=logging.INFO)
+                        level=logging.DEBUG if args.verbose else logging.INFO)
 
     core = Core(config_file=args.config)
 
