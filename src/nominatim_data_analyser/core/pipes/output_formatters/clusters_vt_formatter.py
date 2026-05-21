@@ -1,4 +1,5 @@
-from __future__ import annotations
+import logging
+
 from geojson.feature import Feature, FeatureCollection
 from geojson import dumps
 from ....timer import Timer
@@ -7,6 +8,8 @@ from ... import Pipe
 from ....clustering_vt import cluster  # type: ignore[import-not-found]
 from pathlib import Path
 from typing import List
+
+LOG = logging.getLogger()
 
 class ClustersVtFormatter(Pipe):
     """
@@ -38,6 +41,8 @@ class ClustersVtFormatter(Pipe):
             Calls clustering-vt through a subprocess and send the feature collection as a stream
             in the stdin of the subprocess.
         """
-        result = cluster(str(output_dir), self.radius, (dumps(feat) for feat in feature_collection['features']))
+        result = cluster(str(output_dir), self.radius,
+                         (dumps(feat) for feat in feature_collection['features']),
+                         LOG)
         if result != 0:
             raise RuntimeError("Clustering failed.")

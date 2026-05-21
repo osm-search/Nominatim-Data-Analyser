@@ -6,8 +6,6 @@
 
 #include <pybind11/pybind11.h>
 
-#define DEBUG_TIMER false
-
 #include <supercluster.hpp>
 
 #include <iostream>
@@ -15,6 +13,8 @@
 #include <string>
 #include <iterator>
 #include <filesystem>
+
+namespace {
 
 const int maxZoom = 13;
 
@@ -211,8 +211,27 @@ void generate_tiles(const short zoom,
     }
 }
 
-int cluster(std::string const outdir, int radius, pybind11::iterable const json_features) {
-    mapbox::supercluster::Timer timer;
+class Timer {
+    std::chrono::high_resolution_clock::time_point started;
+    pybind11::object log_func;
+
+public:
+    Timer(pybind11::object logger) {
+        started = std::chrono::high_resolution_clock::now();
+        log_func = logger.attr("debug");
+    }
+
+    void operator()(std::string msg) {
+        const auto now = std::chrono::high_resolution_clock::now();
+        const auto ms = std::chrono::duration_cast<std::chrono::microseconds>(now - started);
+        log_func("%s: %sms", msg, double(ms.count()) / 1000);
+        started = now;
+    }
+};
+
+
+int cluster(std::string const outdir, int radius, pybind11::iterable const json_features, pybind11::object logger) {
+    Timer timer(logger);
 
     mapbox::feature::feature_collection<double> features;
 
@@ -235,10 +254,11 @@ int cluster(std::string const outdir, int radius, pybind11::iterable const json_
     generate_tiles(0, 0, 0, outdir, index);
 
     timer("total tiles generation time");
-    std::cout << "Tiles created: " << amountCreated << "\n";
-    std::cout << "Tiles removed: " << amountRemoved << "\n";
+    logger.attr("info")("Tiles created: %s  removed: %s", amountCreated, amountRemoved);
 
     return 0;
+}
+
 }
 
 PYBIND11_MODULE(clustering_vt, m) {
