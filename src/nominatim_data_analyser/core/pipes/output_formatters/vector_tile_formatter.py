@@ -23,12 +23,11 @@ class VectorTileFormatter(Pipe):
         """
         feature_collection = FeatureCollection(features)
         self.base_folder_path.mkdir(parents=True, exist_ok=True)
-        timer = Timer().start_timer()
+        timer = Timer('Vector tile conversion')
 
         self.call_tippecanoe(self.base_folder_path, feature_collection)
 
-        elapsed_mins, elapsed_secs = timer.get_elapsed()
-        self.log(f'Vector tile conversion executed in {elapsed_mins} mins {elapsed_secs} secs')
+        self.log(timer.elapsed_str)
 
         web_path = f'{Config.values["WebPrefixPath"]}/{self.exec_context.rule_name}/vector-tiles/' + '{z}/{x}/{y}.pbf'
         return web_path

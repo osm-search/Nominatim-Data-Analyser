@@ -24,12 +24,11 @@ class ClustersVtFormatter(Pipe):
             The outputfolder is initially deleted if it exists.
         """
         feature_collection = FeatureCollection(features)
-        timer = Timer().start_timer()
+        timer = Timer('Clustering and vector tiles creation')
 
         self.call_clustering_vt(self.base_folder_path, feature_collection)
 
-        elapsed_mins, elapsed_secs = timer.get_elapsed()
-        self.log(f'Clustering and vector tiles creation executed in {elapsed_mins} mins {elapsed_secs} secs')
+        self.log(timer.elapsed_str)
 
         web_path = f'{Config.values["WebPrefixPath"]}/{self.exec_context.rule_name}/vector-tiles/' + '{z}/{x}/{y}.pbf'
         return web_path

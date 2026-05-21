@@ -34,7 +34,7 @@ class Core():
         self._execute(self.rules_path / f"{name}.yaml")
 
     def _execute(self, rule_file: Path) -> None:
-        timer = Timer().start_timer()
+        timer = Timer(f'<{rule_file.stem}> The whole rule')
         loaded_yaml = load_yaml_rule(rule_file)
         PipelineAssembler(loaded_yaml, rule_file.stem).assemble().process_and_next()
-        LOG.info('<%s> The whole rule executed in %s mins %s secs', rule_file.stem, *timer.get_elapsed())
+        LOG.info(timer.elapsed_str)
