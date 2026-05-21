@@ -28,13 +28,26 @@ Clone this repository by running:
 git clone https://github.com/osm-search/Nominatim-Data-Analyser
 ```
 
-Then you can compile everything with
-
-    python3 setup.py build
-
-Or you can directly compile and install the analyser with
+Then you can directly compile and install the analyser with
 
     pip install .
+
+## Installing for development
+
+For a fast development setup, uv is recommended. Follow the
+[official instructions](https://docs.astral.sh/uv/getting-started/installation/)
+for installing uv, then run:
+
+```
+uv sync
+```
+
+Now the analyzer can be run with
+
+```
+uv run nominatim-data-analyser
+```
+
 
 ## Database
 
@@ -69,13 +82,12 @@ after having built everything using the supplied `cli.py`.
 
 # Tests
 
-[Pytest](https://docs.pytest.org/en/6.2.x/getting-started.html) is used for the tests and it should be installed:
+[Pytest](https://docs.pytest.org/) is used for the tests. Using uv the tests
+can be run as follows:
 
 ```
-pip install pytest
+uv run pytest
 ```
-
-To run the tests for the analyser: execute ```pytest``` command at the root folder of the project.
 
 # Reporting errors in the rule
 
