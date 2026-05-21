@@ -17,7 +17,7 @@ def test_process_geojson_formatter(config: Config,
     geojson_formatter.base_folder_path = tmp_path / 'test_folder'
 
     features = [
-        Feature(geometry=Point((5, 2))),
+        Feature(geometry=Point((5, 2)), properties={'key': 'value', 'null': None}),
         Feature(geometry=Point((4, 1))),
         Feature(geometry=Point((10, 20)))
     ]
@@ -27,4 +27,8 @@ def test_process_geojson_formatter(config: Config,
 
     #Verify the content of the geojson created
     with open(tmp_path/'test_folder/test_file.json' , 'r') as file:
-        assert loads(file.read()) == FeatureCollection(features)
+        data = loads(file.read())
+        assert data == FeatureCollection(features)
+        # Make sure empty values got removed
+        assert FeatureCollection(data)['features'][0]['properties'] == {'key': 'value'}
+        assert FeatureCollection(data)['features'][1]['properties'] == {}

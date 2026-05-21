@@ -20,6 +20,14 @@ class GeoJSONFormatter(Pipe):
             Create the FeatureCollection and dump it to
             a new GeoJSON file.
         """
+
+        # tippecanoe (using sqlite as datastore) converts Null to 0.
+        # https://github.com/mapbox/tippecanoe/issues/811
+        # Thus loop through all features and remove any properties having Null values.
+        if features is not None:
+            for feature in features:
+                feature['properties'] = {k: v for k, v in feature['properties'].items() if v is not None}
+
         feature_collection = FeatureCollection(features)
         self.base_folder_path.mkdir(parents=True, exist_ok=True)
         full_path = self.base_folder_path / f'{self.file_name}.json'
