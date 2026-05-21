@@ -1,11 +1,12 @@
 from typing import Any
 import uuid
 import logging
+
 from abc import ABCMeta, abstractmethod
-from ..logger.logger import LOG
 from .exceptions import YAMLSyntaxException
 from .qa_rule import ExecutionContext
 
+LOG = logging.getLogger()
 
 class Pipe(metaclass=ABCMeta):
     """

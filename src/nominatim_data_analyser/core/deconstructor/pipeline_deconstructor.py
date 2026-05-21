@@ -1,9 +1,11 @@
 from typing import Any, Callable
 from collections import deque
-from ...logger.logger import LOG
+import logging
 
 NEW_NODE_EVENT = 'new_node'
 BACKTRACKING_EVENT = 'backtracking'
+
+LOG = logging.getLogger()
 
 class PipelineDeconstructor():
     """

@@ -1,9 +1,12 @@
+import logging
+from pathlib import Path
+
 from .yaml_logic.yaml_loader import load_yaml_rule
 from .assembler.pipeline_assembler import PipelineAssembler
-from ..logger.logger import LOG
 from ..logger.timer import Timer
 from ..config import load_config
-from pathlib import Path
+
+LOG = logging.getLogger()
 
 class Core():
     """

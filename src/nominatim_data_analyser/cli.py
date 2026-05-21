@@ -1,4 +1,5 @@
 import argparse
+import logging
 
 from .core.core import Core
 
@@ -15,6 +16,10 @@ def cli() -> int:
                         help='Location of config file (default: config.yaml)')
 
     args = parser.parse_args()
+
+    logging.basicConfig(format='%(asctime)s: %(message)s',
+                        datefmt='%Y-%m-%d %H:%M:%S',
+                        level=logging.INFO)
 
     core = Core(config_file=args.config)
 

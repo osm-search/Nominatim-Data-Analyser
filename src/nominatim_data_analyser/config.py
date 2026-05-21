@@ -1,9 +1,9 @@
 from pathlib import Path
+import logging
 
 import yaml
 
-from .logger.logger import LOG
-
+LOG = logging.getLogger()
 
 class Config:
     values: dict[str, str] = {}

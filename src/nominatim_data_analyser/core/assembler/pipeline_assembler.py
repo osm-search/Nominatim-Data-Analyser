@@ -1,12 +1,14 @@
 from typing import Any
+import logging
+
 from ..deconstructor import PipelineDeconstructor, BACKTRACKING_EVENT, NEW_NODE_EVENT
 from .. import Pipe
 from ..pipes import FillingPipe
 from ..qa_rule import ExecutionContext
-from ...logger.logger import LOG
 from collections import deque
 from .pipe_factory import PipeFactory
 
+LOG = logging.getLogger()
 
 class PipelineAssembler():
     """
