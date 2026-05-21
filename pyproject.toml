@@ -27,9 +27,24 @@ version = "0.2.5"
 [project.urls]
 Homepage = "https://github.com/osm-search/Nominatim-Data-Analyser"
 
-[project.optional-dependencies]
-tests = [
+[dependency-groups]
+dev = [
+    { include-group = "test" },
+    { include-group = "lint" },
+    { include-group = "typing" }
+]
+
+test = [
     'pytest',
+]
+
+typing = [
+    'mypy',
+    'types-PyYAML'
+]
+
+lint = [
+    'flake8'
 ]
 
 [tool.setuptools]
