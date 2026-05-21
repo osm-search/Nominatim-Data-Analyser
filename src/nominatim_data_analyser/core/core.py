@@ -3,7 +3,7 @@ from pathlib import Path
 
 from .yaml_logic.yaml_loader import load_yaml_rule
 from .assembler.pipeline_assembler import PipelineAssembler
-from ..logger.timer import Timer
+from ..timer import Timer
 from ..config import load_config
 
 LOG = logging.getLogger()

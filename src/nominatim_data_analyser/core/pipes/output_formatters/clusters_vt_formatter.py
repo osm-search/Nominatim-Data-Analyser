@@ -1,7 +1,7 @@
 from __future__ import annotations
 from geojson.feature import Feature, FeatureCollection
 from geojson import dumps
-from ....logger.timer import Timer
+from ....timer import Timer
 from ....config import Config
 from ... import Pipe
 from ....clustering_vt import cluster  # type: ignore[import-not-found]

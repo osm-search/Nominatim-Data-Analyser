@@ -1,6 +1,6 @@
 from __future__ import annotations
 from typing import List, Any
-from ....logger.timer import Timer
+from ....timer import Timer
 from ... import Pipe
 
 class LoopDataProcessor(Pipe):

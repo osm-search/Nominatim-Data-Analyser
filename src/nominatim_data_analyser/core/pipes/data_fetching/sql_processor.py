@@ -4,7 +4,7 @@ import psycopg
 
 from ....config import Config
 from ... import Pipe
-from ....logger.timer import Timer
+from ....timer import Timer
 
 
 class SQLProcessor(Pipe):
