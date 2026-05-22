@@ -6,6 +6,7 @@ def test_create_from_WKT_string() -> None:
     node = Node.create_from_WKT_string('POINT(10 15)')
     assert node.coordinates[0] == 10 and node.coordinates[1] == 15
 
+
 def test_to_geojson_feature() -> None:
     """
         Test the to_geojson_feature() method.

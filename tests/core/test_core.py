@@ -2,8 +2,8 @@
 from pathlib import Path
 
 import pytest
-from nominatim_data_analyser.config import Config
 from nominatim_data_analyser.core.core import Core
+
 
 class TestConfig:
 

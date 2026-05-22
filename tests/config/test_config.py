@@ -3,6 +3,7 @@ import yaml
 
 from nominatim_data_analyser.config import Config, load_config
 
+
 def test_load_default_config() -> None:
     """
         Test the load_config() method. The default config should be
@@ -12,6 +13,7 @@ def test_load_default_config() -> None:
     load_config(None)
     assert Config.values['Dsn'] == 'dbname=nominatim'
     assert Config.values['RulesFolderPath'] == 'qa-data'
+
 
 def test_load_custom_config(tmp_path) -> None:
     """
@@ -26,6 +28,7 @@ def test_load_custom_config(tmp_path) -> None:
 
     assert Config.values['Dsn'] == 'custom_dsn'
     assert Config.values['RulesFolderPath'] == 'qa-data'
+
 
 def test_load_broken_config(tmp_path) -> None:
     """

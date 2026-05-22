@@ -19,14 +19,14 @@ def test_on_new_node(pipeline_assembler: PipelineAssembler, filling_pipe: Pipe) 
         'type': 'GeometryConverter',
         'geometry_type': 'Node'
     }
-    #Add a FillingPipe as first pipe to the nodes history.
+    # Add a FillingPipe as first pipe to the nodes history.
     first_pipe = filling_pipe
     pipeline_assembler.nodes_history.append(first_pipe)
     pipeline_assembler.on_new_node(node)
     new_top_node = pipeline_assembler.nodes_history.pop()
-    #Check that the new top node is the right type.
+    # Check that the new top node is the right type.
     assert isinstance(new_top_node, GeometryConverter)
-    #Check that the new top node is the one plugged to the first_pipe.
+    # Check that the new top node is the one plugged to the first_pipe.
     assert first_pipe.next_pipes.pop() == new_top_node
 
 

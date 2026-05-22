@@ -4,7 +4,7 @@ from nominatim_data_analyser.config import Config
 
 
 def test_process_geojson_formatter(config: Config,
-                                   geojson_formatter: GeoJSONFormatter, 
+                                   geojson_formatter: GeoJSONFormatter,
                                    tmp_path) -> None:
     """
         Test the process() method of the GeoJSONFormatter.
@@ -26,6 +26,6 @@ def test_process_geojson_formatter(config: Config,
     result: str = geojson_formatter.process(features)
     assert result == 'test_prefix_path/test_rule/geojson/test_file.json'
 
-    #Verify the content of the geojson created
-    with open(tmp_path/'test_folder/test_file.json' , 'r') as file:
+    # Verify the content of the geojson created
+    with open(tmp_path/'test_folder/test_file.json', 'r') as file:
         assert loads(file.read()) == FeatureCollection(features)

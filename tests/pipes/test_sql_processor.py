@@ -24,4 +24,7 @@ def test_execute_query(sql_processor: SQLProcessor, dsn, temp_db_cursor):
 
     Config.values['Dsn'] = dsn
     results = sql_processor.process(None)
-    assert len(results) == 3 and results[0]['val'] == 'test1' and results[1]['val'] == 'test2' and results[2]['val'] == 'test3'
+    assert len(results) == 3
+    assert results[0]['val'] == 'test1'
+    assert results[1]['val'] == 'test2'
+    assert results[2]['val'] == 'test3'

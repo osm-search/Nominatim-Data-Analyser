@@ -6,7 +6,8 @@ from nominatim_data_analyser.core.qa_rule import ExecutionContext
 from geojson.feature import Feature
 
 
-def test_process_place_nodes_close_CFC(place_nodes_close_CFC: PlaceNodesCloseCustomFeatureConverter) -> None:
+def test_process_place_nodes_close_CFC(
+        place_nodes_close_CFC: PlaceNodesCloseCustomFeatureConverter) -> None:
     """
         Test the process() method of the custom pipe PlaceNodesCloseCustomFeatureConverter.
         The method should be procuding a Feature with the expected_properties inside.
@@ -26,6 +27,8 @@ def test_process_place_nodes_close_CFC(place_nodes_close_CFC: PlaceNodesCloseCus
     assert isinstance(result, Feature)
     assert result['properties'] == expected_properties
 
+
 @pytest.fixture
-def place_nodes_close_CFC(execution_context: ExecutionContext) -> PlaceNodesCloseCustomFeatureConverter:
+def place_nodes_close_CFC(
+        execution_context: ExecutionContext) -> PlaceNodesCloseCustomFeatureConverter:
     return PlaceNodesCloseCustomFeatureConverter({}, execution_context)

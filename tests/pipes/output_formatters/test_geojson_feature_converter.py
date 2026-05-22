@@ -3,7 +3,8 @@ from nominatim_data_analyser.core.model.node import Node
 from geojson.feature import Feature
 
 
-def test_on_created_geojson_feature_converter(geojson_feature_converter: GeoJSONFeatureConverter) -> None:
+def test_on_created_geojson_feature_converter(
+        geojson_feature_converter: GeoJSONFeatureConverter) -> None:
     """
         Test the on_created() method of the GeoJSONFeatureConverter.
     """
@@ -13,7 +14,8 @@ def test_on_created_geojson_feature_converter(geojson_feature_converter: GeoJSON
     assert geojson_feature_converter.properties_pattern == {'prop1': 'val1'}
 
 
-def test_process_geojson_feature_converter(geojson_feature_converter: GeoJSONFeatureConverter) -> None:
+def test_process_geojson_feature_converter(
+        geojson_feature_converter: GeoJSONFeatureConverter) -> None:
     """
         Test the process() method of the GeoJSONFeatureConverter.
     """
