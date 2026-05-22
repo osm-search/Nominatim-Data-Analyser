@@ -1,6 +1,7 @@
 from typing import Any
 from ...core import Pipe
 
+
 class FillingPipe(Pipe):
     """
         Pipe used only for filling.

@@ -1,12 +1,12 @@
-from tests.conftest import temp_db_cursor
 from nominatim_data_analyser.config import Config
 from nominatim_data_analyser.core.pipes import OsmoscopeLayerFormatter
 import pytest
 import json
 
-def test_add_layer_to_global_layers_file_doesnt_exist(osmoscope_layer_formatter: OsmoscopeLayerFormatter,
-                                                      config: Config,
-                                                      tmp_path) -> None:
+
+def test_add_layer_to_global_layers_file_doesnt_exist(
+        osmoscope_layer_formatter: OsmoscopeLayerFormatter,
+        config: Config, tmp_path) -> None:
     """
         Test the add_layer_to_global_layers_file() method with a layers.json which doesnt exist yet.
         It should be created and the layer added to it.
@@ -17,6 +17,7 @@ def test_add_layer_to_global_layers_file_doesnt_exist(osmoscope_layer_formatter:
         data = json.load(file)
     assert data['layers'] == ['test/test_layer_path.json']
 
+
 def test_add_layer_to_global_layers_file_exist(osmoscope_layer_formatter: OsmoscopeLayerFormatter,
                                                config: Config,
                                                tmp_path) -> None:
@@ -25,7 +26,7 @@ def test_add_layer_to_global_layers_file_exist(osmoscope_layer_formatter: Osmosc
         The new layer should be added to the file.
     """
     config.values['RulesFolderPath'] = tmp_path
-    #Create an initial layers.json with one layer inside.
+    # Create an initial layers.json with one layer inside.
     data = {
         'name': 'Nominatim suspects',
         'layers': ['layer_already_in']
@@ -41,14 +42,16 @@ def test_add_layer_to_global_layers_file_exist(osmoscope_layer_formatter: Osmosc
         data = json.load(file)
     assert data['layers'] == ['layer_already_in', 'test/test_layer_path.json']
 
+
 def test_add_last_update_date_layer_info(osmoscope_layer_formatter: OsmoscopeLayerFormatter,
                                          config: Config,
                                          dsn,
                                          import_status_table) -> None:
     config.values['Dsn'] = dsn
-    osmoscope_layer_formatter.add_last_update_date_layer_info();
-    assert osmoscope_layer_formatter.data['doc']['last_update'] == '2021-09-28 20:10:25 UTC' 
-                
+    osmoscope_layer_formatter.add_last_update_date_layer_info()
+    assert osmoscope_layer_formatter.data['doc']['last_update'] == '2021-09-28 20:10:25 UTC'
+
+
 def test_process_osmoscope_layer_formatter(osmoscope_layer_formatter: OsmoscopeLayerFormatter,
                                            tmp_path,
                                            dsn,
@@ -73,6 +76,7 @@ def test_process_osmoscope_layer_formatter(osmoscope_layer_formatter: OsmoscopeL
         'vector_tile_url': 'web_path',
         'doc': {'last_update': '2021-09-28 20:10:25 UTC'}
     }
+
 
 @pytest.fixture
 def import_status_table(temp_db_cursor):

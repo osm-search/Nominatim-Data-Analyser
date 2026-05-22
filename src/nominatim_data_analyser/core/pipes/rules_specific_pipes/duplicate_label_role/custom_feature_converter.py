@@ -2,6 +2,7 @@ from typing import Any
 from ....pipe import Pipe
 from geojson.feature import Feature
 
+
 class DuplicateLabelRoleCustomFeatureConverter(Pipe):
     def on_created(self) -> None:
         self.current_feature_id = -1
@@ -34,4 +35,5 @@ class DuplicateLabelRoleCustomFeatureConverter(Pipe):
                 type = members[i][0]
                 properties[f'{type}/@idLabel {label_members_count}'] = members[i][1:]
 
-        return elements.pop('geometry_holder').to_geojson_feature(self.current_feature_id, properties)
+        return elements.pop('geometry_holder')\
+                       .to_geojson_feature(self.current_feature_id, properties)

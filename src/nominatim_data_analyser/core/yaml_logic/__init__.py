@@ -1,1 +1,0 @@
-from .yaml_loader import load_yaml_rule

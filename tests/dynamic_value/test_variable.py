@@ -1,6 +1,7 @@
+import pytest
 
 from nominatim_data_analyser.core.dynamic_value import Variable
-import pytest
+
 
 def test_resolve_variable_ok(variable: Variable) -> None:
     """
@@ -14,6 +15,7 @@ def test_resolve_variable_ok(variable: Variable) -> None:
     }
     assert variable.resolve(data) == 'test_val2'
 
+
 def test_resolve_variable_dont_exist(variable: Variable) -> None:
     """
         Test the resolve() method of the Variable class by
@@ -24,10 +26,11 @@ def test_resolve_variable_dont_exist(variable: Variable) -> None:
         'test_key2': 'test_val2',
         'test_key3': 'test_val3'
     }
-    with pytest.raises(Exception, match='The variable name var_name was not found in the input dictionary.'):
+    with pytest.raises(Exception,
+                       match='The variable name var_name was not found in the input dictionary.'):
         variable.resolve(data)
+
 
 @pytest.fixture
 def variable() -> Variable:
     return Variable('var_name')
-

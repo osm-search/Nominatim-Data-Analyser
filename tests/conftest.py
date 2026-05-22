@@ -1,37 +1,22 @@
-import sys
-import sysconfig
-from pathlib import Path
-
 import psycopg
 from psycopg import sql as pysql
 import pytest
 
-SRC_DIR = Path(__file__, '..', '..').resolve()
-
-BUILD_DIR = f"build/lib.{sysconfig.get_platform()}-{sys.version_info[0]}.{sys.version_info[1]}"
-
-if not (SRC_DIR / BUILD_DIR).exists():
-    BUILD_DIR = f"build/lib.{sysconfig.get_platform()}-{sys.implementation.cache_tag}"
-
-if (SRC_DIR / BUILD_DIR).exists():
-    sys.path.insert(0, str(SRC_DIR / BUILD_DIR))
-
-
 from nominatim_data_analyser.config import Config, load_config
-from nominatim_data_analyser.core.pipes import FillingPipe
-from nominatim_data_analyser.core.pipes.data_fetching.sql_processor import SQLProcessor
-from nominatim_data_analyser.core.pipes.data_processing import (GeometryConverter,
-                                                 LoopDataProcessor)
-from nominatim_data_analyser.core.pipes.output_formatters import (GeoJSONFeatureConverter,
-                                                   GeoJSONFormatter,
-                                                   OsmoscopeLayerFormatter,
-                                                   VectorTileFormatter)
+from nominatim_data_analyser.core.pipes import (FillingPipe,
+                                                SQLProcessor,
+                                                GeometryConverter,
+                                                LoopDataProcessor,
+                                                GeoJSONFeatureConverter,
+                                                GeoJSONFormatter,
+                                                OsmoscopeLayerFormatter,
+                                                VectorTileFormatter)
 from nominatim_data_analyser.core.qa_rule import ExecutionContext
 
 
 @pytest.fixture
 def temp_db() -> str:
-    """ 
+    """
         Create an empty database for the test.
     """
     name = 'test_qa_tool_python_unittest'
@@ -46,9 +31,11 @@ def temp_db() -> str:
         with conn.cursor() as cur:
             cur.execute(pysql.SQL('DROP DATABASE IF EXISTS') + pysql.Identifier(name))
 
+
 @pytest.fixture
 def dsn(temp_db: str) -> str:
     return 'dbname=' + temp_db
+
 
 @pytest.fixture
 def temp_db_conn(dsn: str):
@@ -58,15 +45,17 @@ def temp_db_conn(dsn: str):
     with psycopg.connect(dsn) as conn:
         yield conn
 
+
 @pytest.fixture
 def temp_db_cursor(dsn: str):
-    """ 
-        Connection and cursor towards the test database. 
+    """
+        Connection and cursor towards the test database.
         The connection will be in auto-commit mode.
     """
     with psycopg.connect(dsn, autocommit=True) as conn:
         with conn.cursor() as cur:
             yield cur
+
 
 @pytest.fixture
 def config() -> Config:
@@ -76,11 +65,13 @@ def config() -> Config:
     load_config(None)
     return Config
 
+
 @pytest.fixture
 def sql_processor(execution_context: ExecutionContext) -> SQLProcessor:
     return SQLProcessor({
         'query': 'dumb_query'
     }, execution_context)
+
 
 @pytest.fixture
 def geometry_converter(execution_context: ExecutionContext) -> GeometryConverter:
@@ -88,9 +79,11 @@ def geometry_converter(execution_context: ExecutionContext) -> GeometryConverter
         'geometry_type': 'Node'
     }, execution_context)
 
+
 @pytest.fixture
 def filling_pipe(execution_context: ExecutionContext) -> FillingPipe:
     return FillingPipe({}, execution_context)
+
 
 @pytest.fixture
 def geojson_feature_converter(execution_context: ExecutionContext) -> GeoJSONFeatureConverter:
@@ -101,9 +94,11 @@ def geojson_feature_converter(execution_context: ExecutionContext) -> GeoJSONFea
         ]
     }, execution_context)
 
+
 @pytest.fixture
 def geojson_formatter(execution_context: ExecutionContext) -> GeoJSONFormatter:
     return GeoJSONFormatter({}, execution_context)
+
 
 @pytest.fixture
 def osmoscope_layer_formatter(execution_context: ExecutionContext) -> OsmoscopeLayerFormatter:
@@ -111,9 +106,11 @@ def osmoscope_layer_formatter(execution_context: ExecutionContext) -> OsmoscopeL
         'data_format_url': 'geojson_url'
     }, execution_context)
 
+
 @pytest.fixture
 def vector_tile_formatter(execution_context: ExecutionContext) -> VectorTileFormatter:
     return VectorTileFormatter({}, execution_context)
+
 
 @pytest.fixture
 def loop_data_processor(execution_context: ExecutionContext,
@@ -121,6 +118,7 @@ def loop_data_processor(execution_context: ExecutionContext,
     return LoopDataProcessor({
         'sub_pipeline': filling_pipe
     }, execution_context)
+
 
 @pytest.fixture
 def execution_context() -> ExecutionContext:

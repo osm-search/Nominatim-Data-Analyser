@@ -4,6 +4,7 @@ from .. import pipes as pipes_module
 from .. import Pipe
 from ..qa_rule import ExecutionContext
 
+
 class PipeFactory():
     """
         Factory to assemble pipes.
@@ -17,7 +18,8 @@ class PipeFactory():
             raise YAMLSyntaxException("Each node of the tree (pipe) should have a type defined.")
 
         try:
-            assembled_pipe = cast(Pipe, getattr(pipes_module, node_data['type'])(node_data, exec_context))
+            type_func = getattr(pipes_module, node_data['type'])
+            assembled_pipe = cast(Pipe, type_func(node_data, exec_context))
         except AttributeError:
             raise YAMLSyntaxException(f"The type {node_data['type']} doesn't exist.")
 

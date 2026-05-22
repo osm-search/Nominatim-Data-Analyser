@@ -6,7 +6,9 @@ from abc import ABCMeta, abstractmethod
 from .exceptions import YAMLSyntaxException
 from .qa_rule import ExecutionContext
 
+
 LOG = logging.getLogger()
+
 
 class Pipe(metaclass=ABCMeta):
     """
@@ -62,17 +64,20 @@ class Pipe(metaclass=ABCMeta):
         """
             Tries to get data from the data dictionary.
 
-            If the data name provided exists in the dictionary it gets pop out and it gets returned.
-            But if it doesn't exist, the default value provided is returned (None by default).
+            If the data name provided exists in the dictionary it gets pop
+            out and it gets returned. But if it doesn't exist, the default
+            value provided is returned (None by default).
 
-            if the required value is set to True and if the data can't be found, a YAMLSyntaxException is raised.
+            if the required value is set to True and if the data can't be
+            found, a YAMLSyntaxException is raised.
         """
         if name in self.data:
             return self.data.pop(name)
         if not required:
             return default
 
-        raise YAMLSyntaxException(f'The field "{name}" is required for the pipe of type {type(self).__name__}')
+        raise YAMLSyntaxException(
+            f'The field "{name}" is required for the pipe of type {type(self).__name__}')
 
     def log(self, msg: str, level: int = logging.INFO) -> None:
         """

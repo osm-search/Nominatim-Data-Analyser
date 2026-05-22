@@ -1,6 +1,11 @@
-from nominatim_data_analyser.core.deconstructor.pipeline_deconstructor import BACKTRACKING_EVENT, NEW_NODE_EVENT
-from nominatim_data_analyser.core.deconstructor import PipelineDeconstructor
 import pytest
+from itertools import count
+
+from nominatim_data_analyser.core.deconstructor.pipeline_deconstructor import (
+    BACKTRACKING_EVENT,
+    NEW_NODE_EVENT,
+    PipelineDeconstructor)
+
 
 def test_deconstruct_basic() -> None:
     """
@@ -25,18 +30,14 @@ def test_deconstruct_basic() -> None:
             }
         }
     }
-    #Store new nodes added
+    # Store new nodes added
     new_nodes = list()
-    def new_node_callback(node: dict):
-        # nonlocal new_nodes
-        new_nodes.append(node)
-    backtrack_count = 0
-    def backtrack_callback():
-        nonlocal backtrack_count
-        backtrack_count += 1
+    backtrack_count = count()
+
     pipeline_deconstructor = PipelineDeconstructor(node1, 'test_rule')
-    pipeline_deconstructor._event_callbacks[NEW_NODE_EVENT].append(new_node_callback)
-    pipeline_deconstructor._event_callbacks[BACKTRACKING_EVENT].append(backtrack_callback)
+    pipeline_deconstructor._event_callbacks[NEW_NODE_EVENT].append(new_nodes.append)
+    pipeline_deconstructor._event_callbacks[BACKTRACKING_EVENT].append(
+        lambda: next(backtrack_count))
     pipeline_deconstructor.deconstruct()
     assert new_nodes == [
         {'type': 'ROOT_NODE'},
@@ -44,7 +45,8 @@ def test_deconstruct_basic() -> None:
         {'type': 'TEST_TYPE2'},
         {'type': 'TEST_TYPE3'}
     ]
-    assert backtrack_count == 3
+    assert next(backtrack_count) == 3
+
 
 def test_deconstruct_double_out() -> None:
     """
@@ -74,18 +76,14 @@ def test_deconstruct_double_out() -> None:
             }
         }
     }
-    #Store new nodes added
+    # Store new nodes added
     new_nodes = list()
-    def new_node_callback(node: dict):
-        # nonlocal new_nodes
-        new_nodes.append(node)
-    backtrack_count = 0
-    def backtrack_callback():
-        nonlocal backtrack_count
-        backtrack_count += 1
+    backtrack_count = count()
+
     pipeline_deconstructor = PipelineDeconstructor(node1, 'test_rule')
-    pipeline_deconstructor._event_callbacks[NEW_NODE_EVENT].append(new_node_callback)
-    pipeline_deconstructor._event_callbacks[BACKTRACKING_EVENT].append(backtrack_callback)
+    pipeline_deconstructor._event_callbacks[NEW_NODE_EVENT].append(new_nodes.append)
+    pipeline_deconstructor._event_callbacks[BACKTRACKING_EVENT].append(
+        lambda: next(backtrack_count))
     pipeline_deconstructor.deconstruct()
     assert new_nodes == [
         {'type': 'ROOT_NODE'},
@@ -94,27 +92,27 @@ def test_deconstruct_double_out() -> None:
         {'type': 'TEST_TYPE3'},
         {'type': 'TEST_TYPE4'}
     ]
-    assert backtrack_count == 4
+    assert next(backtrack_count) == 4
 
-def test_send_current_node_and_explore(pipeline_deconstructor: PipelineDeconstructor, monkeypatch) -> None:
+
+def test_send_current_node_and_explore(
+        pipeline_deconstructor: PipelineDeconstructor, monkeypatch) -> None:
     """
         Test the _send_current_node_and_explore() method.
         Only check that the methods inside are well called.
     """
-    x = 0
-    def callback(self, new_node: dict = None):
-        nonlocal x
-        x += 1
-    
-    #Mock the methods
-    monkeypatch.setattr('nominatim_data_analyser.core.deconstructor.pipeline_deconstructor.PipelineDeconstructor._notify_new_node',
-                        callback)
-    monkeypatch.setattr('nominatim_data_analyser.core.deconstructor.pipeline_deconstructor.PipelineDeconstructor._explore_deeper_or_backtrack',
-                        callback)
-    pipeline_deconstructor.deconstruct()
-    assert x == 2
+    x = count()
 
-def test_explore_deeper_or_backtrack(pipeline_deconstructor: PipelineDeconstructor, monkeypatch) -> None:
+    monkeypatch.setattr('nominatim_data_analyser.core.deconstructor.pipeline_deconstructor.PipelineDeconstructor._notify_new_node',  # noqa: E501
+                        lambda *a, **kw: next(x))
+    monkeypatch.setattr('nominatim_data_analyser.core.deconstructor.pipeline_deconstructor.PipelineDeconstructor._explore_deeper_or_backtrack',  # noqa: E501
+                        lambda *a, **kw: next(x))
+    pipeline_deconstructor.deconstruct()
+    assert next(x) == 2
+
+
+def test_explore_deeper_or_backtrack(
+        pipeline_deconstructor: PipelineDeconstructor, monkeypatch) -> None:
     """
         Test the _explore_deeper_or_backtrack() method.
         the node in 'out' should be popped out and if is_new_node
@@ -135,15 +133,12 @@ def test_explore_deeper_or_backtrack(pipeline_deconstructor: PipelineDeconstruct
             'OUT_NODE_2': node2
         }
     }
-    #Store new nodes added
+    # Store new nodes added
     new_nodes = list()
-    def new_node_callback(node: dict):
-        # nonlocal new_nodes
-        new_nodes.append(node)
-    pipeline_deconstructor._event_callbacks[NEW_NODE_EVENT].append(new_node_callback)
+    pipeline_deconstructor._event_callbacks[NEW_NODE_EVENT].append(new_nodes.append)
 
-    #Mock a dumb _backtrack method.
-    monkeypatch.setattr('nominatim_data_analyser.core.deconstructor.pipeline_deconstructor.PipelineDeconstructor._backtrack',
+    # Mock a dumb _backtrack method.
+    monkeypatch.setattr('nominatim_data_analyser.core.deconstructor.pipeline_deconstructor.PipelineDeconstructor._backtrack',  # noqa: E501
                         lambda self: 1)
 
     pipeline_deconstructor.current_node = node1
@@ -152,6 +147,7 @@ def test_explore_deeper_or_backtrack(pipeline_deconstructor: PipelineDeconstruct
     assert not node1['out'] and not node2['out']
 
     assert len(pipeline_deconstructor._event_callbacks[NEW_NODE_EVENT]) == 1
+
 
 def test_backtrack(pipeline_deconstructor: PipelineDeconstructor, monkeypatch) -> None:
     """
@@ -169,18 +165,19 @@ def test_backtrack(pipeline_deconstructor: PipelineDeconstructor, monkeypatch) -
     }
     pipeline_deconstructor.nodes_history.append(node)
 
-    #Mock a dumb _explore_deeper_or_backtrack method to not launch the recursion.
-    monkeypatch.setattr('nominatim_data_analyser.core.deconstructor.pipeline_deconstructor.PipelineDeconstructor._explore_deeper_or_backtrack',
+    # Mock a dumb _explore_deeper_or_backtrack method to not launch the recursion.
+    monkeypatch.setattr('nominatim_data_analyser.core.deconstructor.pipeline_deconstructor.PipelineDeconstructor._explore_deeper_or_backtrack',  # noqa: E501
                         lambda self: 1)
 
     pipeline_deconstructor._backtrack()
     assert pipeline_deconstructor.current_node == node
     assert not pipeline_deconstructor.nodes_history
-    #Test that if out it empty it gets removed.
+    # Test that if out it empty it gets removed.
     node['out'] = {}
     pipeline_deconstructor.nodes_history.append(node)
     pipeline_deconstructor._backtrack()
-    assert not 'out' in pipeline_deconstructor.current_node
+    assert 'out' not in pipeline_deconstructor.current_node
+
 
 def test_subscribe_event(pipeline_deconstructor: PipelineDeconstructor) -> None:
     """
@@ -188,6 +185,7 @@ def test_subscribe_event(pipeline_deconstructor: PipelineDeconstructor) -> None:
     """
     pipeline_deconstructor.subscribe_event(NEW_NODE_EVENT, None)
     assert len(pipeline_deconstructor._event_callbacks[NEW_NODE_EVENT]) == 1
+
 
 def test_notify_new_node(pipeline_deconstructor: PipelineDeconstructor) -> None:
     """
@@ -198,59 +196,52 @@ def test_notify_new_node(pipeline_deconstructor: PipelineDeconstructor) -> None:
         'type': 'GeometryConverter',
         'geometry_type': 'Node'
     }
-    x = None
-    def callback(node: dict):
-        nonlocal x
-        x = node
-    pipeline_deconstructor._event_callbacks[NEW_NODE_EVENT].append(callback)
+    x = []
+    pipeline_deconstructor._event_callbacks[NEW_NODE_EVENT].append(x.append)
     pipeline_deconstructor._notify_new_node(node)
-    assert x == node
+    assert x == [node]
+
 
 def test_notify_backtracking(pipeline_deconstructor: PipelineDeconstructor) -> None:
     """
         Test the _notify_backtracking() method.
         Checks that the callback is called as it should.
     """
-    x = 0
-    def callback():
-        nonlocal x
-        x += 1
-    pipeline_deconstructor._event_callbacks[BACKTRACKING_EVENT].append(callback)
+    x = count()
+    pipeline_deconstructor._event_callbacks[BACKTRACKING_EVENT].append(lambda: next(x))
     pipeline_deconstructor._notify_backtracking()
-    assert x == 1
+    assert next(x) == 1
+
 
 def test_raise_event(pipeline_deconstructor: PipelineDeconstructor) -> None:
     """
         Test the _raise_event() method.
         Checks that the callbacks are called as they should.
     """
-    x = 0
-    y = 0
-    def callback1():
-        nonlocal x
-        x += 1
-    def callback2():
-        nonlocal y
-        y += 4
-    pipeline_deconstructor._event_callbacks[NEW_NODE_EVENT].append(callback1)
-    pipeline_deconstructor._event_callbacks[NEW_NODE_EVENT].append(callback2)
+    x = count()
+    y = count()
+
+    pipeline_deconstructor._event_callbacks[NEW_NODE_EVENT].append(lambda: next(x))
+    pipeline_deconstructor._event_callbacks[NEW_NODE_EVENT].append(lambda: next(y))
     pipeline_deconstructor._raise_event(NEW_NODE_EVENT)
-    assert x == 1
-    assert y == 4
+    assert next(x) == 1
+    assert next(y) == 1
+
 
 def test_init_event_callbacks(pipeline_deconstructor: PipelineDeconstructor) -> None:
     """
-        Test the initialization of the _event_callbacks dictionnary 
+        Test the initialization of the _event_callbacks dictionnary
         through the _init_event_callbacks() method.
     """
-    #the _init_event_callbacks() is initally called in the constructor.
+    # the _init_event_callbacks() is initally called in the constructor.
     pipeline_deconstructor.__dict__.pop('_event_callbacks', None)
-    assert not '_event_callbacks' in pipeline_deconstructor.__dict__
+    assert '_event_callbacks' not in pipeline_deconstructor.__dict__
 
     pipeline_deconstructor._init_event_callbacks()
     assert '_event_callbacks' in pipeline_deconstructor.__dict__
     assert NEW_NODE_EVENT in pipeline_deconstructor._event_callbacks
     assert BACKTRACKING_EVENT in pipeline_deconstructor._event_callbacks
+
 
 @pytest.fixture
 def pipeline_deconstructor() -> PipelineDeconstructor:

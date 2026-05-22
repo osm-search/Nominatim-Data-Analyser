@@ -3,6 +3,7 @@ import logging
 
 from .core.core import Core
 
+
 def cli() -> int:
     parser = argparse.ArgumentParser(prog='nominatim-analyser')
 

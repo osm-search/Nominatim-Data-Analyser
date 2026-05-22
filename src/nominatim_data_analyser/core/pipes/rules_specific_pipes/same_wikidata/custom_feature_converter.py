@@ -3,6 +3,7 @@ from ....pipe import Pipe
 from ....model.node import Node
 from geojson import Feature
 
+
 class SameWikiDataFeatureConverter(Pipe):
     def process(self, data: list[dict[str, Any]]) -> list[Feature]:
         """

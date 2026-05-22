@@ -3,6 +3,7 @@ from ...dynamic_value import resolve_all
 from ... import Pipe
 from geojson import Feature
 
+
 class GeoJSONFeatureConverter(Pipe):
     """
         Handle the conversion of generic data class
@@ -24,5 +25,6 @@ class GeoJSONFeatureConverter(Pipe):
                 resolved_value = resolve_all(prop, elements)
                 for k, v in resolved_value.items():
                     properties[k] = v
-        returned_geom = elements.pop('geometry_holder').to_geojson_feature(self.current_id, properties)
-        return returned_geom
+
+        return elements.pop('geometry_holder')\
+                       .to_geojson_feature(self.current_id, properties)

@@ -5,9 +5,9 @@ import yaml
 
 from nominatim_data_analyser.core.dynamic_value.variable import Variable
 from nominatim_data_analyser.core.dynamic_value.switch import Switch
-import nominatim_data_analyser.core.yaml_logic.yaml_loader as yaml_loader
 from nominatim_data_analyser.core.yaml_logic.yaml_loader import load_yaml_rule
 from nominatim_data_analyser.core import Pipe
+
 
 def test_load_yaml_rule(yaml_path) -> None:
     """
@@ -26,6 +26,7 @@ def test_load_yaml_rule(yaml_path) -> None:
         }
     }
 
+
 def test_load_wrong_yaml(yaml_path) -> None:
     """
         Test the load_yaml_rule() function with a test yaml file which
@@ -33,6 +34,7 @@ def test_load_wrong_yaml(yaml_path) -> None:
     """
     with pytest.raises(yaml.YAMLError):
         load_yaml_rule(yaml_path / 'test_load_wrong_yaml.yaml')
+
 
 def test_construct_sub_pipeline(yaml_path) -> None:
     """
@@ -43,6 +45,7 @@ def test_construct_sub_pipeline(yaml_path) -> None:
     """
     loaded_data = load_yaml_rule(yaml_path / 'test_construct_sub_pipeline.yaml')
     assert isinstance(loaded_data['QUERY']['sub_pipeline'], Pipe)
+
 
 def test_construct_switch(yaml_path) -> None:
     """
@@ -61,6 +64,7 @@ def test_construct_switch(yaml_path) -> None:
     assert loaded_data['DUMB_NODE']['value'].expression == 'expression_value'
     assert loaded_data['DUMB_NODE']['value'].cases == expected_cases
 
+
 def test_construct_variable(yaml_path) -> None:
     """
         Test that the variable_constructor() is well called when
@@ -71,6 +75,7 @@ def test_construct_variable(yaml_path) -> None:
     loaded_data = load_yaml_rule(yaml_path / 'test_construct_variable.yaml')
     assert isinstance(loaded_data['DUMB_NODE']['value'], Variable)
     assert loaded_data['DUMB_NODE']['value'].name == 'variable_name'
+
 
 @pytest.fixture
 def yaml_path() -> Path:

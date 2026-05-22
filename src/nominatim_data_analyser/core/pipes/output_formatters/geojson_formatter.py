@@ -1,4 +1,3 @@
-from __future__ import annotations
 from ....config import Config
 from typing import List
 from geojson.feature import Feature
@@ -6,12 +5,15 @@ from ....core import Pipe
 from pathlib import Path
 from geojson import FeatureCollection, dump
 
+
 class GeoJSONFormatter(Pipe):
     """
         Handles the creation of the GeoJSON file.
     """
     def on_created(self) -> None:
-        self.base_folder_path = Path(f'{Config.values["RulesFolderPath"]}/{self.exec_context.rule_name}/geojson')
+        self.base_folder_path = Path(Config.values["RulesFolderPath"],
+                                     self.exec_context.rule_name,
+                                     'geojson')
         # Take the rule's name as default file name.
         self.file_name = self.extract_data('file_name', self.exec_context.rule_name)
 
@@ -27,5 +29,5 @@ class GeoJSONFormatter(Pipe):
         with open(full_path, 'w') as file:
             dump(feature_collection, file)
 
-        web_path = f'{Config.values["WebPrefixPath"]}/{self.exec_context.rule_name}/geojson/{self.file_name}.json'
-        return web_path
+        return str(Path(Config.values['WebPrefixPath'], self.exec_context.rule_name,
+                        'geojson', f'{self.file_name}.json'))

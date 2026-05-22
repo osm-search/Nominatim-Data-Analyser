@@ -2,6 +2,7 @@ from typing import Any
 from ....pipe import Pipe
 import re
 
+
 class AddrHouseNumberNoDigitFilter(Pipe):
     def on_created(self) -> None:
         self.any_digit_regex = re.compile(r'.*\d.*')

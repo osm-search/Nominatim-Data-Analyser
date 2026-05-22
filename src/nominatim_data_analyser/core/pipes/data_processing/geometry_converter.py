@@ -2,6 +2,7 @@ from typing import Any
 from ... import Pipe
 from ... import model as core_model
 
+
 class GeometryConverter(Pipe):
     """
         Pipe used to convert data to a Geometry class.

@@ -4,6 +4,7 @@ from .geometry import Geometry
 from dataclasses import dataclass
 import re
 
+
 @dataclass
 class Node(Geometry):
     coordinates: list[float]
