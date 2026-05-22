@@ -6,12 +6,15 @@ import psycopg
 from ....config import Config
 from ... import Pipe
 
+
 class OsmoscopeLayerFormatter(Pipe):
     """
         Handles the creation of the layer JSON file.
     """
     def on_created(self) -> None:
-        self.base_folder_path = Path(f'{Config.values["RulesFolderPath"]}/{self.exec_context.rule_name}/osmoscope-layer')
+        self.base_folder_path = Path(Config.values['RulesFolderPath'],
+                                     self.exec_context.rule_name,
+                                     'osmoscope-layer')
         self.file_name = self.extract_data('file_name', 'layer')
         self.data_format_url = self.extract_data('data_format_url', required=True)
         self.data['id'] = self.extract_data('id', default=self.exec_context.rule_name)
@@ -31,8 +34,8 @@ class OsmoscopeLayerFormatter(Pipe):
         with open(full_path, 'w') as json_file:
             json.dump(self.data, json_file)
 
-        file_url = f'{Config.values["WebPrefixPath"]}/{self.exec_context.rule_name}/osmoscope-layer/{self.file_name}.json'
-        self.add_layer_to_global_layers_file(file_url)
+        file_url = self.base_folder_path / f'{self.file_name}.json'
+        self.add_layer_to_global_layers_file(str(file_url))
 
     def add_last_update_date_layer_info(self) -> None:
         """
@@ -58,13 +61,17 @@ class OsmoscopeLayerFormatter(Pipe):
         folder_path = Path(f'{Config.values["RulesFolderPath"]}')
         folder_path.mkdir(parents=True, exist_ok=True)
         # Check if the folder_path has a parent because /layers.json will require sudo permissions.
-        full_path = folder_path / 'layers.json' if len(folder_path.parents) > 0 else Path('layers.json')
+        if len(folder_path.parents) > 0:
+            full_path = folder_path / 'layers.json'
+        else:
+            Path('layers.json')
+
         full_path.touch(exist_ok=True)
 
         with open(full_path, 'r') as json_file:
             try:
                 data = json.load(json_file)
-            except:
+            except Exception:
                 data = {
                     'name': 'Nominatim suspects',
                     'layers': []

@@ -1,4 +1,3 @@
-from __future__ import annotations
 from geojson.feature import Feature, FeatureCollection
 from geojson import dumps
 from ....timer import Timer
@@ -9,12 +8,15 @@ from typing import List
 import subprocess
 import logging
 
+
 class VectorTileFormatter(Pipe):
     """
         Handles the creation of the Vector tiles.
     """
     def on_created(self) -> None:
-        self.base_folder_path = Path(f'{Config.values["RulesFolderPath"]}/{self.exec_context.rule_name}/vector-tiles')
+        self.base_folder_path = Path(Config.values['RulesFolderPath'],
+                                     self.exec_context.rule_name,
+                                     'vector-tiles')
 
     def process(self, features: List[Feature]) -> str:
         """
@@ -29,8 +31,7 @@ class VectorTileFormatter(Pipe):
 
         self.log(timer.elapsed_str)
 
-        web_path = f'{Config.values["WebPrefixPath"]}/{self.exec_context.rule_name}/vector-tiles/' + '{z}/{x}/{y}.pbf'
-        return web_path
+        return str(self.base_folder_path / "{z}/{x}/{y}.pbf")
 
     def call_tippecanoe(self, output_dir: Path, feature_collection: FeatureCollection) -> None:
         """

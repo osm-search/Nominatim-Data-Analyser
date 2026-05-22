@@ -2,6 +2,7 @@ from typing import Any
 from .....core.pipe import Pipe
 from geojson.feature import Feature
 
+
 class PlaceNodesCloseCustomFeatureConverter(Pipe):
     def on_created(self) -> None:
         self.current_feature_id = -1
@@ -20,4 +21,5 @@ class PlaceNodesCloseCustomFeatureConverter(Pipe):
         for i in range(len(common_ids)):
             properties[f'n/@idClose node {i+1}'] = common_ids[i]
 
-        return elements.pop('geometry_holder').to_geojson_feature(self.current_feature_id, properties)
+        return elements.pop('geometry_holder')\
+                       .to_geojson_feature(self.current_feature_id, properties)

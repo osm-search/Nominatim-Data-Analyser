@@ -1,14 +1,17 @@
 from typing import Any
 import logging
 
-from ..deconstructor import PipelineDeconstructor, BACKTRACKING_EVENT, NEW_NODE_EVENT
+from ..deconstructor.pipeline_deconstructor import PipelineDeconstructor, \
+                                                   BACKTRACKING_EVENT, \
+                                                   NEW_NODE_EVENT
 from .. import Pipe
-from ..pipes import FillingPipe
+from ..pipes.filling_pipe import FillingPipe
 from ..qa_rule import ExecutionContext
 from collections import deque
 from .pipe_factory import PipeFactory
 
 LOG = logging.getLogger()
+
 
 class PipelineAssembler():
     """
@@ -17,7 +20,8 @@ class PipelineAssembler():
     """
     def __init__(self, pipeline_specification: dict[str, Any], rule_name: str) -> None:
         self.rule_name = rule_name
-        self.deconstructor: PipelineDeconstructor = PipelineDeconstructor(pipeline_specification, rule_name)
+        self.deconstructor: PipelineDeconstructor = PipelineDeconstructor(pipeline_specification,
+                                                                          rule_name)
         self.deconstructor.subscribe_event(NEW_NODE_EVENT, self.on_new_node)
         self.deconstructor.subscribe_event(BACKTRACKING_EVENT, self.on_backtrack)
         self.nodes_history: deque[Pipe] = deque()
@@ -36,7 +40,8 @@ class PipelineAssembler():
             pipe = PipeFactory.assemble_pipe(node, self.exec_context)
             # Plug the new pipe to the current last pipe of the deque
             self.nodes_history[-1].plug_pipe(pipe)
-            LOG.debug("<%s> Assembler -> %s plugged to %s", self.rule_name, pipe, self.nodes_history[-1])
+            LOG.debug("<%s> Assembler -> %s plugged to %s",
+                      self.rule_name, pipe, self.nodes_history[-1])
             self.nodes_history.append(pipe)
 
     def on_backtrack(self) -> None:

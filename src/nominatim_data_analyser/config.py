@@ -5,6 +5,7 @@ import yaml
 
 LOG = logging.getLogger()
 
+
 class Config:
     values: dict[str, str] = {}
 

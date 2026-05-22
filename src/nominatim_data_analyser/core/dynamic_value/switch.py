@@ -1,6 +1,7 @@
 from . import DynamicValue
 from typing import Any
 
+
 class Switch(DynamicValue):
     """
         Dynamic value implementing a switch condition.
@@ -13,10 +14,11 @@ class Switch(DynamicValue):
 
     def resolve(self, data: dict[str, Any]) -> Any:
         if self.expression not in data:
-            raise Exception(f'The expression {self.expression} was not found in the input dictionnary.')
+            raise RuntimeError(f'The expression {self.expression} was not found '
+                               'in the input dictionary.')
 
         if data[self.expression] not in self.cases:
-            raise Exception(f'The case {data[self.expression]} is not in '
-                            f'the configured switch cases: {list(self.cases.keys())}')
+            raise RuntimeError(f'The case {data[self.expression]} is not in '
+                               f'the configured switch cases: {list(self.cases.keys())}')
 
         return self.cases[data[self.expression]]

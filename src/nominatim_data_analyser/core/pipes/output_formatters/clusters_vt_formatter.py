@@ -9,14 +9,18 @@ from ....clustering_vt import cluster  # type: ignore[import-not-found]
 from pathlib import Path
 from typing import List
 
+
 LOG = logging.getLogger()
+
 
 class ClustersVtFormatter(Pipe):
     """
         Handles the creation of the clusters and vector tiles.
     """
     def on_created(self) -> None:
-        self.base_folder_path = Path(f'{Config.values["RulesFolderPath"]}/{self.exec_context.rule_name}/vector-tiles')
+        self.base_folder_path = Path(Config.values["RulesFolderPath"],
+                                     self.exec_context.rule_name,
+                                     'vector-tiles')
         self.radius: int = self.extract_data('radius', default=60)
 
     def process(self, features: List[Feature]) -> str:
@@ -33,8 +37,7 @@ class ClustersVtFormatter(Pipe):
 
         self.log(timer.elapsed_str)
 
-        web_path = f'{Config.values["WebPrefixPath"]}/{self.exec_context.rule_name}/vector-tiles/' + '{z}/{x}/{y}.pbf'
-        return web_path
+        return str(self.base_folder_path / '{z}/{x}/{y}.pbf')
 
     def call_clustering_vt(self, output_dir: Path, feature_collection: FeatureCollection) -> None:
         """

@@ -6,10 +6,12 @@ import yaml
 
 from ..dynamic_value.switch import Switch
 from ..dynamic_value.variable import Variable
-from ..assembler import PipelineAssembler
+from ..assembler.pipeline_assembler import PipelineAssembler
 from .. import Pipe
 
+
 LOG = logging.getLogger()
+
 
 def load_yaml_rule(rule_file: Path) -> dict[str, Any]:
     """
@@ -35,6 +37,7 @@ def load_yaml_rule(rule_file: Path) -> dict[str, Any]:
 
     return loaded
 
+
 def sub_pipeline_constructor(loader: yaml.SafeLoader, node: yaml.MappingNode,
                              rule_name: str) -> Pipe:
     """
@@ -46,6 +49,7 @@ def sub_pipeline_constructor(loader: yaml.SafeLoader, node: yaml.MappingNode,
     pipeline_specification = cast(dict[str, Any], loader.construct_mapping(node, deep=True))
     return PipelineAssembler(pipeline_specification, rule_name).assemble()
 
+
 def variable_constructor(loader: yaml.SafeLoader, node: yaml.Node) -> Variable:
     """
         Creates a Variable object using the node's data.
@@ -54,6 +58,7 @@ def variable_constructor(loader: yaml.SafeLoader, node: yaml.Node) -> Variable:
         raise RuntimeError("!variable expects scalar value.")
 
     return Variable(loader.construct_scalar(node))
+
 
 def switch_constructor(loader: yaml.SafeLoader, node: yaml.Node) -> Switch:
     """

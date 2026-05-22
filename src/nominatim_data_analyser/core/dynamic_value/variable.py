@@ -1,6 +1,7 @@
 from . import DynamicValue
 from typing import Any
 
+
 class Variable(DynamicValue):
     """
         Dynamic value corresponding to a basic variable.

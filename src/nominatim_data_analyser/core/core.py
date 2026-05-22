@@ -8,6 +8,7 @@ from ..config import load_config
 
 LOG = logging.getLogger()
 
+
 class Core():
     """
         Core of the analyser used to execute rules.
