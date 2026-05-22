@@ -1,6 +1,7 @@
-from nominatim_data_analyser.core.pipes.output_formatters import GeoJSONFeatureConverter
-from nominatim_data_analyser.core.model import Node
+from nominatim_data_analyser.core.pipes import GeoJSONFeatureConverter
+from nominatim_data_analyser.core.model.node import Node
 from geojson.feature import Feature
+
 
 def test_on_created_geojson_feature_converter(geojson_feature_converter: GeoJSONFeatureConverter) -> None:
     """
@@ -10,6 +11,7 @@ def test_on_created_geojson_feature_converter(geojson_feature_converter: GeoJSON
     geojson_feature_converter.data['properties'] = {'prop1': 'val1'}
     geojson_feature_converter.on_created()
     assert geojson_feature_converter.properties_pattern == {'prop1': 'val1'}
+
 
 def test_process_geojson_feature_converter(geojson_feature_converter: GeoJSONFeatureConverter) -> None:
     """

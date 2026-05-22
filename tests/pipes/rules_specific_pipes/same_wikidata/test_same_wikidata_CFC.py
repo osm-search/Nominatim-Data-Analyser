@@ -1,6 +1,6 @@
 import pytest
-from nominatim_data_analyser.core.pipes.rules_specific_pipes import \
-    SameWikiDataFeatureConverter
+
+from nominatim_data_analyser.core.pipes import SameWikiDataFeatureConverter
 from nominatim_data_analyser.core.qa_rule import ExecutionContext
 
 
@@ -49,6 +49,7 @@ def test_same_wikidata_CFC(same_wikidata_CFC: SameWikiDataFeatureConverter) -> N
     ]
     results = same_wikidata_CFC.process(data)
     assert results == expected_results
+
 
 @pytest.fixture
 def same_wikidata_CFC(execution_context: ExecutionContext) -> SameWikiDataFeatureConverter:

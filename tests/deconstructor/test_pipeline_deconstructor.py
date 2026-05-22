@@ -1,6 +1,10 @@
-from nominatim_data_analyser.core.deconstructor.pipeline_deconstructor import BACKTRACKING_EVENT, NEW_NODE_EVENT
-from nominatim_data_analyser.core.deconstructor import PipelineDeconstructor
 import pytest
+
+from nominatim_data_analyser.core.deconstructor.pipeline_deconstructor import (
+    BACKTRACKING_EVENT,
+    NEW_NODE_EVENT,
+    PipelineDeconstructor)
+
 
 def test_deconstruct_basic() -> None:
     """
@@ -45,6 +49,7 @@ def test_deconstruct_basic() -> None:
         {'type': 'TEST_TYPE3'}
     ]
     assert backtrack_count == 3
+
 
 def test_deconstruct_double_out() -> None:
     """
@@ -96,6 +101,7 @@ def test_deconstruct_double_out() -> None:
     ]
     assert backtrack_count == 4
 
+
 def test_send_current_node_and_explore(pipeline_deconstructor: PipelineDeconstructor, monkeypatch) -> None:
     """
         Test the _send_current_node_and_explore() method.
@@ -113,6 +119,7 @@ def test_send_current_node_and_explore(pipeline_deconstructor: PipelineDeconstru
                         callback)
     pipeline_deconstructor.deconstruct()
     assert x == 2
+
 
 def test_explore_deeper_or_backtrack(pipeline_deconstructor: PipelineDeconstructor, monkeypatch) -> None:
     """
@@ -153,6 +160,7 @@ def test_explore_deeper_or_backtrack(pipeline_deconstructor: PipelineDeconstruct
 
     assert len(pipeline_deconstructor._event_callbacks[NEW_NODE_EVENT]) == 1
 
+
 def test_backtrack(pipeline_deconstructor: PipelineDeconstructor, monkeypatch) -> None:
     """
         Test the _backtrack() method. It should set the current node to the top node
@@ -182,12 +190,14 @@ def test_backtrack(pipeline_deconstructor: PipelineDeconstructor, monkeypatch) -
     pipeline_deconstructor._backtrack()
     assert not 'out' in pipeline_deconstructor.current_node
 
+
 def test_subscribe_event(pipeline_deconstructor: PipelineDeconstructor) -> None:
     """
         Test the subscribe_event() method.
     """
     pipeline_deconstructor.subscribe_event(NEW_NODE_EVENT, None)
     assert len(pipeline_deconstructor._event_callbacks[NEW_NODE_EVENT]) == 1
+
 
 def test_notify_new_node(pipeline_deconstructor: PipelineDeconstructor) -> None:
     """
@@ -206,6 +216,7 @@ def test_notify_new_node(pipeline_deconstructor: PipelineDeconstructor) -> None:
     pipeline_deconstructor._notify_new_node(node)
     assert x == node
 
+
 def test_notify_backtracking(pipeline_deconstructor: PipelineDeconstructor) -> None:
     """
         Test the _notify_backtracking() method.
@@ -218,6 +229,7 @@ def test_notify_backtracking(pipeline_deconstructor: PipelineDeconstructor) -> N
     pipeline_deconstructor._event_callbacks[BACKTRACKING_EVENT].append(callback)
     pipeline_deconstructor._notify_backtracking()
     assert x == 1
+
 
 def test_raise_event(pipeline_deconstructor: PipelineDeconstructor) -> None:
     """
@@ -238,6 +250,7 @@ def test_raise_event(pipeline_deconstructor: PipelineDeconstructor) -> None:
     assert x == 1
     assert y == 4
 
+
 def test_init_event_callbacks(pipeline_deconstructor: PipelineDeconstructor) -> None:
     """
         Test the initialization of the _event_callbacks dictionnary 
@@ -251,6 +264,7 @@ def test_init_event_callbacks(pipeline_deconstructor: PipelineDeconstructor) -> 
     assert '_event_callbacks' in pipeline_deconstructor.__dict__
     assert NEW_NODE_EVENT in pipeline_deconstructor._event_callbacks
     assert BACKTRACKING_EVENT in pipeline_deconstructor._event_callbacks
+
 
 @pytest.fixture
 def pipeline_deconstructor() -> PipelineDeconstructor:

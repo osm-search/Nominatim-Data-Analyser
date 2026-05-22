@@ -1,9 +1,10 @@
 import pytest
-from nominatim_data_analyser.core.model import Node
-from nominatim_data_analyser.core.pipes.rules_specific_pipes import \
-    PlaceNodesCloseCustomFeatureConverter
+
+from nominatim_data_analyser.core.model.node import Node
+from nominatim_data_analyser.core.pipes import PlaceNodesCloseCustomFeatureConverter
 from nominatim_data_analyser.core.qa_rule import ExecutionContext
 from geojson.feature import Feature
+
 
 def test_process_place_nodes_close_CFC(place_nodes_close_CFC: PlaceNodesCloseCustomFeatureConverter) -> None:
     """

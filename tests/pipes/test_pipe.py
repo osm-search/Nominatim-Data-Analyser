@@ -1,10 +1,9 @@
-
-from nominatim_data_analyser.core.exceptions.yaml_syntax_exception import YAMLSyntaxException
-from nominatim_data_analyser.core.pipes.data_processing import GeometryConverter
-from nominatim_data_analyser.core.qa_rule import ExecutionContext
-from nominatim_data_analyser.core.pipes import FillingPipe
 import logging
 import pytest
+
+from nominatim_data_analyser.core.exceptions.yaml_syntax_exception import YAMLSyntaxException
+from nominatim_data_analyser.core.pipes import GeometryConverter, FillingPipe
+from nominatim_data_analyser.core.qa_rule import ExecutionContext
 
 def test_plug_pipe(filling_pipe: FillingPipe, geometry_converter: GeometryConverter) -> None:
     filling_pipe.plug_pipe(geometry_converter)

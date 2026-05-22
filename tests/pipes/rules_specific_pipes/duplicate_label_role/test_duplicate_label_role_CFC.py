@@ -1,7 +1,7 @@
 import pytest
-from nominatim_data_analyser.core.model import Node
-from nominatim_data_analyser.core.pipes.rules_specific_pipes import \
-    DuplicateLabelRoleCustomFeatureConverter
+
+from nominatim_data_analyser.core.model.node import Node
+from nominatim_data_analyser.core.pipes import DuplicateLabelRoleCustomFeatureConverter
 from nominatim_data_analyser.core.qa_rule import ExecutionContext
 from geojson.feature import Feature
 
@@ -27,6 +27,7 @@ def test_process_duplicate_label_role_CFC(duplicate_label_role_CFC: DuplicateLab
     result = duplicate_label_role_CFC.process(data)
     assert isinstance(result, Feature)
     assert result['properties'] == expected_properties
+
 
 @pytest.fixture
 def duplicate_label_role_CFC(execution_context: ExecutionContext) -> DuplicateLabelRoleCustomFeatureConverter:

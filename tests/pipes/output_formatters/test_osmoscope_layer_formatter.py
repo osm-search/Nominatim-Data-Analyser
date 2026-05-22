@@ -4,6 +4,7 @@ from nominatim_data_analyser.core.pipes import OsmoscopeLayerFormatter
 import pytest
 import json
 
+
 def test_add_layer_to_global_layers_file_doesnt_exist(osmoscope_layer_formatter: OsmoscopeLayerFormatter,
                                                       config: Config,
                                                       tmp_path) -> None:
@@ -16,6 +17,7 @@ def test_add_layer_to_global_layers_file_doesnt_exist(osmoscope_layer_formatter:
     with open(tmp_path / 'test_folder/layers.json', 'r') as file:
         data = json.load(file)
     assert data['layers'] == ['test/test_layer_path.json']
+
 
 def test_add_layer_to_global_layers_file_exist(osmoscope_layer_formatter: OsmoscopeLayerFormatter,
                                                config: Config,
@@ -41,6 +43,7 @@ def test_add_layer_to_global_layers_file_exist(osmoscope_layer_formatter: Osmosc
         data = json.load(file)
     assert data['layers'] == ['layer_already_in', 'test/test_layer_path.json']
 
+
 def test_add_last_update_date_layer_info(osmoscope_layer_formatter: OsmoscopeLayerFormatter,
                                          config: Config,
                                          dsn,
@@ -48,7 +51,8 @@ def test_add_last_update_date_layer_info(osmoscope_layer_formatter: OsmoscopeLay
     config.values['Dsn'] = dsn
     osmoscope_layer_formatter.add_last_update_date_layer_info();
     assert osmoscope_layer_formatter.data['doc']['last_update'] == '2021-09-28 20:10:25 UTC' 
-                
+
+
 def test_process_osmoscope_layer_formatter(osmoscope_layer_formatter: OsmoscopeLayerFormatter,
                                            tmp_path,
                                            dsn,
@@ -73,6 +77,7 @@ def test_process_osmoscope_layer_formatter(osmoscope_layer_formatter: OsmoscopeL
         'vector_tile_url': 'web_path',
         'doc': {'last_update': '2021-09-28 20:10:25 UTC'}
     }
+
 
 @pytest.fixture
 def import_status_table(temp_db_cursor):

@@ -29,4 +29,5 @@ class GeoJSONFormatter(Pipe):
         with open(full_path, 'w') as file:
             dump(feature_collection, file)
 
-        return str(full_path)
+        return str(Path(Config.values['WebPrefixPath'], self.exec_context.rule_name,
+                        'geojson', f'{self.file_name}.json'))

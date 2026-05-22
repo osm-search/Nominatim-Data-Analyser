@@ -18,14 +18,14 @@ if (SRC_DIR / BUILD_DIR).exists():
 
 
 from nominatim_data_analyser.config import Config, load_config
-from nominatim_data_analyser.core.pipes import FillingPipe
-from nominatim_data_analyser.core.pipes.data_fetching.sql_processor import SQLProcessor
-from nominatim_data_analyser.core.pipes.data_processing import (GeometryConverter,
-                                                 LoopDataProcessor)
-from nominatim_data_analyser.core.pipes.output_formatters import (GeoJSONFeatureConverter,
-                                                   GeoJSONFormatter,
-                                                   OsmoscopeLayerFormatter,
-                                                   VectorTileFormatter)
+from nominatim_data_analyser.core.pipes import (FillingPipe,
+                                                SQLProcessor,
+                                                GeometryConverter,
+                                                LoopDataProcessor,
+                                                GeoJSONFeatureConverter,
+                                                GeoJSONFormatter,
+                                                OsmoscopeLayerFormatter,
+                                                VectorTileFormatter)
 from nominatim_data_analyser.core.qa_rule import ExecutionContext
 
 

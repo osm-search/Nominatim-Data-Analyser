@@ -1,10 +1,12 @@
-from nominatim_data_analyser.core.pipes.data_fetching.sql_processor import SQLProcessor
-from nominatim_data_analyser.core.pipes.output_formatters import GeoJSONFeatureConverter
-from nominatim_data_analyser.core.pipes.data_processing import GeometryConverter
-from nominatim_data_analyser.core.pipes.filling_pipe import FillingPipe
-from nominatim_data_analyser.core.assembler import PipelineAssembler
-from nominatim_data_analyser.core.pipe import Pipe
 import pytest
+
+from nominatim_data_analyser.core.pipes import (SQLProcessor,
+                                                GeoJSONFeatureConverter,
+                                                GeometryConverter,
+                                                FillingPipe)
+from nominatim_data_analyser.core.assembler.pipeline_assembler import PipelineAssembler
+from nominatim_data_analyser.core.pipe import Pipe
+
 
 def test_on_new_node(pipeline_assembler: PipelineAssembler, filling_pipe: Pipe) -> None:
     """
@@ -27,6 +29,7 @@ def test_on_new_node(pipeline_assembler: PipelineAssembler, filling_pipe: Pipe) 
     #Check that the new top node is the one plugged to the first_pipe.
     assert first_pipe.next_pipes.pop() == new_top_node
 
+
 def test_on_new_node_root(pipeline_assembler: PipelineAssembler) -> None:
     """
         Test the on_new_node() method.
@@ -39,6 +42,7 @@ def test_on_new_node_root(pipeline_assembler: PipelineAssembler) -> None:
     assert len(pipeline_assembler.nodes_history) == 0
     pipeline_assembler.on_new_node(node)
     assert isinstance(pipeline_assembler.nodes_history.pop(), FillingPipe)
+
 
 def test_on_backtrack(pipeline_assembler: PipelineAssembler,
                       filling_pipe: FillingPipe,
@@ -60,6 +64,7 @@ def test_on_backtrack(pipeline_assembler: PipelineAssembler,
     pipeline_assembler.on_backtrack()
     assert pipeline_assembler.nodes_history.pop() == geometry_converter
 
+
 def test_assemble() -> None:
     """
         Test the assemble() method.
@@ -73,6 +78,7 @@ def test_assemble() -> None:
     }
     pipeline_assembler = PipelineAssembler(pipeline_specification, 'test_rule')
     assert isinstance(pipeline_assembler.assemble(), FillingPipe)
+
 
 @pytest.fixture
 def pipeline_assembler() -> PipelineAssembler:

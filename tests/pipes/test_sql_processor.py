@@ -1,4 +1,4 @@
-from nominatim_data_analyser.core.pipes.data_fetching import SQLProcessor
+from nominatim_data_analyser.core.pipes import SQLProcessor
 from nominatim_data_analyser.config import Config
 
 
@@ -10,6 +10,7 @@ def test_on_created_sql_processor(sql_processor: SQLProcessor):
     sql_processor.data['query'] = 'QUERY'
     sql_processor.on_created()
     assert sql_processor.query == 'QUERY'
+
 
 def test_execute_query(sql_processor: SQLProcessor, dsn, temp_db_cursor):
     """

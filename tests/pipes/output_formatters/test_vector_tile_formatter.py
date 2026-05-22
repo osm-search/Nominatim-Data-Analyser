@@ -2,6 +2,7 @@ from nominatim_data_analyser.core.pipes import VectorTileFormatter
 from nominatim_data_analyser.config import Config
 from geojson import Feature, Point
 
+
 def test_process_vector_tile_formatter(vector_tile_formatter: VectorTileFormatter,
                                        config: Config,
                                        tmp_path,

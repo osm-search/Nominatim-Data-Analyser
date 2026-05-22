@@ -23,7 +23,7 @@ def test_resolve_switch_expression_dont_exist(switch: Switch) -> None:
         'test_key2': 'case2',
         'test_key2': 'test_val3'
     }
-    with pytest.raises(Exception, match='The expression test_expression was not found in the input dictionnary.'):
+    with pytest.raises(Exception, match='The expression test_expression was not found in the input dictionary.'):
         switch.resolve(data)
 
 def test_resolve_switch_case_dont_exist(switch: Switch) -> None:

@@ -1,9 +1,7 @@
-from nominatim_data_analyser.core.pipes.data_processing import LoopDataProcessor
-from nominatim_data_analyser.core.pipes.data_processing.geometry_converter import \
-    GeometryConverter
-from nominatim_data_analyser.core.pipes.filling_pipe import FillingPipe
-from nominatim_data_analyser.core.pipes.output_formatters.geojson_feature_converter import \
-    GeoJSONFeatureConverter
+from nominatim_data_analyser.core.pipes import (LoopDataProcessor,
+                                                GeometryConverter,
+                                                FillingPipe,
+                                                GeoJSONFeatureConverter)
 from geojson.feature import Feature
 
 

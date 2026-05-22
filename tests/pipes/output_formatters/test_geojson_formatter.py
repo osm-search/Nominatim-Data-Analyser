@@ -1,6 +1,7 @@
-from nominatim_data_analyser.core.pipes.output_formatters import GeoJSONFormatter
+from nominatim_data_analyser.core.pipes import GeoJSONFormatter
 from geojson import Feature, Point, FeatureCollection, loads
 from nominatim_data_analyser.config import Config
+
 
 def test_process_geojson_formatter(config: Config,
                                    geojson_formatter: GeoJSONFormatter, 
