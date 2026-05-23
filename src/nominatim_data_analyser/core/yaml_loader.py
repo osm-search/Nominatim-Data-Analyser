@@ -4,10 +4,10 @@ import logging
 
 import yaml
 
-from ..dynamic_value.switch import Switch
-from ..dynamic_value.variable import Variable
-from ..assembler.pipeline_assembler import PipelineAssembler
-from .. import Pipe
+from .dynamic_value.switch import Switch
+from .dynamic_value.variable import Variable
+from .assembler.pipeline_assembler import PipelineAssembler
+from . import Pipe
 
 
 LOG = logging.getLogger()

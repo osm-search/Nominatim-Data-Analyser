@@ -5,7 +5,7 @@ import yaml
 
 from nominatim_data_analyser.core.dynamic_value.variable import Variable
 from nominatim_data_analyser.core.dynamic_value.switch import Switch
-from nominatim_data_analyser.core.yaml_logic.yaml_loader import load_yaml_rule
+from nominatim_data_analyser.core.yaml_loader import load_yaml_rule
 from nominatim_data_analyser.core import Pipe
 
 
