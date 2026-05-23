@@ -1,31 +1,25 @@
 ---
-QUERY:
-  type: SQLProcessor
+- type: SQLProcessor
   query: >
     SELECT ST_AsText(centroid) AS geometry_holder, osm_id FROM placex WHERE osm_type='R' AND class='boundary'
     AND type='administrative' AND admin_level >= 15;
-  out:
-    LOOP_PROCESSING:
-      type: LoopDataProcessor
-      sub_pipeline: !sub-pipeline
-        GEOMETRY_CONVERTER:
-          type: GeometryConverter
-          geometry_type: Node
-          out:
-            FEATURE_CONVERTER:
-              type: GeoJSONFeatureConverter
-              properties:
-                - relation_id: !variable osm_id
-      out:
-        GEOJSON:
-          type: GeoJSONFormatter
-          out:
-            LAYER_FILE:
-              type: OsmoscopeLayerFormatter
-              data_format_url: geojson_url
-              name: No admin level
-              updates: Every evening
-              doc:
-                description: Every relation with boundary=administrative should have an admin_level value set.
-                why_problem: Check the [wiki page](https://wiki.openstreetmap.org/wiki/Tag%3Aboundary%3Dadministrative) for more information.
-                how_to_fix: Add a tag 'admin_level' to the boundary relation.
+
+- type: LoopDataProcessor
+  sub_pipeline: !sub-pipeline
+    - type: GeometryConverter
+      geometry_type: Node
+
+    - type: GeoJSONFeatureConverter
+      properties:
+        - relation_id: !variable osm_id
+
+- type: GeoJSONFormatter
+
+- type: OsmoscopeLayerFormatter
+  data_format_url: geojson_url
+  name: No admin level
+  updates: Every evening
+  doc:
+    description: Every relation with boundary=administrative should have an admin_level value set.
+    why_problem: Check the [wiki page](https://wiki.openstreetmap.org/wiki/Tag%3Aboundary%3Dadministrative) for more information.
+    how_to_fix: Add a tag 'admin_level' to the boundary relation.

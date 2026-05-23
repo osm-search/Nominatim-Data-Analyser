@@ -1,6 +1,5 @@
 ---
-QUERY:
-  type: SQLProcessor
+- type: SQLProcessor
   query: >
     WITH country_names AS MATERIALIZED (
       SELECT
@@ -28,40 +27,35 @@ QUERY:
           AND placex.country_code NOT IN ('mx')
         )
       );
-  out:
-    LOOP_PROCESSING:
-      type: LoopDataProcessor
-      sub_pipeline: !sub-pipeline
-        GEOMETRY_CONVERTER:
-          type: GeometryConverter
-          geometry_type: Node
-          out:
-            FEATURE_CONVERTER:
-              type: GeoJSONFeatureConverter
-              properties:
-                - !switch
-                    expression: osm_type
-                    cases:
-                      'N': 
-                        node_id: !variable osm_id
-                      'W': 
-                        way_id: !variable osm_id
-                      'R': 
-                        relation_id: !variable osm_id
-                - state: !variable state
-                - province: !variable province
-                - country_code: !variable cc
-      out:
-        CLUSTERING_VECTOR_TILES:
-          type: ClustersVtFormatter
-          radius: 60
-          out:
-            LAYER_FILE:
-              type: OsmoscopeLayerFormatter
-              data_format_url: vector_tile_url
-              name: Suspicious addr:state value
-              updates: Every evening
-              doc:
-                description: addr:state contains a country name, code or is same as province
-                why_problem: In addresses a state cannot also be the country.
-                how_to_fix: Make sure addr:state really contains a state name. Maybe in the addresses' country doesn't have states, then no value is required.
+
+- type: LoopDataProcessor
+  sub_pipeline: !sub-pipeline
+    - type: GeometryConverter
+      geometry_type: Node
+
+    - type: GeoJSONFeatureConverter
+      properties:
+        - !switch
+            expression: osm_type
+            cases:
+              'N': 
+                node_id: !variable osm_id
+              'W': 
+                way_id: !variable osm_id
+              'R': 
+                relation_id: !variable osm_id
+        - state: !variable state
+        - province: !variable province
+        - country_code: !variable cc
+
+- type: ClustersVtFormatter
+  radius: 60
+
+- type: OsmoscopeLayerFormatter
+  data_format_url: vector_tile_url
+  name: Suspicious addr:state value
+  updates: Every evening
+  doc:
+    description: addr:state contains a country name, code or is same as province
+    why_problem: In addresses a state cannot also be the country.
+    how_to_fix: Make sure addr:state really contains a state name. Maybe in the addresses' country doesn't have states, then no value is required.
