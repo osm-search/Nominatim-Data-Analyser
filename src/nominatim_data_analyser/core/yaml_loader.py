@@ -1,3 +1,4 @@
+from typing import Any, cast
 from pathlib import Path
 import logging
 
@@ -5,9 +6,11 @@ import yaml
 
 from .dynamic_value.switch import Switch
 from .dynamic_value.variable import Variable
-from .assembler.pipeline_assembler import PipelineAssembler
+from .pipes import FillingPipe
+from .qa_rule import ExecutionContext
 from . import Pipe
-
+from .exceptions import YAMLSyntaxException
+from . import pipes as pipes_module
 
 LOG = logging.getLogger()
 
@@ -37,7 +40,7 @@ def load_yaml_rule(rule_file: Path) -> Pipe:
     if not isinstance(loaded, list):
         raise RuntimeError('Pipeline description must be a list.')
 
-    return PipelineAssembler(rule_file.stem).assemble(loaded)
+    return assemble_pipeline(rule_file.stem, loaded)
 
 
 def sub_pipeline_constructor(loader: yaml.SafeLoader, node: yaml.SequenceNode,
@@ -51,7 +54,7 @@ def sub_pipeline_constructor(loader: yaml.SafeLoader, node: yaml.SequenceNode,
     pipeline_specification = loader.construct_sequence(node, deep=True)
     assert isinstance(pipeline_specification, list)
 
-    return PipelineAssembler(rule_name).assemble(pipeline_specification)
+    return assemble_pipeline(rule_name, pipeline_specification)
 
 
 def variable_constructor(loader: yaml.SafeLoader, node: yaml.Node) -> Variable:
@@ -73,3 +76,38 @@ def switch_constructor(loader: yaml.SafeLoader, node: yaml.Node) -> Switch:
 
     data = loader.construct_mapping(node, deep=True)
     return Switch(data['expression'], data['cases'])
+
+
+def assemble_pipeline(rule_name: str, specification: list[Any]) -> Pipe:
+    """
+        Assembles a pipeline from the given specification.
+    """
+    exec_context: ExecutionContext = ExecutionContext()
+    exec_context.rule_name = rule_name
+
+    first_pipe: Pipe = FillingPipe({}, exec_context)
+    prev_step = first_pipe
+
+    for node in specification:
+        pipe = assemble_pipe(node, exec_context)
+        prev_step.plug_pipe(pipe)
+        LOG.debug("<%s> Assembler -> %s plugged to %s", rule_name, pipe, prev_step)
+        prev_step = pipe
+
+    return first_pipe
+
+
+def assemble_pipe(node_data: dict[str, Any], exec_context: ExecutionContext) -> Pipe:
+    """
+        Instantiate a pipe based on the given node_data
+    """
+    if 'type' not in node_data:
+        raise YAMLSyntaxException("Each node of the tree (pipe) should have a type defined.")
+
+    try:
+        type_func = getattr(pipes_module, node_data['type'])
+        assembled_pipe = cast(Pipe, type_func(node_data, exec_context))
+    except AttributeError:
+        raise YAMLSyntaxException(f"The type {node_data['type']} doesn't exist.")
+
+    return assembled_pipe

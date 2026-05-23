@@ -6,6 +6,7 @@ import yaml
 from nominatim_data_analyser.core.dynamic_value.resolver import resolve_all
 from nominatim_data_analyser.core.yaml_loader import load_yaml_rule
 from nominatim_data_analyser.core import Pipe
+from nominatim_data_analyser.core.exceptions import YAMLSyntaxException
 
 
 class PipeModules:
@@ -27,7 +28,7 @@ class PipeModules:
 def yaml_file(tmp_path, monkeypatch):
     ruledir = tmp_path / 'rules'
     ruledir.mkdir()
-    monkeypatch.setattr('nominatim_data_analyser.core.assembler.pipe_factory.pipes_module',
+    monkeypatch.setattr('nominatim_data_analyser.core.yaml_loader.pipes_module',
                         PipeModules)
 
     def _mkfile(rule, content):
@@ -62,6 +63,29 @@ def test_load_wrong_yaml(yaml_file) -> None:
           data: Bar
         """)
     with pytest.raises(yaml.YAMLError):
+        load_yaml_rule(rule)
+
+
+def test_load_mising_type(yaml_file) -> None:
+    rule = yaml_file('test_bad_yaml', """\
+        - data: Foo
+        - type: AppendString
+          data: Bar
+        """)
+    with pytest.raises(YAMLSyntaxException,
+                       match='Each node of the tree \\(pipe\\) should have a type defined.'):
+        load_yaml_rule(rule)
+
+
+def test_load_unknown_type(yaml_file) -> None:
+    rule = yaml_file('test_bad_yaml', """\
+        - type: AppendString
+          data: Foo
+        - type: SomethingWeDontKnowAbout
+          data: Bar
+        """)
+    with pytest.raises(YAMLSyntaxException,
+                       match="The type SomethingWeDontKnowAbout doesn't exist."):
         load_yaml_rule(rule)
 
 
