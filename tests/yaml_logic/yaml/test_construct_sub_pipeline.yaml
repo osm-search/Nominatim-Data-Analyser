@@ -1,7 +1,0 @@
-- type: SQLProcessor
-  query: QUERY
-  sub_pipeline: !sub-pipeline
-    - type: SQLProcessor
-      query: QUERY
-    - type: FillingPipe
-- type: DumbPipe

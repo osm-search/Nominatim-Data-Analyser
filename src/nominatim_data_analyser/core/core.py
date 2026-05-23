@@ -2,7 +2,6 @@ import logging
 from pathlib import Path
 
 from .yaml_loader import load_yaml_rule
-from .assembler.pipeline_assembler import PipelineAssembler
 from ..timer import Timer
 from ..config import load_config
 
@@ -36,6 +35,5 @@ class Core():
 
     def _execute(self, rule_file: Path) -> None:
         timer = Timer(f'<{rule_file.stem}> The whole rule')
-        loaded_yaml = load_yaml_rule(rule_file)
-        PipelineAssembler(rule_file.stem).assemble(loaded_yaml).process_and_next()
+        load_yaml_rule(rule_file).process_and_next()
         LOG.info(timer.elapsed_str)

@@ -1,4 +1,3 @@
-from typing import Any
 from pathlib import Path
 import logging
 
@@ -13,7 +12,7 @@ from . import Pipe
 LOG = logging.getLogger()
 
 
-def load_yaml_rule(rule_file: Path) -> list[Any]:
+def load_yaml_rule(rule_file: Path) -> Pipe:
     """
         Load the YAML specification file.
         YAML constructors are added to handle custom types in the YAML.
@@ -38,7 +37,7 @@ def load_yaml_rule(rule_file: Path) -> list[Any]:
     if not isinstance(loaded, list):
         raise RuntimeError('Pipeline description must be a list.')
 
-    return loaded
+    return PipelineAssembler(rule_file.stem).assemble(loaded)
 
 
 def sub_pipeline_constructor(loader: yaml.SafeLoader, node: yaml.SequenceNode,
