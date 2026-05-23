@@ -2,7 +2,7 @@ from typing import Any
 import uuid
 import logging
 
-from abc import ABCMeta, abstractmethod
+from abc import ABC, abstractmethod
 from .exceptions import YAMLSyntaxException
 from .qa_rule import ExecutionContext
 
@@ -10,7 +10,7 @@ from .qa_rule import ExecutionContext
 LOG = logging.getLogger()
 
 
-class Pipe(metaclass=ABCMeta):
+class Pipe(ABC):
     """
         This is the base class for every pipe.
     """
@@ -18,7 +18,7 @@ class Pipe(metaclass=ABCMeta):
         self.id = uuid.uuid1()
         self.exec_context = exec_context
         self.data = data
-        self.next_pipes: set['Pipe'] = set()
+        self.next_pipe: Pipe | None = None
         self.on_created()
 
     def plug_pipe(self, pipe: 'Pipe') -> 'Pipe':
@@ -26,17 +26,23 @@ class Pipe(metaclass=ABCMeta):
             Plugs a pipe to the current pipe and returns the
             plugged pipe.
         """
-        self.next_pipes.add(pipe)
+        assert self.next_pipe is None
+        self.next_pipe = pipe
         return pipe
 
-    def process_and_next(self, data: Any = None) -> Any:
+    def process_and_next(self, data: Any = None, return_on_none: bool = False) -> Any:
         """
             Process this pipe and process the plugged ones
             by giving them the result of this execution.
         """
         result = self.process(data)
-        for pipe in self.next_pipes:
-            result = pipe.process_and_next(result)
+
+        if result is None and return_on_none:
+            return None
+
+        if self.next_pipe is not None:
+            result = self.next_pipe.process_and_next(result)
+
         return result
 
     def __str__(self) -> str:

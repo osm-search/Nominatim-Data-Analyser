@@ -9,7 +9,7 @@ from nominatim_data_analyser.core.qa_rule import ExecutionContext
 
 def test_plug_pipe(filling_pipe: FillingPipe, geometry_converter: GeometryConverter) -> None:
     filling_pipe.plug_pipe(geometry_converter)
-    assert filling_pipe.next_pipes.pop() == geometry_converter
+    assert filling_pipe.next_pipe == geometry_converter
 
 
 def test_process_and_next(filling_pipe: FillingPipe,
@@ -19,7 +19,7 @@ def test_process_and_next(filling_pipe: FillingPipe,
         two pipes should be called.
     """
     filling_pipe2 = FillingPipe({}, execution_context)
-    filling_pipe.next_pipes.add(filling_pipe2)
+    filling_pipe.plug_pipe(filling_pipe2)
 
     x = count()
 
