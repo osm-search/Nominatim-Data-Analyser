@@ -51,9 +51,7 @@ lint = [
 packages = ["nominatim_data_analyser",
             "nominatim_data_analyser.core",
             "nominatim_data_analyser.core.exceptions",
-            "nominatim_data_analyser.core.yaml_logic",
             "nominatim_data_analyser.core.dynamic_value",
-            "nominatim_data_analyser.core.deconstructor",
             "nominatim_data_analyser.core.model",
             "nominatim_data_analyser.core.pipes",
             "nominatim_data_analyser.core.pipes.rules_specific_pipes",
@@ -65,7 +63,6 @@ packages = ["nominatim_data_analyser",
             "nominatim_data_analyser.core.pipes.data_processing",
             "nominatim_data_analyser.core.pipes.data_fetching",
             "nominatim_data_analyser.core.qa_rule",
-            "nominatim_data_analyser.core.assembler",
             "nominatim_data_analyser.rules_specifications"
 ]
 
