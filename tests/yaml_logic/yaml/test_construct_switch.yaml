@@ -1,5 +1,4 @@
-DUMB_NODE:
-  value: !switch
+- value: !switch
     expression: expression_value
     cases:
       'case1': val1

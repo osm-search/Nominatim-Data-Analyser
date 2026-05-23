@@ -1,4 +1,4 @@
-from typing import Any, cast
+from typing import Any
 from pathlib import Path
 import logging
 
@@ -13,14 +13,14 @@ from .. import Pipe
 LOG = logging.getLogger()
 
 
-def load_yaml_rule(rule_file: Path) -> dict[str, Any]:
+def load_yaml_rule(rule_file: Path) -> list[Any]:
     """
         Load the YAML specification file.
         YAML constructors are added to handle custom types in the YAML.
     """
     def _sub_pipeline(loader: yaml.SafeLoader, node: yaml.Node) -> Pipe:
-        if not isinstance(node, yaml.MappingNode):
-            raise RuntimeError("!switch expects mapping.")
+        if not isinstance(node, yaml.SequenceNode):
+            raise RuntimeError("!sub-pipeline expects list.")
         return sub_pipeline_constructor(loader, node, rule_file.stem)
 
     yaml.add_constructor(u'!sub-pipeline', _sub_pipeline, Loader=yaml.SafeLoader)
@@ -29,16 +29,19 @@ def load_yaml_rule(rule_file: Path) -> dict[str, Any]:
 
     with rule_file.open('r') as file:
         try:
-            loaded = cast(dict[str, Any], yaml.safe_load(file))
+            loaded = yaml.safe_load(file)
         except yaml.YAMLError as exc:
             LOG.error('Error while loading the YAML rule file %s: %s',
                       rule_file.stem, exc)
             raise
 
+    if not isinstance(loaded, list):
+        raise RuntimeError('Pipeline description must be a list.')
+
     return loaded
 
 
-def sub_pipeline_constructor(loader: yaml.SafeLoader, node: yaml.MappingNode,
+def sub_pipeline_constructor(loader: yaml.SafeLoader, node: yaml.SequenceNode,
                              rule_name: str) -> Pipe:
     """
         Loads the pipeline specification from the YAML node and
@@ -46,8 +49,10 @@ def sub_pipeline_constructor(loader: yaml.SafeLoader, node: yaml.MappingNode,
 
         This constructor is used for the !sub-pipeline custom type.
     """
-    pipeline_specification = cast(dict[str, Any], loader.construct_mapping(node, deep=True))
-    return PipelineAssembler(pipeline_specification, rule_name).assemble()
+    pipeline_specification = loader.construct_sequence(node, deep=True)
+    assert isinstance(pipeline_specification, list)
+
+    return PipelineAssembler(rule_name).assemble(pipeline_specification)
 
 
 def variable_constructor(loader: yaml.SafeLoader, node: yaml.Node) -> Variable:

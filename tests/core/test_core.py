@@ -24,6 +24,7 @@ class TestConfig:
         """
         self.core.execute_one('rule1')
         assert (self.rulepath / 'rule1/geojson/rule1.json').is_file()
+        assert not (self.rulepath / 'rule1/geojson/rule2.json').is_file()
 
     def test_execute_all(self) -> None:
         """

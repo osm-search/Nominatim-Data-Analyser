@@ -14,17 +14,15 @@ def test_load_yaml_rule(yaml_path) -> None:
         Test the load_yaml_rule() function with a test yaml file.
     """
     loaded_data = load_yaml_rule(yaml_path / 'test_load_yaml.yaml')
-    assert loaded_data == {
-        'QUERY': {
+    assert loaded_data == [
+        {
             'type': 'SQLProcessor',
-            'query': 'QUERY',
-            'out': {
-                'DUMB_PIPE': {
-                    'type': 'DumbPipe'
-                }
-            }
+            'query': 'QUERY'
+        },
+        {
+            'type': 'DumbPipe'
         }
-    }
+    ]
 
 
 def test_load_wrong_yaml(yaml_path) -> None:
@@ -44,7 +42,7 @@ def test_construct_sub_pipeline(yaml_path) -> None:
         The value should be a Pipe after loading.
     """
     loaded_data = load_yaml_rule(yaml_path / 'test_construct_sub_pipeline.yaml')
-    assert isinstance(loaded_data['QUERY']['sub_pipeline'], Pipe)
+    assert isinstance(loaded_data[0]['sub_pipeline'], Pipe)
 
 
 def test_construct_switch(yaml_path) -> None:
@@ -60,9 +58,9 @@ def test_construct_switch(yaml_path) -> None:
         'case2': 'val2',
         'case3': 'val3'
     }
-    assert isinstance(loaded_data['DUMB_NODE']['value'], Switch)
-    assert loaded_data['DUMB_NODE']['value'].expression == 'expression_value'
-    assert loaded_data['DUMB_NODE']['value'].cases == expected_cases
+    assert isinstance(loaded_data[0]['value'], Switch)
+    assert loaded_data[0]['value'].expression == 'expression_value'
+    assert loaded_data[0]['value'].cases == expected_cases
 
 
 def test_construct_variable(yaml_path) -> None:
@@ -73,8 +71,8 @@ def test_construct_variable(yaml_path) -> None:
         The value should be a Variable after loading.
     """
     loaded_data = load_yaml_rule(yaml_path / 'test_construct_variable.yaml')
-    assert isinstance(loaded_data['DUMB_NODE']['value'], Variable)
-    assert loaded_data['DUMB_NODE']['value'].name == 'variable_name'
+    assert isinstance(loaded_data[0]['value'], Variable)
+    assert loaded_data[0]['value'].name == 'variable_name'
 
 
 @pytest.fixture
