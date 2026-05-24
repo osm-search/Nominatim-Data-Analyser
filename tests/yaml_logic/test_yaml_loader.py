@@ -1,82 +1,129 @@
-from pathlib import Path
+from textwrap import dedent
 
 import pytest
 import yaml
 
-from nominatim_data_analyser.core.dynamic_value.variable import Variable
-from nominatim_data_analyser.core.dynamic_value.switch import Switch
-from nominatim_data_analyser.core.yaml_logic.yaml_loader import load_yaml_rule
+from nominatim_data_analyser.core.dynamic_value.resolver import resolve_all
+from nominatim_data_analyser.core.yaml_loader import load_yaml_rule
 from nominatim_data_analyser.core import Pipe
+from nominatim_data_analyser.core.exceptions import YAMLSyntaxException
 
 
-def test_load_yaml_rule(yaml_path) -> None:
-    """
-        Test the load_yaml_rule() function with a test yaml file.
-    """
-    loaded_data = load_yaml_rule(yaml_path / 'test_load_yaml.yaml')
-    assert loaded_data == {
-        'QUERY': {
-            'type': 'SQLProcessor',
-            'query': 'QUERY',
-            'out': {
-                'DUMB_PIPE': {
-                    'type': 'DumbPipe'
-                }
-            }
-        }
-    }
+class PipeModules:
 
+    class AppendString(Pipe):
 
-def test_load_wrong_yaml(yaml_path) -> None:
-    """
-        Test the load_yaml_rule() function with a test yaml file which
-        contains wrong syntax. A YAMLError should be raised while loading.
-    """
-    with pytest.raises(yaml.YAMLError):
-        load_yaml_rule(yaml_path / 'test_load_wrong_yaml.yaml')
+        def process(self, data):
+            data['out'].append(resolve_all(self.data['data'], data))
+            return data
 
+    class WithSub(Pipe):
 
-def test_construct_sub_pipeline(yaml_path) -> None:
-    """
-        Test that the sub_pipeline_constructor() is well called when
-        a specific type !sub-pipeline is present in the YAML file.
-
-        The value should be a Pipe after loading.
-    """
-    loaded_data = load_yaml_rule(yaml_path / 'test_construct_sub_pipeline.yaml')
-    assert isinstance(loaded_data['QUERY']['sub_pipeline'], Pipe)
-
-
-def test_construct_switch(yaml_path) -> None:
-    """
-        Test that the switch_constructor() is well called when
-        a specific type !switch is present in the YAML file.
-
-        The value should be a Switch after loading.
-    """
-    loaded_data = load_yaml_rule(yaml_path / 'test_construct_switch.yaml')
-    expected_cases = {
-        'case1': 'val1',
-        'case2': 'val2',
-        'case3': 'val3'
-    }
-    assert isinstance(loaded_data['DUMB_NODE']['value'], Switch)
-    assert loaded_data['DUMB_NODE']['value'].expression == 'expression_value'
-    assert loaded_data['DUMB_NODE']['value'].cases == expected_cases
-
-
-def test_construct_variable(yaml_path) -> None:
-    """
-        Test that the variable_constructor() is well called when
-        a specific type !variable is present in the YAML file.
-
-        The value should be a Variable after loading.
-    """
-    loaded_data = load_yaml_rule(yaml_path / 'test_construct_variable.yaml')
-    assert isinstance(loaded_data['DUMB_NODE']['value'], Variable)
-    assert loaded_data['DUMB_NODE']['value'].name == 'variable_name'
+        def process(self, data):
+            data['out'].append(self.data['sub'].process_and_next({'out': []})['out'])
+            return data
 
 
 @pytest.fixture
-def yaml_path() -> Path:
-    return Path(__file__).parent / 'yaml'
+def yaml_file(tmp_path, monkeypatch):
+    ruledir = tmp_path / 'rules'
+    ruledir.mkdir()
+    monkeypatch.setattr('nominatim_data_analyser.core.yaml_loader.pipes_module',
+                        PipeModules)
+
+    def _mkfile(rule, content):
+        outfile = ruledir / f"{rule}.yaml"
+        outfile.write_text(dedent(content), encoding='utf-8')
+        return outfile
+
+    return _mkfile
+
+
+def test_load_yaml_rule(yaml_file) -> None:
+    """
+        Test the load_yaml_rule() function with a test yaml file.
+    """
+    rule = yaml_file('test_load_yaml', """\
+        - type: AppendString
+          data: Foo
+        - type: AppendString
+          data: Bar
+        """)
+
+    pipe = load_yaml_rule(rule)
+
+    assert pipe.process_and_next({'out': []})['out'] == ['Foo', 'Bar']
+
+
+def test_load_wrong_yaml(yaml_file) -> None:
+    rule = yaml_file('test_bad_yaml', """\
+        - >>>>type: AppendString
+          data: Foo
+        - type: AppendString
+          data: Bar
+        """)
+    with pytest.raises(yaml.YAMLError):
+        load_yaml_rule(rule)
+
+
+def test_load_mising_type(yaml_file) -> None:
+    rule = yaml_file('test_bad_yaml', """\
+        - data: Foo
+        - type: AppendString
+          data: Bar
+        """)
+    with pytest.raises(YAMLSyntaxException,
+                       match='Each node of the tree \\(pipe\\) should have a type defined.'):
+        load_yaml_rule(rule)
+
+
+def test_load_unknown_type(yaml_file) -> None:
+    rule = yaml_file('test_bad_yaml', """\
+        - type: AppendString
+          data: Foo
+        - type: SomethingWeDontKnowAbout
+          data: Bar
+        """)
+    with pytest.raises(YAMLSyntaxException,
+                       match="The type SomethingWeDontKnowAbout doesn't exist."):
+        load_yaml_rule(rule)
+
+
+def test_construct_sub_pipeline(yaml_file) -> None:
+    rule = yaml_file('test_load_yaml', """\
+        - type: WithSub
+          sub: !sub-pipeline
+            - type: AppendString
+              data: Bar
+        - type: AppendString
+          data: Foo
+        """)
+
+    pipe = load_yaml_rule(rule)
+
+    assert pipe.process_and_next({'out': []})['out'] == [['Bar'], 'Foo']
+
+
+def test_construct_switch(yaml_file) -> None:
+    rule = yaml_file('test_load_yaml', """\
+        - type: AppendString
+          data: !switch
+            expression: inval
+            cases:
+              A: alpha
+              B: beta
+        """)
+    pipe = load_yaml_rule(rule)
+
+    assert pipe.process_and_next({'inval': 'A', 'out': []})['out'] == ['alpha']
+    assert pipe.process_and_next({'inval': 'B', 'out': []})['out'] == ['beta']
+
+
+def test_construct_variable(yaml_file) -> None:
+    rule = yaml_file('test_load_yaml', """\
+        - type: AppendString
+          data: !variable inval
+        """)
+    pipe = load_yaml_rule(rule)
+
+    assert pipe.process_and_next({'inval': 'A', 'out': []})['out'] == ['A']

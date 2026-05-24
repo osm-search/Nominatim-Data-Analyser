@@ -1,6 +1,0 @@
-QUERY:
-  type: SQLProcessor
-  query: QUERY
-  out:
-    >>>>>DUMB_PIPE:
-      type: DumbPipe

@@ -1,33 +1,27 @@
 ---
-QUERY:
-  type: SQLProcessor
+- type: SQLProcessor
   query: >
     SELECT ST_AsText(px1.centroid) AS geometry_holder, px1.osm_id as osm_id, ARRAY_AGG(px2.osm_id) AS common_ids 
     FROM (SELECT * FROM placex WHERE osm_type='N' AND class='place' AND type != 'postcode' AND rank_search < 26) AS px1 
     JOIN (SELECT * FROM placex WHERE osm_type='N' AND class='place' AND type != 'postcode' AND rank_search < 26) AS px2 
     ON px1.type = px2.type and px1.name = px2.name and px1.osm_id != px2.osm_id 
     WHERE ST_DistanceSphere(px1.centroid, px2.centroid) / 1000 <= 1 GROUP BY px1.osm_id, px1.centroid;
-  out:
-    LOOP_PROCESSING:
-      type: LoopDataProcessor
-      sub_pipeline: !sub-pipeline
-        GEOMETRY_CONVERTER:
-          type: GeometryConverter
-          geometry_type: Node
-          out:
-            FEATURE_CONVERTER:
-              type: PlaceNodesCloseCustomFeatureConverter
-      out:
-        CLUSTERING_VECTOR_TILES:
-          type: ClustersVtFormatter
-          radius: 60
-          out:
-            LAYER_FILE:
-              type: OsmoscopeLayerFormatter
-              data_format_url: vector_tile_url
-              name: Place nodes close
-              updates: Every evening
-              doc:
-                description: Place nodes of same type and name close to each other.
-                why_problem: Place nodes with the same type and name which are geographically close to each other are probably errors.
-                how_to_fix: Remove or correct the duplicate nodes.
+
+- type: LoopDataProcessor
+  sub_pipeline: !sub-pipeline
+    - type: GeometryConverter
+      geometry_type: Node
+
+    - type: PlaceNodesCloseCustomFeatureConverter
+
+- type: ClustersVtFormatter
+  radius: 60
+
+- type: OsmoscopeLayerFormatter
+  data_format_url: vector_tile_url
+  name: Place nodes close
+  updates: Every evening
+  doc:
+    description: Place nodes of same type and name close to each other.
+    why_problem: Place nodes with the same type and name which are geographically close to each other are probably errors.
+    how_to_fix: Remove or correct the duplicate nodes.

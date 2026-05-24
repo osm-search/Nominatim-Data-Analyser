@@ -1,6 +1,5 @@
 ---
-QUERY:
-  type: SQLProcessor
+- type: SQLProcessor
   query: >
     SELECT ST_AsText(centroid) AS geometry_holder, osm_id, osm_type, address, class, type
     FROM placex p WHERE (address ? 'street' or address ? 'place')
@@ -10,42 +9,37 @@ QUERY:
                            OR (class = 'leisure' and type = 'park'))
                            AND NOT EXISTS (SELECT * FROM placex o
                                            WHERE o.osm_id = p.osm_id and o.osm_type = p.osm_type and rank_address = 30);
-  out:
-    LOOP_PROCESSING:
-      type: LoopDataProcessor
-      sub_pipeline: !sub-pipeline
-        GEOMETRY_CONVERTER:
-          type: GeometryConverter
-          geometry_type: Node
-          out:
-            FEATURE_CONVERTER:
-              type: GeoJSONFeatureConverter
-              properties:
-                - key: !variable class
-                - value: !variable type
-                - !switch
-                    expression: osm_type
-                    cases:
-                      'N': 
-                        node_id: !variable osm_id
-                      'W': 
-                        way_id: !variable osm_id
-                      'R': 
-                        relation_id: !variable osm_id
-                - address: !variable address
-      out:
-        CLUSTERING_VECTOR_TILES:
-          type: ClustersVtFormatter
-          radius: 60
-          out:
-            LAYER_FILE:
-              type: OsmoscopeLayerFormatter
-              data_format_url: vector_tile_url
-              name: addr:* tags on non-addressable places
-              updates: Every evening
-              doc:
-                description: addr:street or addr:place on objects that normally do not have an address.
-                how_to_fix: |
-                  Check if the object really should have an address. Remove all tags 'addr:*'.
-                  If this is not the case or convert them to a more appropriate tag,
-                  for example using 'contact:*' tags.
+
+- type: LoopDataProcessor
+  sub_pipeline: !sub-pipeline
+    - type: GeometryConverter
+      geometry_type: Node
+
+    - type: GeoJSONFeatureConverter
+      properties:
+        - key: !variable class
+        - value: !variable type
+        - !switch
+            expression: osm_type
+            cases:
+              'N':
+                node_id: !variable osm_id
+              'W':
+                way_id: !variable osm_id
+              'R':
+                relation_id: !variable osm_id
+        - address: !variable address
+
+- type: ClustersVtFormatter
+  radius: 60
+
+- type: OsmoscopeLayerFormatter
+  data_format_url: vector_tile_url
+  name: addr:* tags on non-addressable places
+  updates: Every evening
+  doc:
+    description: addr:street or addr:place on objects that normally do not have an address.
+    how_to_fix: |
+      Check if the object really should have an address. Remove all tags 'addr:*'.
+      If this is not the case or convert them to a more appropriate tag,
+      for example using 'contact:*' tags.

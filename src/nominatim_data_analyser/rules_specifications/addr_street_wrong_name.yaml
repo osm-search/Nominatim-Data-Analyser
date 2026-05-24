@@ -1,6 +1,5 @@
 ---
-QUERY:
-  type: SQLProcessor
+- type: SQLProcessor
   query: >
     SELECT ST_AsText(px1.centroid) AS geometry_holder, px1.osm_id, px1.osm_type, px1.address->'street' as street_name,
     px2.name->'name' as parent_name FROM (
@@ -10,53 +9,48 @@ QUERY:
     ON px1.parent_place_id = px2.place_id
     WHERE px1.address->'street' not in (SELECT regexp_split_to_table(svals(px2.name), '\s*;\s*'))
           and not lower(px1.address->'street') = lower(px2.name->'name');
-  out:
-    LOOP_PROCESSING:
-      type: LoopDataProcessor
-      sub_pipeline: !sub-pipeline
-        GEOMETRY_CONVERTER:
-          type: GeometryConverter
-          geometry_type: Node
-          out:
-            FEATURE_CONVERTER:
-              type: GeoJSONFeatureConverter
-              properties:
-                - !switch
-                    expression: osm_type
-                    cases:
-                      'N': 
-                        node_id: !variable osm_id
-                      'W': 
-                        way_id: !variable osm_id
-                      'R': 
-                        relation_id: !variable osm_id
-                - street_name: !variable street_name
-                - parent_name: !variable parent_name
-      out:
-        CLUSTERING_VECTOR_TILES:
-          type: ClustersVtFormatter
-          radius: 60
-          out:
-            LAYER_FILE:
-              type: OsmoscopeLayerFormatter
-              data_format_url: vector_tile_url
-              name: Suspicious addr:street tag
-              updates: Every evening
-              doc:
-                description: |
-                  This view shows addresses where the addr:street tag differs
-                  from the name of the street that Nominatim has assigned to
-                  the address. There are three different reasons that this
-                  happens: 1) there is a typo in addr:street or the street name.
-                  2) The addr:street part does not refer to a street at all
-                     but to a place (village, hamlet, area).
-                  3) Road is not mapped yet near address (or tts name is missing) 
-                why_problem: |
-                  1) The addr:street tag should have exactly the same name as the street.
-                  2) addr:street must only be used when the house number is attached
-                     to an existing street nearby.
-                how_to_fix: |
-                  1) Check if there is a typo in the addr:street tag or
-                  in the name of the street and fix it.
-                  2) If addr:street refers to a place, use change it to addr:place.
-                  3) If road is missing, map it
+
+- type: LoopDataProcessor
+  sub_pipeline: !sub-pipeline
+    - type: GeometryConverter
+      geometry_type: Node
+
+    - type: GeoJSONFeatureConverter
+      properties:
+        - !switch
+            expression: osm_type
+            cases:
+              'N':
+                node_id: !variable osm_id
+              'W':
+                way_id: !variable osm_id
+              'R':
+                relation_id: !variable osm_id
+        - street_name: !variable street_name
+        - parent_name: !variable parent_name
+
+- type: ClustersVtFormatter
+  radius: 60
+
+- type: OsmoscopeLayerFormatter
+  data_format_url: vector_tile_url
+  name: Suspicious addr:street tag
+  updates: Every evening
+  doc:
+    description: |
+      This view shows addresses where the addr:street tag differs
+      from the name of the street that Nominatim has assigned to
+      the address. There are three different reasons that this
+      happens: 1) there is a typo in addr:street or the street name.
+      2) The addr:street part does not refer to a street at all
+         but to a place (village, hamlet, area).
+      3) Road is not mapped yet near address (or tts name is missing) 
+    why_problem: |
+      1) The addr:street tag should have exactly the same name as the street.
+      2) addr:street must only be used when the house number is attached
+         to an existing street nearby.
+    how_to_fix: |
+      1) Check if there is a typo in the addr:street tag or
+      in the name of the street and fix it.
+      2) If addr:street refers to a place, use change it to addr:place.
+      3) If road is missing, map it

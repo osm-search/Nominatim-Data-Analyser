@@ -1,25 +1,21 @@
 ---
-QUERY:
-  type: SQLProcessor
+- type: SQLProcessor
   query: >
     SELECT wikidata, ids, centroids FROM (SELECT extratags->'wikidata' as wikidata, array_agg(osm_id) as ids, 
     array_agg(ST_AsText(centroid)) as centroids, count(1) FROM placex
     WHERE class='place' and rank_search < 26
           AND osm_type='N' AND extratags ? 'wikidata' GROUP BY wikidata) foo WHERE count > 1
-  out:
-    CONVERTER:
-      type: SameWikiDataFeatureConverter
-      out:
-        CLUSTERING_VECTOR_TILES:
-          type: ClustersVtFormatter
-          radius: 60
-          out:
-            LAYER_FILE:
-              type: OsmoscopeLayerFormatter
-              data_format_url: vector_tile_url
-              name: Duplicate wikidata ID
-              updates: Every evening
-              doc:
-                description: A single wikidata id should be assigned to at most one place node.
-                why_problem: Wikidata object describes exactly one place, if the same wikidata id is found on multiple places then usually the id belongs to the parent place.
-                how_to_fix: Check the wikidata entries, leave the wikidata id only on the place that corresponds exactly to the entry. Sometimes you have to remove all of the wikidata ids because they belong to the parent.
+
+- type: SameWikiDataFeatureConverter
+
+- type: ClustersVtFormatter
+  radius: 60
+
+- type: OsmoscopeLayerFormatter
+  data_format_url: vector_tile_url
+  name: Duplicate wikidata ID
+  updates: Every evening
+  doc:
+    description: A single wikidata id should be assigned to at most one place node.
+    why_problem: Wikidata object describes exactly one place, if the same wikidata id is found on multiple places then usually the id belongs to the parent place.
+    how_to_fix: Check the wikidata entries, leave the wikidata id only on the place that corresponds exactly to the entry. Sometimes you have to remove all of the wikidata ids because they belong to the parent.
