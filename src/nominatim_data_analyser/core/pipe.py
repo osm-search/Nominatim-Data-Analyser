@@ -41,7 +41,7 @@ class Pipe(ABC):
             return None
 
         if self.next_pipe is not None:
-            result = self.next_pipe.process_and_next(result)
+            result = self.next_pipe.process_and_next(result, return_on_none)
 
         return result
 
