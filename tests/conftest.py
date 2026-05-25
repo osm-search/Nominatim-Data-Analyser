@@ -25,6 +25,9 @@ def temp_db() -> str:
             cur.execute(pysql.SQL('DROP DATABASE IF EXISTS') + pysql.Identifier(name))
             cur.execute(pysql.SQL('CREATE DATABASE') + pysql.Identifier(name))
 
+    with psycopg.connect(dbname=name, autocommit=True) as conn:
+        conn.execute('CREATE EXTENSION IF NOT EXISTS hstore')
+
     yield name
 
     with psycopg.connect(dbname='postgres', autocommit=True) as conn:

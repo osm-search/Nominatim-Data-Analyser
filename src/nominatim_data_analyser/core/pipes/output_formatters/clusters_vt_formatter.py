@@ -37,7 +37,8 @@ class ClustersVtFormatter(Pipe):
 
         self.log(timer.elapsed_str)
 
-        return str(self.base_folder_path / '{z}/{x}/{y}.pbf')
+        return f"{Config.values["WebPrefixPath"]}/{self.exec_context.rule_name}"\
+               '/vector-tiles/{z}/{x}/{y}.pbf'
 
     def call_clustering_vt(self, output_dir: Path, feature_collection: FeatureCollection) -> None:
         """

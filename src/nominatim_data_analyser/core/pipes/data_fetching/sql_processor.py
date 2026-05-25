@@ -1,6 +1,7 @@
 from typing import Any
 
 import psycopg
+import psycopg.types.hstore
 
 from ....config import Config
 from ... import Pipe
@@ -22,6 +23,10 @@ class SQLProcessor(Pipe):
         results: list[dict[str, Any]]
 
         with psycopg.connect(Config.values['Dsn']) as conn:
+            info = psycopg.types.TypeInfo.fetch(conn, "hstore")
+            if info is None:
+                raise RuntimeError('Hstore extension is requested but not installed.')
+            psycopg.types.hstore.register_hstore(info, conn)
             with conn.cursor(row_factory=psycopg.rows.dict_row) as cur:
                 timer = Timer(f'Query {self.id}')
                 cur.execute(self.query)
