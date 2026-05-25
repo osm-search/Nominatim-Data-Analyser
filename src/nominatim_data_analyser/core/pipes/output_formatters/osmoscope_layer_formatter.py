@@ -34,8 +34,9 @@ class OsmoscopeLayerFormatter(Pipe):
         with open(full_path, 'w') as json_file:
             json.dump(self.data, json_file)
 
-        file_url = self.base_folder_path / f'{self.file_name}.json'
-        self.add_layer_to_global_layers_file(str(file_url))
+        file_url = f"{Config.values['WebPrefixPath']}/{self.exec_context.rule_name}"\
+                   f"/osmoscope-layer/{self.file_name}.json"
+        self.add_layer_to_global_layers_file(file_url)
 
     def add_last_update_date_layer_info(self) -> None:
         """
