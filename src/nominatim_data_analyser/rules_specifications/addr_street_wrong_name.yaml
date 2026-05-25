@@ -16,6 +16,8 @@
 
 - type: LoopDataProcessor
   sub_pipeline: !sub-pipeline
+    - type: EqualStreetNameFilter
+
     - type: GeometryConverter
       geometry_type: Node
 
@@ -48,7 +50,7 @@
       happens: 1) there is a typo in addr:street or the street name.
       2) The addr:street part does not refer to a street at all
          but to a place (village, hamlet, area).
-      3) Road is not mapped yet near address (or tts name is missing) 
+      3) Road is not mapped yet near address (or tts name is missing)
     why_problem: |
       1) The addr:street tag should have exactly the same name as the street.
       2) addr:street must only be used when the house number is attached

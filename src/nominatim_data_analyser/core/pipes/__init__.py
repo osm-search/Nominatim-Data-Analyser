@@ -18,6 +18,8 @@ from .rules_specific_pipes.place_nodes_close.custom_feature_converter import (
     PlaceNodesCloseCustomFeatureConverter as PlaceNodesCloseCustomFeatureConverter)
 from .rules_specific_pipes.same_wikidata.custom_feature_converter import (
     SameWikiDataFeatureConverter as SameWikiDataFeatureConverter)
+from .rules_specific_pipes.addr_street_wrong_name.equal_street_name_filter import (
+    EqualStreetNameFilter as EqualStreetNameFilter)
 
 from .data_processing.loop_data_processor import LoopDataProcessor as LoopDataProcessor
 from .data_processing.geometry_converter import GeometryConverter as GeometryConverter
