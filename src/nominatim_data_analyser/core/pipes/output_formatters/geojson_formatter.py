@@ -1,5 +1,5 @@
+from typing import Any
 from ....config import Config
-from typing import List
 from geojson.feature import Feature
 from ....core import Pipe
 from pathlib import Path
@@ -17,12 +17,16 @@ class GeoJSONFormatter(Pipe):
         # Take the rule's name as default file name.
         self.file_name = self.extract_data('file_name', self.exec_context.rule_name)
 
-    def process(self, features: List[Feature]) -> str:
+    def process(self, features: Any) -> str:
         """
             Create the FeatureCollection and dump it to
             a new GeoJSON file.
         """
-        feature_collection = FeatureCollection(features)
+        if isinstance(features, list):
+            feature_collection = FeatureCollection([f for f in features if isinstance(f, Feature)])
+        else:
+            feature_collection = FeatureCollection([])
+
         self.base_folder_path.mkdir(parents=True, exist_ok=True)
         full_path = self.base_folder_path / f'{self.file_name}.json'
 
