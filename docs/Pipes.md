@@ -186,6 +186,20 @@ Generates a `Vector tile` folder with a hierarchy of vector tiles inside from a 
 
 **Output** -> (Subject to change).
 
+## ClustersVtFormatter
+
+Generates a `Vector tile` folder with clustered vector tiles from a list of [Feature](https://github.com/jazzband/geojson#feature), using the bundled `clustering-vt` module.
+
+**Class name (type)** -> `ClustersVtFormatter`
+
+**Optional fields**:
+
+* `radius` -> Cluster radius (default: 60).
+
+**Expected inputs** -> `List` of [Feature](https://github.com/jazzband/geojson#feature).
+
+**Output** -> Web URL template of the vector tiles.
+
 ## OsmoscopeLayerFormatter
 
 Generates a `Layer` file following the [Layer specification](https://github.com/osmoscope/osmoscope-ui/blob/master/doc/creating-layers.md#the-layer-file) of Osmoscope.
