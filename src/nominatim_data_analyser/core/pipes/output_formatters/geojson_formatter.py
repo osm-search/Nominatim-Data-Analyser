@@ -4,6 +4,7 @@ from geojson.feature import Feature
 from ....core import Pipe
 from pathlib import Path
 from geojson import FeatureCollection, dump
+import gzip
 
 
 class GeoJSONFormatter(Pipe):
@@ -16,6 +17,8 @@ class GeoJSONFormatter(Pipe):
                                      'geojson')
         # Take the rule's name as default file name.
         self.file_name = self.extract_data('file_name', self.exec_context.rule_name)
+        # Write a gzip-compressed .json.gz file instead of plain .json.
+        self.compress: bool = self.extract_data('compress', default=False)
 
     def process(self, features: Any) -> str:
         """
@@ -28,10 +31,11 @@ class GeoJSONFormatter(Pipe):
             feature_collection = FeatureCollection([])
 
         self.base_folder_path.mkdir(parents=True, exist_ok=True)
-        full_path = self.base_folder_path / f'{self.file_name}.json'
+        file_name = f'{self.file_name}.json.gz' if self.compress else f'{self.file_name}.json'
+        full_path = self.base_folder_path / file_name
 
-        with open(full_path, 'w') as file:
+        with gzip.open(full_path, 'wt') if self.compress else open(full_path, 'w') as file:
             dump(feature_collection, file)
 
         return f"{Config.values['WebPrefixPath']}/{self.exec_context.rule_name}"\
-               f"/geojson/{self.file_name}.json"
+               f"/geojson/{file_name}"

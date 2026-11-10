@@ -3,6 +3,7 @@ from geojson import dumps
 from ....timer import Timer
 from ....config import Config
 from ... import Pipe
+from .geojson_formatter import GeoJSONFormatter
 from pathlib import Path
 from typing import List
 import subprocess
@@ -12,17 +13,21 @@ import logging
 class VectorTileFormatter(Pipe):
     """
         Handles the creation of the Vector tiles.
+        The features are also written to a GeoJSON file.
     """
     def on_created(self) -> None:
         self.base_folder_path = Path(Config.values['RulesFolderPath'],
                                      self.exec_context.rule_name,
                                      'vector-tiles')
+        self.geojson_formatter = GeoJSONFormatter({'compress': True}, self.exec_context)
 
     def process(self, features: List[Feature]) -> str:
         """
             Converts a list of features to vector tiles by
             calling tippecanoe from the command line.
         """
+        self.geojson_formatter.process(features)
+
         feature_collection = FeatureCollection(features)
         self.base_folder_path.mkdir(parents=True, exist_ok=True)
         timer = Timer('Vector tile conversion')
