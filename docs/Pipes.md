@@ -180,6 +180,8 @@ Generates a `GeoJSON file` from a list of [Feature](https://github.com/jazzband/
 
 Generates a `Vector tile` folder with a hierarchy of vector tiles inside from a list of [Feature](https://github.com/jazzband/geojson#feature). This pipe makes a call to [Tippecanoe](https://github.com/mapbox/tippecanoe) to generate the vector tiles.
 
+The features are also written to `geojson/<rule name>.json` (see [GeoJSONFormatter](#geojsonformatter)).
+
 **Class name (type)** -> `VectorTileFormatter`
 
 **Expected inputs** -> `List` of [Feature](https://github.com/jazzband/geojson#feature).
@@ -189,6 +191,8 @@ Generates a `Vector tile` folder with a hierarchy of vector tiles inside from a 
 ## ClustersVtFormatter
 
 Generates a `Vector tile` folder with clustered vector tiles from a list of [Feature](https://github.com/jazzband/geojson#feature), using the bundled `clustering-vt` module.
+
+The features are also written to `geojson/<rule name>.json` (see [GeoJSONFormatter](#geojsonformatter)).
 
 **Class name (type)** -> `ClustersVtFormatter`
 

@@ -1,6 +1,6 @@
 from nominatim_data_analyser.core.pipes import VectorTileFormatter
 from nominatim_data_analyser.config import Config
-from geojson import Feature, Point
+from geojson import Feature, Point, FeatureCollection, loads
 
 
 def test_process_vector_tile_formatter(vector_tile_formatter: VectorTileFormatter,
@@ -19,6 +19,7 @@ def test_process_vector_tile_formatter(vector_tile_formatter: VectorTileFormatte
     """
     config.values['WebPrefixPath'] = 'test_prefix_path'
     vector_tile_formatter.base_folder_path = tmp_path / 'test_folder'
+    vector_tile_formatter.geojson_formatter.base_folder_path = tmp_path / 'geojson'
 
     features = [
         Feature(geometry=Point((5, 2))),
@@ -32,3 +33,7 @@ def test_process_vector_tile_formatter(vector_tile_formatter: VectorTileFormatte
 
     web_path = vector_tile_formatter.process(features)
     assert web_path == 'test_prefix_path/test_rule/vector-tiles/{z}/{x}/{y}.pbf'
+
+    # The features are also written to a GeoJSON file.
+    with open(tmp_path/'geojson/test_rule.json', 'r') as file:
+        assert loads(file.read()) == FeatureCollection(features)

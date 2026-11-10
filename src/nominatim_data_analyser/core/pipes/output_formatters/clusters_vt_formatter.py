@@ -6,6 +6,7 @@ from ....timer import Timer
 from ....config import Config
 from ... import Pipe
 from ....clustering_vt import cluster  # type: ignore[import-not-found]
+from .geojson_formatter import GeoJSONFormatter
 from pathlib import Path
 from typing import List
 
@@ -16,12 +17,14 @@ LOG = logging.getLogger()
 class ClustersVtFormatter(Pipe):
     """
         Handles the creation of the clusters and vector tiles.
+        The features are also written to a GeoJSON file.
     """
     def on_created(self) -> None:
         self.base_folder_path = Path(Config.values["RulesFolderPath"],
                                      self.exec_context.rule_name,
                                      'vector-tiles')
         self.radius: int = self.extract_data('radius', default=60)
+        self.geojson_formatter = GeoJSONFormatter({}, self.exec_context)
 
     def process(self, features: List[Feature]) -> str:
         """
@@ -30,6 +33,8 @@ class ClustersVtFormatter(Pipe):
 
             The outputfolder is initially deleted if it exists.
         """
+        self.geojson_formatter.process(features)
+
         feature_collection = FeatureCollection(features)
         timer = Timer('Clustering and vector tiles creation')
 
