@@ -1,3 +1,5 @@
+import gzip
+
 from nominatim_data_analyser.core.pipes import VectorTileFormatter
 from nominatim_data_analyser.config import Config
 from geojson import Feature, Point, FeatureCollection, loads
@@ -34,6 +36,6 @@ def test_process_vector_tile_formatter(vector_tile_formatter: VectorTileFormatte
     web_path = vector_tile_formatter.process(features)
     assert web_path == 'test_prefix_path/test_rule/vector-tiles/{z}/{x}/{y}.pbf'
 
-    # The features are also written to a GeoJSON file.
-    with open(tmp_path/'geojson/test_rule.json', 'r') as file:
+    # The features are also written to a compressed GeoJSON file.
+    with gzip.open(tmp_path/'geojson/test_rule.json.gz', 'rt') as file:
         assert loads(file.read()) == FeatureCollection(features)

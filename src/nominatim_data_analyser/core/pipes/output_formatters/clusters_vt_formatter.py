@@ -24,7 +24,7 @@ class ClustersVtFormatter(Pipe):
                                      self.exec_context.rule_name,
                                      'vector-tiles')
         self.radius: int = self.extract_data('radius', default=60)
-        self.geojson_formatter = GeoJSONFormatter({}, self.exec_context)
+        self.geojson_formatter = GeoJSONFormatter({'compress': True}, self.exec_context)
 
     def process(self, features: List[Feature]) -> str:
         """
